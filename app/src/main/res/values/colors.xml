@@ -18,5 +18,14 @@
     <color name="md_theme_light_surface">#E7EFF3</color>
     <color name="md_theme_light_onSurface">#49454F</color>
     <color name="md_theme_light_outline">#C1D2D5</color>
-    
+
+    <!-- Colores adicionales -->
+    <color name="primary_color">@color/md_theme_light_primary</color>
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_secondary_light">#999999</color>
+    <color name="circle_background_color">#F0F0F0</color>
+    <color name="navigation_icon_inactive">#CCCCCC</color>
+    <color name="navigation_text_inactive">#CCCCCC</color>
+
 </resources>

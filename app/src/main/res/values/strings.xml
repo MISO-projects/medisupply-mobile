@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MediSupply</string>
+    
+    <!-- Clientes -->
+    <string name="logo_cliente_description">Logo del cliente</string>
+    <string name="error_cargar_clientes">Error al cargar clientes</string>
+    <string name="reintentar">Reintentar</string>
+    <string name="cargando_clientes">Cargando clientes…</string>
+    <string name="no_hay_clientes">No hay clientes disponibles</string>
 </resources>

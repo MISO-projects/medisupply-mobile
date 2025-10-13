@@ -62,10 +62,11 @@ dependencies {
     
     // Image loading
     implementation(libs.glide)
-    annotationProcessor(libs.glide.compiler)
+    kapt(libs.glide.compiler)
     
     // Lifecycle components
     implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
     
     // Room database
     implementation(libs.room.runtime)
