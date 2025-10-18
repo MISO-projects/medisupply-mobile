@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">MediSupply</string>
-    
+
     <!-- Clientes -->
     <string name="logo_cliente_description">Logo del cliente</string>
     <string name="error_cargar_clientes">Error al cargar clientes</string>
     <string name="reintentar">Reintentar</string>
     <string name="cargando_clientes">Cargando clientes…</string>
     <string name="no_hay_clientes">No hay clientes disponibles</string>
-    
+
     <!-- Inventario -->
     <string name="buscar_productos">Buscar productos</string>
     <string name="categorias">Categorías</string>
@@ -23,4 +23,13 @@
     <string name="categoria_medicamentos">Medicamentos</string>
     <string name="categoria_insumos">Insumos</string>
     <string name="categoria_equipos">Equipos</string>
+
+    <!-- Login -->
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="create_account">¿Aún no tienes cuenta? Crea una</string>
+    <string name="app_logo">Logo de la aplicación</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
