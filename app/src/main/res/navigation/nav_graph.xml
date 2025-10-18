@@ -28,14 +28,22 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
         android:id="@+id/clientHomeFragment"
         android:name="com.medisupply.ui.fragments.ClientHomeFragment"
         android:label="ClientHomeFragment"
-        tools:layout="@layout/fragment_client_home" />
+        tools:layout="@layout/fragment_client_home">
+        <action
+            android:id="@+id/action_clientHomeFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/registerFragment"
