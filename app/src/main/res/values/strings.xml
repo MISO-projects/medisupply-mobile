@@ -7,4 +7,20 @@
     <string name="reintentar">Reintentar</string>
     <string name="cargando_clientes">Cargando clientes…</string>
     <string name="no_hay_clientes">No hay clientes disponibles</string>
+    
+    <!-- Inventario -->
+    <string name="buscar_productos">Buscar productos</string>
+    <string name="categorias">Categorías</string>
+    <string name="disponibilidad">Disponibilidad</string>
+    <string name="imagen_producto_description">Imagen del producto</string>
+    <string name="error_cargar_productos">Error al cargar productos</string>
+    <string name="cargando_productos">Cargando productos…</string>
+    <string name="no_hay_productos">No hay productos disponibles</string>
+    <string name="todos">Todos</string>
+    <string name="disponibles">Disponibles</string>
+    <string name="no_disponibles">No disponibles</string>
+    <string name="categoria_todos">Todas las categorías</string>
+    <string name="categoria_medicamentos">Medicamentos</string>
+    <string name="categoria_insumos">Insumos</string>
+    <string name="categoria_equipos">Equipos</string>
 </resources>

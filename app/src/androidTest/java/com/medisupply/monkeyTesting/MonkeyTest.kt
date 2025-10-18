@@ -1,4 +1,4 @@
-package com.miso.vinilosapp.monkeyTesting
+package com.medisupply.monkeyTesting
 
 import android.app.Instrumentation
 import android.content.Context
@@ -10,7 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
-import com.miso.vinilosapp.ui.MainActivity
+import com.medisupply.ui.MainActivity
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -78,12 +78,12 @@ class MonkeyTest {
     }
 
     private fun isOnHomeScreen(): Boolean {
-        val greetingItem = device.findObject(UiSelector().resourceId("com.miso.vinilosapp:id/greeting"))
+        val greetingItem = device.findObject(UiSelector().resourceId("com.medisupply:id/greeting"))
         return greetingItem.exists()
     }
 
     private fun executeTap(instrumentation: Instrumentation, x: Int, y: Int) {
-        if (!device.findObject(UiSelector().packageName("com.miso.vinilosapp")).exists()) {
+        if (!device.findObject(UiSelector().packageName("com.medisupply")).exists()) {
             Log.e("MonkeyTest", "Activity is not in the foreground, skipping tap at ($x, $y)")
             return
         }
