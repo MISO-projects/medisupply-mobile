@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
+import android.widget.TextView
 import com.medisupply.R
 
 class LoginFragment : Fragment() {
@@ -38,6 +39,12 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeViewModel()
+
+        val createAccount = view.findViewById<TextView>(R.id.create_account_text_view)
+        createAccount.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
+
     }
 
     private fun observeViewModel() {

@@ -85,7 +85,7 @@
 
         <!-- Texto "¿Aún no tienes cuenta? Crea una" -->
         <TextView
-            android:id="@+id/create_account_text"
+            android:id="@+id/create_account_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/create_account"
