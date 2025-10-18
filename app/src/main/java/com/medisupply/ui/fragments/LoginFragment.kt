@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.medisupply.R
 
 class LoginFragment : Fragment() {
@@ -21,6 +22,7 @@ class LoginFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
+        val emailInputLayout = view.findViewById<TextInputLayout>(R.id.email_input_layout)
         val emailEditText = view.findViewById<TextInputEditText>(R.id.email_edit_text)
         val passwordEditText = view.findViewById<TextInputEditText>(R.id.password_edit_text)
         val loginButton = view.findViewById<Button>(R.id.login_button)
@@ -29,10 +31,18 @@ class LoginFragment : Fragment() {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
 
-            loginViewModel.loginUser(email, password)
+            if (isValidEmail(email)) {
+                loginViewModel.loginUser(email, password)
+            } else {
+                emailInputLayout.error = "Ingrese un correo electrónico válido"
+            }
         }
 
         return view
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
