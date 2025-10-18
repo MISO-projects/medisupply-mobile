@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Registro"
-            android:textSize="32sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/logo_image"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,12 +58,13 @@
             app:layout_constraintTop_toBottomOf="@id/institution_name_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:errorEnabled="true"
             android:hint="NIT de la institución">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nit_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"/>
+                android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -106,6 +107,7 @@
             app:layout_constraintTop_toBottomOf="@id/responsible_name_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:errorEnabled="true"
             android:hint="Correo corporativo del responsable">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/email_edit_text"
@@ -122,6 +124,7 @@
             app:layout_constraintTop_toBottomOf="@id/email_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:errorEnabled="true"
             app:passwordToggleEnabled="true"
             android:hint="Contraseña">
             <com.google.android.material.textfield.TextInputEditText
@@ -137,6 +140,7 @@
             android:layout_height="wrap_content"
             android:text="Registrar"
             android:layout_marginTop="24dp"
+            android:backgroundTint="#316A42"
             app:layout_constraintTop_toBottomOf="@id/password_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
