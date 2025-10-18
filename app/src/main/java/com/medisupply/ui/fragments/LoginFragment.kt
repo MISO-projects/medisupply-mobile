@@ -29,7 +29,6 @@ class LoginFragment : Fragment() {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
 
-            // La única responsabilidad del Fragment es delegar la acción al ViewModel
             loginViewModel.loginUser(email, password)
         }
 
@@ -38,8 +37,6 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Observamos los eventos del ViewModel para reaccionar
         observeViewModel()
     }
 
@@ -47,14 +44,15 @@ class LoginFragment : Fragment() {
         loginViewModel.navigationEvent.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is NavigationEvent.NavigateToHome -> {
-                    // Usamos Navigation Component para ir al HomeFragment
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                }
+                is NavigationEvent.NavigateToClientHome -> {
+                    findNavController().navigate(R.id.action_loginFragment_to_clientHomeFragment)
                 }
             }
         }
 
         loginViewModel.errorMessage.observe(viewLifecycleOwner) { message ->
-            // Muestra un mensaje de error al usuario
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         }
     }

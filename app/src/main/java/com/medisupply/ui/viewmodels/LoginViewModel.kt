@@ -43,18 +43,27 @@ class LoginViewModel : ViewModel() {
         })
     }
 
+    // Dentro de LoginViewModel.kt
     private fun getUserProfile(token: String) {
-        // 2. Segunda llamada: Obtener perfil
         NetworkServiceAdapter.apiService.getMe(token).enqueue(object : Callback<UserProfileResponse> {
             override fun onResponse(call: Call<UserProfileResponse>, response: Response<UserProfileResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     val userProfile = response.body()!!
-                    // 3. Lógica de navegación
-                    if (userProfile.role == null || userProfile.role == "seller") {
-                        _navigationEvent.postValue(NavigationEvent.NavigateToHome)
-                    } else {
-                        // Aquí puedes manejar otros roles si es necesario
-                        _errorMessage.postValue("Rol no autorizado: ${userProfile.role}")
+
+                    // 👇 LÓGICA DE DECISIÓN ACTUALIZADA
+                    when (userProfile.role) {
+                        "client" -> {
+                            // Si el rol es 'client', navega a la pantalla del cliente
+                            _navigationEvent.postValue(NavigationEvent.NavigateToClientHome)
+                        }
+                        "seller", null -> {
+                            // Si el rol es 'seller' o no existe (null), navega a la pantalla del vendedor
+                            _navigationEvent.postValue(NavigationEvent.NavigateToHome)
+                        }
+                        else -> {
+                            // Para cualquier otro rol no esperado
+                            _errorMessage.postValue("Rol no autorizado: ${userProfile.role}")
+                        }
                     }
                 } else {
                     _errorMessage.postValue("Error al obtener perfil. Código: ${response.code()}")
@@ -70,5 +79,6 @@ class LoginViewModel : ViewModel() {
 
 // Clase sellada para manejar los eventos de navegación de forma segura
 sealed class NavigationEvent {
-    object NavigateToHome : NavigationEvent()
+    object NavigateToHome : NavigationEvent() // Para el vendedor
+    object NavigateToClientHome : NavigationEvent() // Para el cliente
 }
