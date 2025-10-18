@@ -1,3 +1,4 @@
+// en /ui/fragments/LoginFragment.kt
 package com.medisupply.ui.fragments
 
 import android.os.Bundle
@@ -6,16 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.medisupply.R
-import com.medisupply.data.models.LoginRequest
-import com.medisupply.data.models.LoginResponse
-import com.medisupply.data.repositories.network.NetworkServiceAdapter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class LoginFragment : Fragment() {
+
+    // Inyecta el ViewModel de forma segura
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
@@ -28,42 +29,33 @@ class LoginFragment : Fragment() {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
 
-            println("Email: $email")
-            println("Password: $password")
-
-            loginUser(email, password)
+            // La única responsabilidad del Fragment es delegar la acción al ViewModel
+            loginViewModel.loginUser(email, password)
         }
 
         return view
     }
 
-    private fun loginUser(email: String, password: String) {
-        val loginRequest = LoginRequest(email, password)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        NetworkServiceAdapter.apiService.login(loginRequest).enqueue(object : Callback<LoginResponse> {
-            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                if (response.isSuccessful) {
-                    val loginResponse = response.body()
-                    // Imprimir la respuesta en el logcat
-                    println("LoginResponse: $loginResponse")
-                    // Manejar la respuesta exitosa de inicio de sesión
-                    // Ejemplo: Guardar el token de autenticación, redirigir a la pantalla principal, etc.
-                } else {
-                    // Imprimir el código de error y el mensaje de error en el logcat
-                    val errorCode = response.code()
-                    val errorMessage = response.message()
-                    println("Error en la respuesta de la API: Código $errorCode - Mensaje: $errorMessage")
-                    // Manejar el caso de error en la respuesta de la API
-                    // Ejemplo: Mostrar un mensaje de error al usuario
+        // Observamos los eventos del ViewModel para reaccionar
+        observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        loginViewModel.navigationEvent.observe(viewLifecycleOwner) { event ->
+            when (event) {
+                is NavigationEvent.NavigateToHome -> {
+                    // Usamos Navigation Component para ir al HomeFragment
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 }
             }
+        }
 
-            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                // Imprimir el mensaje de error en el logcat
-                println("Error en la solicitud de red: ${t.message}")
-                // Manejar el caso de error en la solicitud de red
-                // Ejemplo: Mostrar un mensaje de error al usuario
-            }
-        })
+        loginViewModel.errorMessage.observe(viewLifecycleOwner) { message ->
+            // Muestra un mensaje de error al usuario
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
     }
 }
