@@ -19,9 +19,9 @@ interface ApiService {
     @GET("productos")
     suspend fun getProductos(): ProductoResponse
 
-    @POST("auth/login")
+    @POST("autenticacion/login")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
-    @GET("auth/me")
+    @GET("autenticacion/me")
     fun getMe(@Header("Authorization") token: String): Call<UserProfileResponse>
 }
