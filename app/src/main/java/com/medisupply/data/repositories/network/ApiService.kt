@@ -4,8 +4,10 @@ import com.medisupply.data.models.Cliente
 import com.medisupply.data.models.LoginRequest
 import com.medisupply.data.models.LoginResponse
 import com.medisupply.data.models.ProductoResponse
+import com.medisupply.data.models.RegisterRequest
 import com.medisupply.data.models.UserProfileResponse
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -24,4 +26,7 @@ interface ApiService {
 
     @GET("autenticacion/me")
     fun getMe(@Header("Authorization") token: String): Call<UserProfileResponse>
+
+    @POST("autenticacion/register")
+    suspend fun register(@Body registerRequest: RegisterRequest): Response<Unit>
 }
