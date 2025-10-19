@@ -30,3 +30,16 @@ data class RegisterRequest(
     @SerializedName("address")
     val address: String
 )
+data class ClienteRequest(
+    @SerializedName("nombre")
+    val nombre: String,
+
+    @SerializedName("nit")
+    val nit: String,
+
+    @SerializedName("logoUrl")
+    val logoUrl: String,
+
+    @SerializedName("address")
+    val address: String
+)

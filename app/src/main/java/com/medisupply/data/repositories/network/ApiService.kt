@@ -1,6 +1,7 @@
 package com.medisupply.data.repositories.network
 
 import com.medisupply.data.models.Cliente
+import com.medisupply.data.models.ClienteRequest
 import com.medisupply.data.models.LoginRequest
 import com.medisupply.data.models.LoginResponse
 import com.medisupply.data.models.ProductoResponse
@@ -29,4 +30,7 @@ interface ApiService {
 
     @POST("autenticacion/register")
     suspend fun register(@Body registerRequest: RegisterRequest): Response<Unit>
+
+    @POST("clientes")
+    suspend fun crearCliente(@Body clienteRequest: ClienteRequest): Response<Unit>
 }
