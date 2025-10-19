@@ -12,8 +12,6 @@ data class LoginRequest(
 )
 
 data class LoginResponse(
-    // OJO: Basado en tu respuesta anterior, el campo era "access_token"
-    // Asegúrate de que coincida con el JSON real de tu API.
     @SerializedName("access_token")
     val accessToken: String,
 
@@ -21,7 +19,6 @@ data class LoginResponse(
     val tokenType: String
 )
 
-// --- Modelo para el Perfil de Usuario ---
 
 data class UserProfileResponse(
     @SerializedName("id")
@@ -36,7 +33,6 @@ data class UserProfileResponse(
     @SerializedName("is_active")
     val isActive: Boolean,
 
-    // ✅ CAMBIO CLAVE: Campo de rol opcional
     @SerializedName("role")
     val role: String?
 )

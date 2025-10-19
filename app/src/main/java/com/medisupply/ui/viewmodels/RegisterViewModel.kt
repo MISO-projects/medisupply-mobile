@@ -15,7 +15,6 @@ class RegisterViewModel : ViewModel() {
     fun register(registerRequest: RegisterRequest) {
         viewModelScope.launch {
             try {
-                // Crear cliente
                 val clienteRequest = ClienteRequest(
                     nombre = registerRequest.nombre,
                     nit = registerRequest.nit,
@@ -25,7 +24,6 @@ class RegisterViewModel : ViewModel() {
                 val clienteResponse = NetworkServiceAdapter.apiService.crearCliente(clienteRequest)
 
                 if (clienteResponse.isSuccessful) {
-                    // Crear usuario
                     val userResponse = NetworkServiceAdapter.apiService.register(registerRequest)
                     _registrationStatus.postValue(userResponse.isSuccessful)
                 } else {

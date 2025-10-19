@@ -29,19 +29,14 @@ class ClientHomeFragment : Fragment() {
     }
 
     private fun logout() {
-        // Borrar datos de sesión y preferencias
         clearSessionData()
 
-        // Navegar al LoginFragment
         val navController = findNavController()
         navController.navigate(R.id.action_clientHomeFragment_to_loginFragment)
     }
 
     private fun clearSessionData() {
-        // Obtener referencia a las SharedPreferences
         val sharedPreferences = requireContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
-
-        // Borrar todos los datos de sesión
         with(sharedPreferences.edit()) {
             clear()
             apply()

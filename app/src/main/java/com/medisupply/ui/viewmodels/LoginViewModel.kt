@@ -13,19 +13,15 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class LoginViewModel : ViewModel() {
-
-    // LiveData para comunicar eventos de navegación al Fragment
     private val _navigationEvent = MutableLiveData<NavigationEvent>()
     val navigationEvent: LiveData<NavigationEvent> = _navigationEvent
 
-    // LiveData para mostrar errores
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
     fun loginUser(email: String, password: String) {
         val loginRequest = LoginRequest(email, password)
 
-        // 1. Primera llamada: Login
         NetworkServiceAdapter.apiService.login(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful && response.body() != null) {
@@ -43,14 +39,12 @@ class LoginViewModel : ViewModel() {
         })
     }
 
-    // Dentro de LoginViewModel.kt
     private fun getUserProfile(token: String) {
         NetworkServiceAdapter.apiService.getMe(token).enqueue(object : Callback<UserProfileResponse> {
             override fun onResponse(call: Call<UserProfileResponse>, response: Response<UserProfileResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     val userProfile = response.body()!!
 
-                    // 👇 LÓGICA DE DECISIÓN ACTUALIZADA
                     when (userProfile.role) {
                         "client" -> {
                             // Si el rol es 'client', navega a la pantalla del cliente
@@ -79,6 +73,6 @@ class LoginViewModel : ViewModel() {
 
 // Clase sellada para manejar los eventos de navegación de forma segura
 sealed class NavigationEvent {
-    object NavigateToHome : NavigationEvent() // Para el vendedor
-    object NavigateToClientHome : NavigationEvent() // Para el cliente
+    object NavigateToHome : NavigationEvent()
+    object NavigateToClientHome : NavigationEvent() 
 }

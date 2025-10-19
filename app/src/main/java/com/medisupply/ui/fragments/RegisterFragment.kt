@@ -95,7 +95,6 @@ class RegisterFragment : Fragment() {
             }
         }
 
-        // Opcional: Agregar navegación para el texto "Inicia sesión"
         val goToLogin = view.findViewById<TextView>(R.id.go_to_login_text_view)
         goToLogin.setOnClickListener {
             findNavController().navigateUp() // Vuelve a la pantalla anterior (Login)
@@ -111,7 +110,6 @@ class RegisterFragment : Fragment() {
     }
 
     private fun isValidPassword(password: String): Boolean {
-        // Ejemplo de validación: mínimo 8 caracteres, al menos una letra mayúscula, una letra minúscula y un número
         return password.matches(Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"))
     }
 }
