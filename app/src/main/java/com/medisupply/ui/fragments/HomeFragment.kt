@@ -1,11 +1,14 @@
 package com.medisupply.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import com.medisupply.R
 import com.medisupply.databinding.FragmentHomeBinding
 
@@ -42,7 +45,7 @@ class HomeFragment : Fragment() {
     private fun setupUI() {
         // Configurar eventos del header
         binding.logoutText.setOnClickListener {
-            // TODO: Implementar logout
+            logout()
         }
 
         binding.menuIcon.setOnClickListener {
@@ -119,6 +122,28 @@ class HomeFragment : Fragment() {
         childFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
+    }
+
+    private fun logout() {
+        // Borrar datos de sesión y preferencias
+        clearSessionData()
+
+        // Navegar al LoginFragment
+        val navController = findNavController()
+        navController.navigate(R.id.action_homeFragment_to_loginFragment, null, NavOptions.Builder()
+            .setPopUpTo(R.id.homeFragment, true)
+            .build())
+    }
+
+    private fun clearSessionData() {
+        // Obtener referencia a las SharedPreferences
+        val sharedPreferences = requireContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+
+        // Borrar todos los datos de sesión
+        with(sharedPreferences.edit()) {
+            clear()
+            apply()
+        }
     }
 
     override fun onDestroyView() {
