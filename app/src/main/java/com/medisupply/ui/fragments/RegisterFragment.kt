@@ -6,13 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import android.widget.TextView
 import com.medisupply.R
+import com.medisupply.data.models.RegisterRequest
+import com.medisupply.ui.viewmodels.RegisterViewModel
 import com.google.android.material.textfield.TextInputLayout
 
 class RegisterFragment : Fragment() {
+
+    private val registerViewModel: RegisterViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,15 +55,18 @@ class RegisterFragment : Fragment() {
             val isPasswordValid = isValidPassword(passwordValue)
 
             if (isNitValid && isEmailValid && isPasswordValid) {
-                // Recolectar y imprimir la información
-                println("--- Nuevo Registro ---")
-                println("Institución: $institutionNameValue")
-                println("NIT: $nitValue")
-                println("Dirección: $addressValue")
-                println("Responsable: $responsibleNameValue")
-                println("Email: $emailValue")
-                println("Contraseña: $passwordValue")
-                println("----------------------")
+                val registerRequest = RegisterRequest(
+                    email = emailValue,
+                    username = responsibleNameValue,
+                    role = "client",
+                    password = passwordValue,
+                    nombre = institutionNameValue,
+                    nit = nitValue,
+                    logoUrl = "https://storage.googleapis.com/logos/hospital-general.png",
+                    address = addressValue
+                )
+
+                registerViewModel.register(registerRequest)
             } else {
                 if (!isNitValid) {
                     nitLayout.error = "El NIT debe contener solo números"
@@ -77,7 +86,15 @@ class RegisterFragment : Fragment() {
             }
         }
 
-        // Opcional: Agregar navegación para el texto "Inicia sesión"
+        registerViewModel.registrationStatus.observe(viewLifecycleOwner) { success ->
+            if (success) {
+                Toast.makeText(requireContext(), "Registro exitoso", Toast.LENGTH_SHORT).show()
+                findNavController().navigateUp()
+            } else {
+                Toast.makeText(requireContext(), "Error en el registro", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         val goToLogin = view.findViewById<TextView>(R.id.go_to_login_text_view)
         goToLogin.setOnClickListener {
             findNavController().navigateUp() // Vuelve a la pantalla anterior (Login)
@@ -93,7 +110,6 @@ class RegisterFragment : Fragment() {
     }
 
     private fun isValidPassword(password: String): Boolean {
-        // Ejemplo de validación: mínimo 8 caracteres, al menos una letra mayúscula, una letra minúscula y un número
         return password.matches(Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"))
     }
 }
