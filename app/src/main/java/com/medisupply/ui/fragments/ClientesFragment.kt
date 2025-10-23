@@ -31,8 +31,9 @@ class ClientesFragment : Fragment() {
     private val viewModel: ClientesViewModel by viewModels {
         ClientesViewModelFactory(
             ClienteRepository(
-                NetworkServiceAdapter.getInstance().create(ApiService::class.java)
-            )
+                NetworkServiceAdapter.getApiService()
+            ),
+            requireContext()
         )
     }
     override fun onCreateView(

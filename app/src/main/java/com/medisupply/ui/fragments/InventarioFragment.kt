@@ -50,7 +50,7 @@ class InventarioFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        val apiService = NetworkServiceAdapter.apiService
+        val apiService = NetworkServiceAdapter.getApiService()
         val repository = InventarioRepository(apiService)
         val factory = InventarioViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[InventarioViewModel::class.java]
@@ -58,7 +58,7 @@ class InventarioFragment : Fragment() {
 
     private fun setupRecyclerView() {
         productosAdapter = ProductosAdapter { producto ->
-            // TODO: Manejar click en producto si es necesario
+            // TODO: Manejar click en producto
         }
 
         binding.productosRecyclerView.apply {

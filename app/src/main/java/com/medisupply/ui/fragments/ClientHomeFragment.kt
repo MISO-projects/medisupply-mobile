@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.medisupply.R
+import com.medisupply.data.session.SessionManager
 
 class ClientHomeFragment : Fragment() {
     override fun onCreateView(
@@ -29,17 +30,10 @@ class ClientHomeFragment : Fragment() {
     }
 
     private fun logout() {
-        clearSessionData()
+        val sessionManager = SessionManager(requireContext())
+        sessionManager.logout()
 
         val navController = findNavController()
         navController.navigate(R.id.action_clientHomeFragment_to_loginFragment)
-    }
-
-    private fun clearSessionData() {
-        val sharedPreferences = requireContext().getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
-        with(sharedPreferences.edit()) {
-            clear()
-            apply()
-        }
     }
 }

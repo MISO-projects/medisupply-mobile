@@ -16,21 +16,21 @@ import retrofit2.http.POST
 
 interface ApiService {
 
-    @GET("clientes")
+    @GET("clientes/asignados")
     suspend fun getClientes(): List<Cliente>
 
-    @GET("productos")
+    @GET("productos/disponibles/")
     suspend fun getProductos(): ProductoResponse
 
     @POST("autenticacion/login")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
     @GET("autenticacion/me")
-    fun getMe(@Header("Authorization") token: String): Call<UserProfileResponse>
+    fun getMe(): Call<UserProfileResponse>
 
     @POST("autenticacion/register")
     suspend fun register(@Body registerRequest: RegisterRequest): Response<Unit>
 
-    @POST("clientes")
+    @POST("clientes/")
     suspend fun crearCliente(@Body clienteRequest: ClienteRequest): Response<Unit>
 }
