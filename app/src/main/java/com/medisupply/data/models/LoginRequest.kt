@@ -28,11 +28,14 @@ data class UserProfileResponse(
     val email: String,
 
     @SerializedName("username")
-    val username: String,
+    val username: String? = null,
+    
+    @SerializedName("nombre")
+    val nombre: String? = null,
 
     @SerializedName("is_active")
-    val isActive: Boolean,
+    val isActive: Boolean? = null,
 
     @SerializedName("role")
-    val role: String?
+    val role: String?  = null
 )

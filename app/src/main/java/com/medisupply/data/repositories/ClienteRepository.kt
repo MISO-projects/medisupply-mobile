@@ -4,23 +4,13 @@ import com.medisupply.data.models.Cliente
 import com.medisupply.data.repositories.network.ApiService
 import kotlinx.coroutines.delay
 
-/**
- * Repositorio para manejar datos de clientes
- */
 class ClienteRepository(private val apiService: ApiService) {
 
-    /**
-     * Obtiene la lista de clientes
-     * Por ahora usa datos mock, pero está preparado para usar el servicio real
-     */
     suspend fun getClientes(): List<Cliente> {
-        // Simular delay de red
         delay(1000)
         
-        // TODO: Reemplazar con llamada real al API
         // return apiService.getClientes()
-        
-        // Datos mock por ahora
+
         return getMockClientes()
     }
 

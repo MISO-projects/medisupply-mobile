@@ -21,10 +21,10 @@ class RegisterViewModel : ViewModel() {
                     logoUrl = registerRequest.logoUrl,
                     address = registerRequest.address
                 )
-                val clienteResponse = NetworkServiceAdapter.apiService.crearCliente(clienteRequest)
+                val clienteResponse = NetworkServiceAdapter.getApiService().crearCliente(clienteRequest)
 
                 if (clienteResponse.isSuccessful) {
-                    val userResponse = NetworkServiceAdapter.apiService.register(registerRequest)
+                    val userResponse = NetworkServiceAdapter.getApiService().register(registerRequest)
                     _registrationStatus.postValue(userResponse.isSuccessful)
                 } else {
                     _registrationStatus.postValue(false)

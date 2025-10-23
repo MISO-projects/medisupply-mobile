@@ -13,11 +13,15 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.medisupply.R
+import com.medisupply.ui.viewmodels.LoginViewModel
+import com.medisupply.ui.viewmodels.LoginViewModelFactory
+import com.medisupply.ui.viewmodels.NavigationEvent
 
 class LoginFragment : Fragment() {
 
-    // Inyecta el ViewModel de forma segura
-    private val loginViewModel: LoginViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels {
+        LoginViewModelFactory(requireContext())
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
