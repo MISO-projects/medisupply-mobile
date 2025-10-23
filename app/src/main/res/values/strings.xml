@@ -32,4 +32,9 @@
     <string name="app_logo">Logo de la aplicación</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="estado_pedido">estado</string>
+    <string name="fecha_pedido">fecha</string>
+    <string name="buscar_pedidos">Buscar pedidos</string>
+    <string name="no_hay_pedidos_disponibles">No hay pedidos disponibles</string>
+    <string name="crear_nuevo_pedido">Crear nuevo pedido</string>
 </resources>
