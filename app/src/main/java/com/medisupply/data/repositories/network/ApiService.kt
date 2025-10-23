@@ -31,6 +31,6 @@ interface ApiService {
     @POST("autenticacion/register")
     suspend fun register(@Body registerRequest: RegisterRequest): Response<Unit>
 
-    @POST("clientes")
-    suspend fun crearCliente(@Body clienteRequest: ClienteRequest): Response<Unit>
+    @POST("clientes/")
+    suspend fun crearCliente(@Body cliente: ClienteRequest): Response<Cliente>
 }
