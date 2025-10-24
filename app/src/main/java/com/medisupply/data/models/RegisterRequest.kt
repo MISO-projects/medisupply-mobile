@@ -28,7 +28,10 @@ data class RegisterRequest(
     val logoUrl: String,
 
     @SerializedName("address")
-    val address: String
+    val address: String,
+
+    @SerializedName("id_client")
+    val id_client: String? = null
 )
 data class ClienteRequest(
     @SerializedName("nombre")
