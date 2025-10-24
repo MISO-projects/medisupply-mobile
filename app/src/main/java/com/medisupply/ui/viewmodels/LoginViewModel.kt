@@ -45,7 +45,7 @@ class LoginViewModel(private val context: Context) : ViewModel() {
     }
 
     private fun getUserProfile(token: String, accessToken: String, tokenType: String) {
-        NetworkServiceAdapter.getApiService().getMe().enqueue(object : Callback<UserProfileResponse> {
+        NetworkServiceAdapter.getApiService().getMe(token).enqueue(object : Callback<UserProfileResponse> {
             override fun onResponse(call: Call<UserProfileResponse>, response: Response<UserProfileResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     val userProfile = response.body()!!

@@ -26,7 +26,7 @@ interface ApiService {
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
     @GET("autenticacion/me")
-    fun getMe(): Call<UserProfileResponse>
+    fun getMe(@Header("Authorization") token: String): Call<UserProfileResponse>
 
     @POST("autenticacion/register")
     suspend fun register(@Body registerRequest: RegisterRequest): Response<Unit>
