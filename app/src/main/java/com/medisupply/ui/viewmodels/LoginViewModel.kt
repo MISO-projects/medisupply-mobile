@@ -16,7 +16,7 @@ import retrofit2.Response
 
 class LoginViewModel(private val context: Context) : ViewModel() {
     private val sessionManager = SessionManager(context)
-    
+
     private val _navigationEvent = MutableLiveData<NavigationEvent>()
     val navigationEvent: LiveData<NavigationEvent> = _navigationEvent
 
@@ -31,7 +31,14 @@ class LoginViewModel(private val context: Context) : ViewModel() {
                 if (response.isSuccessful && response.body() != null) {
                     val accessToken = response.body()!!.accessToken
                     val tokenType = response.body()!!.tokenType
-                    // Si el login fue exitoso, obtenemos el perfil del usuario
+                    sessionManager.saveSession(
+                        accessToken = accessToken,
+                        tokenType = tokenType,
+                        userId = "",
+                        email = "",
+                        name = "",
+                        role = ""
+                    )
                     getUserProfile("$tokenType $accessToken", accessToken, tokenType)
                 } else {
                     _errorMessage.postValue("Credenciales incorrectas. Código: ${response.code()}")
@@ -49,7 +56,7 @@ class LoginViewModel(private val context: Context) : ViewModel() {
             override fun onResponse(call: Call<UserProfileResponse>, response: Response<UserProfileResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     val userProfile = response.body()!!
-                    
+
                     // Guardar la sesión
                     sessionManager.saveSession(
                         accessToken = accessToken,
