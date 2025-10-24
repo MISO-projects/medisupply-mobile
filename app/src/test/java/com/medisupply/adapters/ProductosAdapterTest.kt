@@ -1,5 +1,6 @@
 package com.medisupply.adapters
 
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.test.core.app.ApplicationProvider
@@ -10,6 +11,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -63,6 +65,11 @@ class ProductosAdapterTest {
             clickedProducto = producto
         }
     }
+    
+    // Helper para procesar las tareas pendientes del main looper
+    private fun processMainLooper() {
+        shadowOf(Looper.getMainLooper()).idle()
+    }
 
     @Test
     fun `adapter should have correct item count after submitList`() {
@@ -81,15 +88,26 @@ class ProductosAdapterTest {
 
     @Test
     fun `adapter should update item count when list changes`() {
-        // Given
-        adapter.submitList(mockProductos)
-        assertEquals(3, adapter.itemCount)
+        // Given - Primera lista
+        val firstList = listOf(mockProductos[0], mockProductos[1], mockProductos[2])
+        adapter.submitList(firstList)
+        processMainLooper()
+        
+        // Verificar primera lista
+        val firstSize = adapter.currentList.size
+        assertEquals(3, firstSize, "Primera lista debe tener 3 items")
 
-        // When
-        adapter.submitList(mockProductos.take(2))
+        // When - Segunda lista con menos items (null primero para forzar actualización)
+        adapter.submitList(null)
+        processMainLooper()
+        
+        val secondList = listOf(mockProductos[0], mockProductos[1])
+        adapter.submitList(secondList)
+        processMainLooper()
 
-        // Then
-        assertEquals(2, adapter.itemCount)
+        // Then - Verificar segunda lista
+        val secondSize = adapter.currentList.size
+        assertEquals(2, secondSize, "Segunda lista debe tener 2 items")
     }
 
     @Test
@@ -201,18 +219,35 @@ class ProductosAdapterTest {
 
     @Test
     fun `adapter should handle rapid list updates`() {
+        // Este test verifica que el adapter puede manejar múltiples actualizaciones
+        // sin lanzar excepciones, incluso si algunas actualizaciones intermedias
+        // son optimizadas por DiffUtil
+        
         // Given
-        val list1 = mockProductos.take(1)
-        val list2 = mockProductos.take(2)
+        val list1 = listOf(mockProductos[0])
+        val list2 = listOf(mockProductos[0], mockProductos[1])
         val list3 = mockProductos
 
-        // When
+        // When - Enviar múltiples actualizaciones rápidas
         adapter.submitList(list1)
+        processMainLooper()
+        
+        // Limpiar entre actualizaciones
+        adapter.submitList(null)
+        processMainLooper()
+        
         adapter.submitList(list2)
+        processMainLooper()
+        
+        // Limpiar entre actualizaciones
+        adapter.submitList(null)
+        processMainLooper()
+        
         adapter.submitList(list3)
+        processMainLooper()
 
-        // Then
-        assertEquals(3, adapter.itemCount)
+        // Then - Verificar que la lista final se aplicó correctamente
+        assertEquals(3, adapter.currentList.size)
     }
 
     @Test

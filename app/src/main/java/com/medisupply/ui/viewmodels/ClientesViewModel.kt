@@ -1,17 +1,24 @@
 package com.medisupply.ui.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.medisupply.data.models.Cliente
 import com.medisupply.data.repositories.ClienteRepository
+import com.medisupply.data.session.SessionManager
 import kotlinx.coroutines.launch
 
 /**
  * ViewModel para la pantalla de Clientes
  */
-class ClientesViewModel(private val clienteRepository: ClienteRepository) : ViewModel() {
+class ClientesViewModel(
+    private val clienteRepository: ClienteRepository,
+    private val context: Context
+) : ViewModel() {
+    
+    private val sessionManager = SessionManager(context)
 
     private val _clientes = MutableLiveData<List<Cliente>>()
     val clientes: LiveData<List<Cliente>> = _clientes

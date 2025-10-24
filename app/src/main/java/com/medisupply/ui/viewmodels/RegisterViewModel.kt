@@ -21,7 +21,7 @@ class RegisterViewModel : ViewModel() {
                     logoUrl = registerRequest.logoUrl,
                     address = registerRequest.address
                 )
-                val clienteResponse = NetworkServiceAdapter.apiService.crearCliente(clienteRequest)
+                val clienteResponse = NetworkServiceAdapter.getApiService().crearCliente(clienteRequest)
 
                 if (clienteResponse.isSuccessful) {
                     val clienteBody = clienteResponse.body()
@@ -29,7 +29,7 @@ class RegisterViewModel : ViewModel() {
                         val registerRequestWithClient = registerRequest.copy(
                             id_client = clienteBody.id
                         )
-                        val userResponse = NetworkServiceAdapter.apiService.register(registerRequestWithClient)
+                        val userResponse = NetworkServiceAdapter.getApiService().register(registerRequestWithClient)
                         _registrationStatus.postValue(userResponse.isSuccessful)
                     } else {
                         _registrationStatus.postValue(false)
