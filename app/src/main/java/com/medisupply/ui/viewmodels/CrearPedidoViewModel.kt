@@ -113,7 +113,6 @@ class CrearPedidoViewModel(
     fun crearPedido(
         clienteId: String,
         vendedorId: String,
-        creadoPor: String,
         observaciones: String?
     ) {
         viewModelScope.launch {
@@ -140,7 +139,6 @@ class CrearPedidoViewModel(
                 val pedidoRequest = PedidoRequest(
                     clienteId = clienteId,
                     vendedorId = vendedorId,
-                    creadoPor = creadoPor,
                     observaciones = observaciones,
                     productos = items
                 )

@@ -1,6 +1,7 @@
 package com.medisupply.data.models
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /**
  * Modelo de datos para Cliente
@@ -17,4 +18,4 @@ data class Cliente(
     
     @SerializedName("logoUrl")
     val logoUrl: String
-)
+) : Serializable

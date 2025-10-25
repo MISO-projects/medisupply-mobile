@@ -202,15 +202,31 @@ class CrearPedidoFragment : Fragment() {
             return
         }
 
-        val userName = sessionManager.getUserName() ?: "admin"
-        val vendedorId = "vendedor-1"
+        val selectedProducts = viewModel.selectedProductos.value?.filter { it.cantidad > 0 }
+        if (selectedProducts.isNullOrEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                "Por favor agregue al menos un producto",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
 
-        viewModel.crearPedido(
-            clienteId = selectedCliente!!.id,
+        val userName = sessionManager.getUserName() ?: "admin"
+        // TODO: Remplazar el ID de vendedor extrayéndolo del token o de la sesión actual
+        val vendedorId = "f40c2145-0490-4f07-ab58-c399b60c9125"
+
+        val resumenFragment = ResumenPedidoFragment.newInstance(
+            cliente = selectedCliente!!,
+            productos = ArrayList(selectedProducts),
+            observaciones = notes.ifBlank { null },
             vendedorId = vendedorId,
-            creadoPor = userName,
-            observaciones = notes.ifBlank { null }
         )
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, resumenFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {

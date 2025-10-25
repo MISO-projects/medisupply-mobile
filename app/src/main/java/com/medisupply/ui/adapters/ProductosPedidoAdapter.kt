@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.medisupply.R
 import com.medisupply.data.models.Producto
+import java.io.Serializable
 
 /**
  * Wrapper para producto con cantidad seleccionada
@@ -16,7 +17,7 @@ import com.medisupply.data.models.Producto
 data class ProductoConCantidad(
     val producto: Producto,
     var cantidad: Int = 0
-)
+) : Serializable
 
 class ProductosPedidoAdapter(
     private val onCantidadChanged: (ProductoConCantidad) -> Unit

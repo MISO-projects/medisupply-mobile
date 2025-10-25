@@ -65,9 +65,6 @@ data class PedidoRequest(
     @SerializedName("id_vendedor")
     val vendedorId: String,
 
-    @SerializedName("creado_por")
-    val creadoPor: String,
-
     @SerializedName("observaciones")
     val observaciones: String?,
 
