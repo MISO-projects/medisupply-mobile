@@ -18,9 +18,8 @@ class InventarioRepository(private val apiService: ApiService) {
         // Simular delay de red
         delay(800)
         
-        // return apiService.getProductos()
-        
-        return getMockProductos()
+        return apiService.getProductos()
+
     }
 
     /**

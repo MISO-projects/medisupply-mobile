@@ -37,4 +37,20 @@
     <string name="buscar_pedidos">Buscar pedidos</string>
     <string name="no_hay_pedidos_disponibles">No hay pedidos disponibles</string>
     <string name="crear_nuevo_pedido">Crear nuevo pedido</string>
+    <string name="seleccionar_institucion">Seleccionar institución</string>
+    <string name="productos">Productos</string>
+    <string name="informacion_adicional">Información Adicional</string>
+    <string name="notas_adicionales">Notas adicionales</string>
+    <string name="crear_pedido">Crear Pedido</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="clientes">Clientes</string>
+    <string name="inventario">Inventario</string>
+    <string name="rutas">Rutas</string>
+    <string name="pedidos">Pedidos</string>
+    <string name="unidades_disponibles">%d unidades disponibles</string>
+    <string name="cero">0</string>
+    <string name="menos">-</string>
+    <string name="mas">+</string>
+    <string name="producto">Producto</string>
+    <string name="cero_unidades_disponibles">0 unidades disponibles</string>
 </resources>

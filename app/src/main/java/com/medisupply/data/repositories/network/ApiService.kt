@@ -18,6 +18,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -25,7 +26,7 @@ interface ApiService {
     suspend fun getClientes(): List<Cliente>
 
     @GET("productos/disponibles/")
-    suspend fun getProductos(): ProductoResponse
+    suspend fun getProductos(@Query("nombre") nombre: String? = null): ProductoResponse
 
     @GET("ordenes/")
     suspend fun getPedidos(): ListarPedidosResponse

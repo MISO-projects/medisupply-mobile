@@ -68,6 +68,19 @@ class PedidosFragment : Fragment() {
         binding.retryButton.setOnClickListener {
             viewModel.retry()
         }
+
+        // Configurar botón de crear pedido
+        binding.crearPedidoButton.setOnClickListener {
+            navigateToCrearPedido()
+        }
+    }
+
+    private fun navigateToCrearPedido() {
+        val crearPedidoFragment = CrearPedidoFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, crearPedidoFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupObservers() {
