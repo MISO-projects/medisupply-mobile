@@ -2,6 +2,7 @@ package com.medisupply.data.repositories.network
 
 import com.medisupply.data.models.Cliente
 import com.medisupply.data.models.ClienteRequest
+import com.medisupply.data.models.ClientesAsignadosResponse
 import com.medisupply.data.models.CrearPedidoResponse
 import com.medisupply.data.models.ListarPedidosResponse
 import com.medisupply.data.models.LoginRequest
@@ -23,7 +24,7 @@ import retrofit2.http.Query
 interface ApiService {
 
     @GET("clientes/asignados")
-    suspend fun getClientes(): List<Cliente>
+    suspend fun getClientesAsignados(): ClientesAsignadosResponse
 
     @GET("productos/disponibles/")
     suspend fun getProductos(@Query("nombre") nombre: String? = null): ProductoResponse

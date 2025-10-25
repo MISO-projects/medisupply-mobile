@@ -19,3 +19,11 @@ data class Cliente(
     @SerializedName("logoUrl")
     val logoUrl: String
 ) : Serializable
+
+data class ClientesAsignadosResponse(
+    @SerializedName("clientes")
+    val clientes: List<Cliente>,
+
+    @SerializedName("total")
+    val total: Int
+)
