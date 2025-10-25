@@ -21,10 +21,10 @@ import retrofit2.http.Path
 
 interface ApiService {
 
-    @GET("clientes")
+    @GET("clientes/asignados")
     suspend fun getClientes(): List<Cliente>
 
-    @GET("productos")
+    @GET("productos/disponibles/")
     suspend fun getProductos(): ProductoResponse
 
     @GET("ordenes/")
@@ -45,6 +45,6 @@ interface ApiService {
     @POST("autenticacion/register")
     suspend fun register(@Body registerRequest: RegisterRequest): Response<Unit>
 
-    @POST("clientes")
-    suspend fun crearCliente(@Body clienteRequest: ClienteRequest): Response<Unit>
+    @POST("clientes/")
+    suspend fun crearCliente(@Body cliente: ClienteRequest): Response<Cliente>
 }
