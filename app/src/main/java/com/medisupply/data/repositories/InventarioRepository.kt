@@ -14,11 +14,8 @@ class InventarioRepository(private val apiService: ApiService) {
      * Obtiene la lista de productos del inventario
      * Por ahora usa datos mock, pero está preparado para usar el servicio real
      */
-    suspend fun getProductos(): ProductoResponse {
-        // Simular delay de red
-        delay(800)
-        
-        return apiService.getProductos()
+    suspend fun getProductos(nombre: String? = null): ProductoResponse {
+        return apiService.getProductos(nombre)
 
     }
 
