@@ -1,5 +1,7 @@
 package com.medisupply.repositories
 
+import com.medisupply.data.models.Cliente
+import com.medisupply.data.models.ClientesAsignadosResponse
 import com.medisupply.data.repositories.ClienteRepository
 import com.medisupply.data.repositories.network.ApiService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -8,6 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.whenever
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -20,6 +23,45 @@ class ClienteRepositoryTest {
 
     private lateinit var repository: ClienteRepository
 
+    private val mockClientes = listOf(
+        Cliente(
+            id = "C001",
+            nombre = "Hospital General",
+            nit = "901234567-8",
+            logoUrl = "https://storage.googleapis.com/logos/hospital-general.png"
+        ),
+        Cliente(
+            id = "C002",
+            nombre = "Clínica San Martín",
+            nit = "901234568-9",
+            logoUrl = "https://storage.googleapis.com/logos/clinica-san-martin.png"
+        ),
+        Cliente(
+            id = "C003",
+            nombre = "Centro Médico Integral",
+            nit = "901234569-0",
+            logoUrl = "https://storage.googleapis.com/logos/centro-medico-integral.png"
+        ),
+        Cliente(
+            id = "C004",
+            nombre = "Consultorio Dr. Herrera",
+            nit = "901234570-1",
+            logoUrl = "https://storage.googleapis.com/logos/consultorio-herrera.png"
+        ),
+        Cliente(
+            id = "C005",
+            nombre = "Clínica del Corazón",
+            nit = "901234571-2",
+            logoUrl = "https://storage.googleapis.com/logos/clinica-corazon.png"
+        ),
+        Cliente(
+            id = "C006",
+            nombre = "Hospital Infantil",
+            nit = "901234572-3",
+            logoUrl = "https://storage.googleapis.com/logos/hospital-infantil.png"
+        )
+    )
+
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
@@ -28,6 +70,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should return mock data with 6 clients`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 
@@ -38,6 +85,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should return correct client structure`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 
@@ -51,6 +103,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should include Hospital General`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 
@@ -63,6 +120,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should include Clínica San Martín`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 
@@ -75,6 +137,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should include Centro Médico Integral`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 
@@ -86,6 +153,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should have all clients with valid NITs`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 
@@ -99,6 +171,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should have all clients with valid logos`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 
@@ -112,6 +189,9 @@ class ClienteRepositoryTest {
     @Test
     fun `getClientes should simulate network delay`() = runTest {
         // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
         val startTime = System.currentTimeMillis()
 
         // When
@@ -125,6 +205,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should return consistent data on multiple calls`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes1 = repository.getClientes()
         val clientes2 = repository.getClientes()
@@ -137,6 +222,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should have unique IDs`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 
@@ -147,6 +237,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should include Hospital Infantil`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 
@@ -158,6 +253,11 @@ class ClienteRepositoryTest {
 
     @Test
     fun `getClientes should have proper ID format`() = runTest {
+        // Given
+        whenever(apiService.getClientesAsignados()).thenReturn(
+            ClientesAsignadosResponse(clientes = mockClientes, total = 6)
+        )
+        
         // When
         val clientes = repository.getClientes()
 

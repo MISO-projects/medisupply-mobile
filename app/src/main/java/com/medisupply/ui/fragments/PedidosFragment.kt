@@ -54,6 +54,15 @@ class PedidosFragment : Fragment() {
     }
 
     private fun setupUI() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.retry()
+        }
+        
+        binding.swipeRefreshLayout.setColorSchemeResources(
+            R.color.md_theme_light_primary,
+            R.color.md_theme_light_secondary
+        )
+        
         // Configurar RecyclerView
         pedidosAdapter = PedidosAdapter { pedido ->
             onPedidoClick(pedido)
@@ -93,6 +102,7 @@ class PedidosFragment : Fragment() {
         // Observar estado de carga
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.loadingProgressBar.isVisible = isLoading
+            binding.swipeRefreshLayout.isRefreshing = isLoading
             if (isLoading) {
                 binding.pedidosRecyclerView.isVisible = false
                 binding.errorView.isVisible = false
