@@ -70,6 +70,19 @@ class CrearPedidoFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Clear search results when returning to this fragment
+        clearSearch()
+    }
+
+    private fun clearSearch() {
+        binding.searchProductoText.setText("")
+        searchResultsAdapter.submitList(emptyList())
+        binding.searchResultsRecyclerView?.isVisible = false
+        searchJob?.cancel()
+    }
+
     private fun setupUI() {
         // Setup products RecyclerView
         setupProductsList()
