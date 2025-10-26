@@ -1,6 +1,7 @@
 package com.medisupply.data.models
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /**
  * Modelo de datos para Producto
@@ -32,7 +33,7 @@ data class Producto(
     
     @SerializedName("descripcion")
     val descripcion: String
-)
+) : Serializable
 
 /**
  * Respuesta del endpoint de productos

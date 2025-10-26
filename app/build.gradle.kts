@@ -39,6 +39,10 @@ android {
         dataBinding = true
     }
     
+    lint {
+        disable.add("NotificationPermission")
+    }
+    
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -55,6 +59,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.databinding.runtime)
     implementation(libs.androidx.uiautomator)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     
     // Navigation dependencies
     implementation(libs.androidx.navigation.fragment.ktx)

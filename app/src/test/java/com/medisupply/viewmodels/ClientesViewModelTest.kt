@@ -1,5 +1,7 @@
 package com.medisupply.viewmodels
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.medisupply.data.models.Cliente
 import com.medisupply.data.repositories.ClienteRepository
@@ -29,6 +31,12 @@ class ClientesViewModelTest {
     @Mock
     private lateinit var clienteRepository: ClienteRepository
 
+    @Mock
+    private lateinit var mockContext: Context
+    
+    @Mock
+    private lateinit var mockSharedPreferences: SharedPreferences
+
     private lateinit var viewModel: ClientesViewModel
 
     private val mockClientes = listOf(
@@ -56,6 +64,10 @@ class ClientesViewModelTest {
     fun setup() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
+        
+        // Mock SharedPreferences behavior
+        whenever(mockContext.getSharedPreferences("MediSupplySession", Context.MODE_PRIVATE))
+            .thenReturn(mockSharedPreferences)
     }
 
     @After
@@ -69,7 +81,7 @@ class ClientesViewModelTest {
         whenever(clienteRepository.getClientes()).thenReturn(mockClientes)
         
         // When
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
 
         // Then
@@ -85,7 +97,7 @@ class ClientesViewModelTest {
         whenever(clienteRepository.getClientes()).thenReturn(mockClientes)
         
         // When
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
         
         // Then - Al finalizar isLoading debe ser false
@@ -100,7 +112,7 @@ class ClientesViewModelTest {
         whenever(clienteRepository.getClientes()).thenThrow(RuntimeException(errorMessage))
         
         // When
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
 
         // Then
@@ -113,7 +125,7 @@ class ClientesViewModelTest {
     fun `retry should call loadClientes again`() = runTest {
         // Given
         whenever(clienteRepository.getClientes()).thenReturn(mockClientes)
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
 
         // When
@@ -131,7 +143,7 @@ class ClientesViewModelTest {
         whenever(clienteRepository.getClientes()).thenReturn(mockClientes)
         
         // When
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
 
         // Then
@@ -144,7 +156,7 @@ class ClientesViewModelTest {
         whenever(clienteRepository.getClientes()).thenReturn(emptyList())
         
         // When
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
 
         // Then
@@ -158,7 +170,7 @@ class ClientesViewModelTest {
         whenever(clienteRepository.getClientes()).thenReturn(mockClientes)
         
         // When
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
 
         // Then
@@ -174,7 +186,7 @@ class ClientesViewModelTest {
     fun `multiple retry calls should work correctly`() = runTest {
         // Given
         whenever(clienteRepository.getClientes()).thenReturn(mockClientes)
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
 
         // When
@@ -193,7 +205,7 @@ class ClientesViewModelTest {
     fun `error should be cleared on successful retry`() = runTest {
         // Given - Setup con repositorio inicial exitoso
         whenever(clienteRepository.getClientes()).thenReturn(mockClientes)
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
         
         // Verificar carga exitosa inicial
@@ -216,7 +228,7 @@ class ClientesViewModelTest {
         whenever(clienteRepository.getClientes()).thenThrow(IllegalStateException("Invalid state"))
         
         // When
-        viewModel = ClientesViewModel(clienteRepository)
+        viewModel = ClientesViewModel(clienteRepository, mockContext)
         advanceUntilIdle()
 
         // Then

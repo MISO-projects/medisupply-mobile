@@ -1,6 +1,7 @@
 package com.medisupply.data.models
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /**
  * Modelo de datos para Cliente
@@ -17,4 +18,12 @@ data class Cliente(
     
     @SerializedName("logoUrl")
     val logoUrl: String
+) : Serializable
+
+data class ClientesAsignadosResponse(
+    @SerializedName("clientes")
+    val clientes: List<Cliente>,
+
+    @SerializedName("total")
+    val total: Int
 )

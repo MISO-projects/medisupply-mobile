@@ -16,6 +16,8 @@ class SessionManager(context: Context) {
         private const val KEY_USER_EMAIL = "user_email"
         private const val KEY_USER_NAME = "user_name"
         private const val KEY_USER_ROLE = "user_role"
+        private const val KEY_ID_CLIENT = "id_client"
+        private const val KEY_ID_SELLER = "id_seller"
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
     }
     
@@ -28,7 +30,9 @@ class SessionManager(context: Context) {
         userId: String,
         email: String,
         name: String?,
-        role: String?
+        role: String?,
+        idClient: String? = null,
+        idSeller: String? = null
     ) {
         with(sharedPreferences.edit()) {
             putString(KEY_ACCESS_TOKEN, accessToken)
@@ -37,6 +41,8 @@ class SessionManager(context: Context) {
             putString(KEY_USER_EMAIL, email)
             putString(KEY_USER_NAME, name ?: "Usuario")
             putString(KEY_USER_ROLE, role)
+            putString(KEY_ID_CLIENT, idClient)
+            putString(KEY_ID_SELLER, idSeller)
             putBoolean(KEY_IS_LOGGED_IN, true)
             apply()
         }
@@ -78,6 +84,20 @@ class SessionManager(context: Context) {
      */
     fun getUserEmail(): String? {
         return sharedPreferences.getString(KEY_USER_EMAIL, null)
+    }
+    
+    /**
+     * Obtiene el ID del cliente
+     */
+    fun getIdClient(): String? {
+        return sharedPreferences.getString(KEY_ID_CLIENT, null)
+    }
+    
+    /**
+     * Obtiene el ID del vendedor
+     */
+    fun getIdSeller(): String? {
+        return sharedPreferences.getString(KEY_ID_SELLER, null)
     }
     
     /**

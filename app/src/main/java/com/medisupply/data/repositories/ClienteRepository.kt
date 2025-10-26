@@ -2,16 +2,11 @@ package com.medisupply.data.repositories
 
 import com.medisupply.data.models.Cliente
 import com.medisupply.data.repositories.network.ApiService
-import kotlinx.coroutines.delay
 
 class ClienteRepository(private val apiService: ApiService) {
 
     suspend fun getClientes(): List<Cliente> {
-        delay(1000)
-        
-        // return apiService.getClientes()
-
-        return getMockClientes()
+        return apiService.getClientesAsignados().clientes
     }
 
     /**

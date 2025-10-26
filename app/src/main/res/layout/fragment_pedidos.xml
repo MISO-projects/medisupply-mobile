@@ -10,21 +10,203 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
+        android:background="@android:color/white"
         tools:context=".ui.fragments.PedidosFragment">
 
-        <TextView
-            android:id="@+id/title_text"
+        <!-- Barra de búsqueda -->
+        <LinearLayout
+            android:id="@+id/search_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/search_background"
+            android:orientation="horizontal"
+            android:padding="14dp"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/search_icon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_search"
+            android:contentDescription="@string/buscar_pedidos"
+            app:tint="#7C8A99" />
+
+        <EditText
+            android:id="@+id/search_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:background="@android:color/transparent"
+            android:hint="@string/buscar_pedidos"
+            android:textColor="@color/text_primary"
+            android:textColorHint="#7C8A99"
+            android:textSize="16sp"
+            android:inputType="text"
+            android:maxLines="1"
+            android:imeOptions="actionSearch" />
+
+        </LinearLayout>
+
+        <!-- Filtros -->
+        <HorizontalScrollView
+            android:id="@+id/filters_scroll_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_card">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <!-- Botón Estado -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_estado_pedido"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/estado_pedido"
+                    android:textColor="@color/md_theme_light_primary"
+                    android:textAllCaps="false"
+                    app:strokeColor="@color/md_theme_light_primary"
+                    app:iconTint="@color/md_theme_light_primary"
+                    app:icon="@drawable/ic_arrow_down"
+                    app:iconGravity="end" />
+
+                <!-- Botón Fecha -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_fecha_pedido"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/fecha_pedido"
+                    android:textColor="@color/md_theme_light_primary"
+                    android:textAllCaps="false"
+                    app:strokeColor="@color/md_theme_light_primary"
+                    app:iconTint="@color/md_theme_light_primary"
+                    app:icon="@drawable/ic_arrow_down"
+                    app:iconGravity="end" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+
+        <!-- SwipeRefreshLayout con RecyclerView de pedidos -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/crear_pedido_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/filters_scroll_view">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pedidos_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/white"
+                android:clipToPadding="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_pedido" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <Button
+            android:id="@+id/crear_pedido_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/crear_nuevo_pedido"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#316A42"
+            app:cornerRadius="6dp"
+            android:paddingVertical="14dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <!-- Loading indicator -->
+        <ProgressBar
+            android:id="@+id/loading_progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pedidos"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="#2E86C1"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+
+        <!-- Vista de error -->
+        <LinearLayout
+            android:id="@+id/error_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <TextView
+                android:id="@+id/error_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp"
+                tools:text="Error al cargar pedidos" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/retry_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/reintentar" />
+
+        </LinearLayout>
+
+        <!-- Vista de lista vacía -->
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="32dp"
+            android:text="@string/no_hay_pedidos_disponibles"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -32,4 +32,34 @@
     <string name="app_logo">Logo de la aplicación</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="estado_pedido">estado</string>
+    <string name="fecha_pedido">fecha</string>
+    <string name="buscar_pedidos">Buscar pedidos</string>
+    <string name="no_hay_pedidos_disponibles">No hay pedidos disponibles</string>
+    <string name="crear_nuevo_pedido">Crear nuevo pedido</string>
+    <string name="seleccionar_institucion">Seleccionar institución</string>
+    <string name="productos">Productos</string>
+    <string name="informacion_adicional">Información Adicional</string>
+    <string name="notas_adicionales">Notas adicionales</string>
+    <string name="crear_pedido">Crear Pedido</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="clientes">Clientes</string>
+    <string name="inventario">Inventario</string>
+    <string name="rutas">Rutas</string>
+    <string name="pedidos">Pedidos</string>
+    <string name="unidades_disponibles">%d unidades disponibles</string>
+    <string name="cero">0</string>
+    <string name="menos">-</string>
+    <string name="mas">+</string>
+    <string name="producto">Producto</string>
+    <string name="cero_unidades_disponibles">0 unidades disponibles</string>
+    <string name="resumen_de_costos">Resumen de Costos</string>
+    <string name="resumen_del_pedido">Resumen del pedido</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="impuestos">Impuestos</string>
+    <string name="total">Total</string>
+    <string name="notas_o_instrucciones_especiales">Notas o Instrucciones Especiales</string>
+    <string name="opcional">Opcional</string>
+    <string name="confirmar_pedido">Confirmar Pedido</string>
+    <string name="editar_pedido">Editar Pedido</string>
 </resources>
