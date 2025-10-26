@@ -37,5 +37,11 @@ data class UserProfileResponse(
     val isActive: Boolean? = null,
 
     @SerializedName("role")
-    val role: String?  = null
+    val role: String?  = null,
+
+    @SerializedName("id_seller")
+    val idSeller: String,
+
+    @SerializedName("id_client")
+    val idClient: String,
 )

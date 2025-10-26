@@ -64,7 +64,9 @@ class LoginViewModel(private val context: Context) : ViewModel() {
                         userId = userProfile.id,
                         email = userProfile.email,
                         name = userProfile.nombre ?: userProfile.username ?: "Usuario",
-                        role = userProfile.role
+                        role = userProfile.role,
+                        idClient = userProfile.idClient,
+                        idSeller = userProfile.idSeller
                     )
 
                     when (userProfile.role) {

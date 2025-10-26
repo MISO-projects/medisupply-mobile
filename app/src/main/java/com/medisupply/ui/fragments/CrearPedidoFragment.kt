@@ -212,9 +212,16 @@ class CrearPedidoFragment : Fragment() {
             return
         }
 
-        val userName = sessionManager.getUserName() ?: "admin"
-        // TODO: Remplazar el ID de vendedor extrayéndolo del token o de la sesión actual
-        val vendedorId = "f40c2145-0490-4f07-ab58-c399b60c9125"
+        // Obtener el ID del vendedor desde la sesión
+        val vendedorId = sessionManager.getIdSeller()
+        if (vendedorId.isNullOrEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                "Error: No se encontró el ID del vendedor en la sesión",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
 
         val resumenFragment = ResumenPedidoFragment.newInstance(
             cliente = selectedCliente!!,
