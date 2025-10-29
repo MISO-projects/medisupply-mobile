@@ -9,6 +9,7 @@ import com.medisupply.data.models.ListarPedidosResumenClienteResponse
 import com.medisupply.data.models.LoginRequest
 import com.medisupply.data.models.LoginResponse
 import com.medisupply.data.models.Pedido
+import com.medisupply.data.models.PedidoClienteRequest
 import com.medisupply.data.models.PedidoRequest
 import com.medisupply.data.models.ProductoResponse
 import com.medisupply.data.models.RegisterRequest
@@ -41,6 +42,9 @@ interface ApiService {
 
     @POST("ordenes/")
     suspend fun crearPedido(@Body pedidoRequest: PedidoRequest): CrearPedidoResponse
+
+    @POST("ordenes/cliente")
+    suspend fun crearPedidoCliente(@Body pedidoRequest: PedidoClienteRequest): CrearPedidoResponse
 
     @POST("autenticacion/login") fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 

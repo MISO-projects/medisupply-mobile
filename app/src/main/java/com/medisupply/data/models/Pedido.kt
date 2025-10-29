@@ -98,6 +98,14 @@ data class PedidoRequest(
     val productos: List<PedidoItem>
 )
 
+data class PedidoClienteRequest(
+    @SerializedName("observaciones")
+    val observaciones: String?,
+
+    @SerializedName("detalles")
+    val productos: List<PedidoItem>
+)
+
 data class CrearPedidoResponse(
     @SerializedName("id")
     val id: String,

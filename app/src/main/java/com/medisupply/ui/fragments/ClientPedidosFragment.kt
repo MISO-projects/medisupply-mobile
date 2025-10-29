@@ -99,8 +99,7 @@ class ClientPedidosFragment : Fragment() {
         )
 
         binding.crearPedidoButton.setOnClickListener {
-            // TODO: Navegar a crear pedido
-            Toast.makeText(requireContext(), "Crear pedido - Por implementar", Toast.LENGTH_SHORT).show()
+            navigateToCrearPedido()
         }
 
         binding.retryButton.setOnClickListener {
@@ -108,6 +107,7 @@ class ClientPedidosFragment : Fragment() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun updateUIState(isEmpty: Boolean, hasError: Boolean, error: String? = null) {
         binding.apply {
             pedidosRecyclerView.isVisible = !isEmpty && !hasError
@@ -124,6 +124,14 @@ class ClientPedidosFragment : Fragment() {
             "Pedido seleccionado: ${pedido.numeroPedido}",
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    private fun navigateToCrearPedido() {
+        val crearPedidoFragment = CrearPedidoClienteFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, crearPedidoFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {
