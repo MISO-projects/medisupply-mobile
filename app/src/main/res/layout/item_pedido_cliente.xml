@@ -11,14 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="16dp"
+        android:paddingTop="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:gravity="center_vertical">
+        android:paddingBottom="16dp">
 
-        <!-- Información del producto -->
+        <!-- Información del pedido (fecha y número) -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -26,42 +26,42 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/numero_pedido"
+                android:id="@+id/fecha_pedido"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:textColor="#1A1A1A"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                tools:text="Pedido # 12345" />
+                tools:text="15 de mayo de 2024" />
 
             <TextView
-                android:id="@+id/nombre_cliente"
+                android:id="@+id/numero_pedido"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="4dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/md_theme_light_primary"
+                android:textColor="#2E86C1"
                 android:textSize="15sp"
-                tools:text="cliente ejemplo" />
+                tools:text="Pedido #123456" />
 
         </LinearLayout>
 
-
+        <!-- Estado del pedido -->
         <TextView
             android:id="@+id/estado_pedido"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textColor="#1A1A1A"
             android:textSize="16sp"
             android:textStyle="normal"
-            tools:text="Estado" />
-
+            tools:text="Enviado" />
 
     </LinearLayout>
 
