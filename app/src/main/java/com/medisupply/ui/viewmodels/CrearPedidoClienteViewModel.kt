@@ -4,18 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.medisupply.data.models.CrearPedidoResponse
-import com.medisupply.data.models.PedidoClienteRequest
-import com.medisupply.data.models.PedidoItem
 import com.medisupply.data.models.Producto
 import com.medisupply.data.repositories.InventarioRepository
-import com.medisupply.data.repositories.PedidoRepository
 import com.medisupply.ui.adapters.ProductoConCantidad
 import kotlinx.coroutines.launch
 
 class CrearPedidoClienteViewModel(
-    private val inventarioRepository: InventarioRepository,
-    private val pedidoRepository: PedidoRepository
+    private val inventarioRepository: InventarioRepository
 ) : ViewModel() {
 
     private val _searchResults = MutableLiveData<List<Producto>>()
@@ -29,9 +24,6 @@ class CrearPedidoClienteViewModel(
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
-
-    private val _pedidoCreado = MutableLiveData<CrearPedidoResponse?>()
-    val pedidoCreado: LiveData<CrearPedidoResponse?> = _pedidoCreado
 
     fun searchProductos(query: String) {
         if (query.isBlank()) {
@@ -77,45 +69,6 @@ class CrearPedidoClienteViewModel(
                 currentList[index] = productoConCantidad
             }
             _selectedProductos.value = currentList
-        }
-    }
-
-    fun crearPedido(observaciones: String?) {
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                _error.value = null
-
-                // Filtrar solo productos con cantidad > 0
-                val productosConCantidad = _selectedProductos.value.orEmpty().filter { it.cantidad > 0 }
-                
-                if (productosConCantidad.isEmpty()) {
-                    _error.value = "Debe agregar al menos un producto al pedido"
-                    _isLoading.value = false
-                    return@launch
-                }
-
-                val pedidoItems = productosConCantidad.map { productoConCantidad ->
-                    PedidoItem(
-                        idProducto = productoConCantidad.producto.id,
-                        cantidad = productoConCantidad.cantidad,
-                        precioUnitario = productoConCantidad.producto.precioUnitario.toDoubleOrNull() ?: 0.0
-                    )
-                }
-
-                val pedidoRequest = PedidoClienteRequest(
-                    observaciones = observaciones,
-                    productos = pedidoItems
-                )
-
-                val response = pedidoRepository.crearPedidoCliente(pedidoRequest)
-                _pedidoCreado.value = response
-
-            } catch (e: Exception) {
-                _error.value = "Error creando pedido: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
         }
     }
 

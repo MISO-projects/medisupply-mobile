@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.medisupply.R
 import com.medisupply.data.repositories.InventarioRepository
-import com.medisupply.data.repositories.PedidoRepository
 import com.medisupply.data.repositories.network.ApiService
 import com.medisupply.data.repositories.network.NetworkServiceAdapter
 import com.medisupply.databinding.FragmentCrearPedidoClienteBinding
@@ -38,8 +37,7 @@ class CrearPedidoClienteFragment : Fragment() {
     private val viewModel: CrearPedidoClienteViewModel by viewModels {
         val apiService = NetworkServiceAdapter.getInstance().create(ApiService::class.java)
         CrearPedidoClienteViewModelFactory(
-            InventarioRepository(apiService),
-            PedidoRepository(apiService)
+            InventarioRepository(apiService)
         )
     }
 
@@ -70,7 +68,7 @@ class CrearPedidoClienteFragment : Fragment() {
     private fun clearSearch() {
         binding.searchProductoText.setText("")
         searchResultsAdapter.submitList(emptyList())
-        binding.searchResultsRecyclerView?.isVisible = false
+        binding.searchResultsRecyclerView.isVisible = false
         searchJob?.cancel()
     }
 
@@ -90,7 +88,7 @@ class CrearPedidoClienteFragment : Fragment() {
     private fun setupObservers() {
         viewModel.searchResults.observe(viewLifecycleOwner) { productos ->
             searchResultsAdapter.submitList(productos)
-            binding.searchResultsRecyclerView?.isVisible = productos.isNotEmpty()
+            binding.searchResultsRecyclerView.isVisible = productos.isNotEmpty()
         }
 
         viewModel.selectedProductos.observe(viewLifecycleOwner) { productos ->
@@ -98,7 +96,7 @@ class CrearPedidoClienteFragment : Fragment() {
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.loadingProgressBar?.isVisible = isLoading
+            binding.loadingProgressBar.isVisible = isLoading
             binding.btnCrearPedido.isEnabled = !isLoading
         }
 
@@ -109,17 +107,18 @@ class CrearPedidoClienteFragment : Fragment() {
             }
         }
 
-        viewModel.pedidoCreado.observe(viewLifecycleOwner) { response ->
-            if (response != null) {
-                Toast.makeText(
-                    requireContext(),
-                    "Pedido creado exitosamente: ${response.numeroPedido}",
-                    Toast.LENGTH_LONG
-                ).show()
-                // Navigate back to pedidos list
-                parentFragmentManager.popBackStack()
-            }
-        }
+        // Remove pedidoCreado observer since we navigate to summary instead
+        // viewModel.pedidoCreado.observe(viewLifecycleOwner) { response ->
+        //     if (response != null) {
+        //         Toast.makeText(
+        //             requireContext(),
+        //             "Pedido creado exitosamente: ${response.numeroPedido}",
+        //             Toast.LENGTH_LONG
+        //         ).show()
+        //         // Navigate back to pedidos list
+        //         parentFragmentManager.popBackStack()
+        //     }
+        // }
     }
 
     private fun setupProductsList() {
@@ -128,10 +127,10 @@ class CrearPedidoClienteFragment : Fragment() {
             searchJob?.cancel()
             binding.searchProductoText.setText("")
             searchResultsAdapter.submitList(emptyList())
-            binding.searchResultsRecyclerView?.isVisible = false
+            binding.searchResultsRecyclerView.isVisible = false
         }
 
-        binding.searchResultsRecyclerView?.apply {
+        binding.searchResultsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = searchResultsAdapter
         }
@@ -159,7 +158,7 @@ class CrearPedidoClienteFragment : Fragment() {
                 }
             } else {
                 searchResultsAdapter.submitList(emptyList())
-                binding.searchResultsRecyclerView?.isVisible = false
+                binding.searchResultsRecyclerView.isVisible = false
             }
         }
     }
@@ -177,7 +176,15 @@ class CrearPedidoClienteFragment : Fragment() {
             return
         }
 
-        viewModel.crearPedido(notes.ifBlank { null })
+        val resumenFragment = ResumenPedidoClienteFragment.newInstance(
+            productos = ArrayList(selectedProducts),
+            observaciones = notes.ifBlank { null }
+        )
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, resumenFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {
