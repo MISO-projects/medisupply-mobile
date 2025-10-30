@@ -118,12 +118,11 @@ class ClientPedidosFragment : Fragment() {
     }
 
     private fun onPedidoClick(pedido: com.medisupply.data.models.PedidoResumenCliente) {
-        // Manejar el clic en el pedido
-        Toast.makeText(
-            requireContext(),
-            "Pedido seleccionado: ${pedido.numeroPedido}",
-            Toast.LENGTH_SHORT
-        ).show()
+        val detailFragment = DetallePedidoClienteFragment.newInstance(pedido)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, detailFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun navigateToCrearPedido() {

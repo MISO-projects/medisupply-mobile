@@ -5,6 +5,7 @@ import com.medisupply.data.models.Pedido
 import com.medisupply.data.models.PedidoRequest
 import com.medisupply.data.models.PedidoResumenCliente
 import com.medisupply.data.models.PedidoClienteRequest
+import com.medisupply.data.models.PedidoDetalle
 import com.medisupply.data.repositories.network.ApiService
 
 class PedidoRepository(private val apiService: ApiService) {
@@ -25,9 +26,9 @@ class PedidoRepository(private val apiService: ApiService) {
         }
     }
 
-    suspend fun obtenerPedidoPorId(id: String): Pedido {
+    suspend fun obtenerPedidoPorId(id: String): PedidoDetalle {
         try {
-            return apiService.getPedidoById(id)
+            return apiService.getPedidoById(id).pedido
         } catch (e: Exception) {
             throw RuntimeException("Error obteniendo pedido con ID $id de la red", e)
         }
