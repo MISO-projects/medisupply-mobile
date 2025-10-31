@@ -13,6 +13,23 @@ data class PedidoItem(
     val precioUnitario: Double,
 )
 
+data class ProductoPedidoDetalle(
+    @SerializedName("id_producto")
+    val idProducto: String,
+
+    @SerializedName("nombre_producto")
+    val nombreProducto: String,
+
+    @SerializedName("cantidad")
+    val cantidad: Int,
+
+    @SerializedName("precio_unitario")
+    val precioUnitario: Double,
+
+    @SerializedName("subtotal")
+    val subtotal: Double,
+)
+
 data class Pedido(
     @SerializedName("id")
     val id: String,
@@ -55,7 +72,55 @@ data class Pedido(
     val observaciones: String?,
 
     @SerializedName("detalles")
-    val productos: List<PedidoItem>
+    val productos: List<PedidoItem>,
+)
+
+data class PedidoDetalle(
+    @SerializedName("id")
+    val id: String,
+
+    @SerializedName("numero_orden")
+    val numeroPedido: String,
+
+
+    @SerializedName("fecha_creacion")
+    val fechaCreacion: String,
+
+    @SerializedName("fecha_actualizacion")
+    val fechaActualizacion: String,
+
+    @SerializedName("fecha_entrega_estimada")
+    val fechaEntregaEstimada: String,
+
+    @SerializedName("estado")
+    val estado: String,
+
+    @SerializedName("valor_total")
+    val valor_total: Double,
+
+    @SerializedName("id_cliente")
+    val clienteId: String,
+
+    @SerializedName("nombre_cliente")
+    val nombreCliente: String,
+
+    @SerializedName("id_vendedor")
+    val vendedorId: String,
+
+    @SerializedName("creado_por")
+    val creadoPor: String,
+
+    @SerializedName("cantidad_items")
+    val cantidadItems: Int,
+
+    @SerializedName("observaciones")
+    val observaciones: String?,
+
+    @SerializedName("detalles")
+    val productos: List<ProductoPedidoDetalle>,
+
+    @SerializedName("direccion_cliente")
+    val direccion: String?
 )
 
 data class PedidoResumenCliente(
@@ -96,6 +161,11 @@ data class PedidoRequest(
 
     @SerializedName("detalles")
     val productos: List<PedidoItem>
+)
+
+data class PedidoPorIdResponse(
+    @SerializedName("data")
+    val pedido: PedidoDetalle
 )
 
 data class PedidoClienteRequest(

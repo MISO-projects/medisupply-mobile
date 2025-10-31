@@ -84,4 +84,15 @@
     <string name="cancelar">Cancelar</string>
 
 
+    <string name="detalles_del_pedido">Detalles del pedido</string>
+    <string name="numero_de_pedido">Número\nde pedido</string>
+    <string name="fecha_del_pedido">Fecha del\npedido</string>
+    <string name="estado">Estado</string>
+    <string name="envio">Envío</string>
+    <string name="direccion">Dirección</string>
+    <string name="metodo_de_envio">Método de\nenvío</string>
+    <string name="fecha_de_entrega_estimada">Fecha de\nentrega\nestimada</string>
+    <string name="volver">Volver</string>
+    <string name="cantidad">Cantidad: %d</string>
+    <string name="entregas">Entregas</string>
 </resources>
