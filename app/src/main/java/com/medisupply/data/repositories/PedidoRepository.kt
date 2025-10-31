@@ -3,10 +3,9 @@ package com.medisupply.data.repositories
 import com.medisupply.data.models.CrearPedidoResponse
 import com.medisupply.data.models.Pedido
 import com.medisupply.data.models.PedidoRequest
+import com.medisupply.data.models.PedidoResumenCliente
+import com.medisupply.data.models.PedidoClienteRequest
 import com.medisupply.data.repositories.network.ApiService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
 
 class PedidoRepository(private val apiService: ApiService) {
 
@@ -15,6 +14,14 @@ class PedidoRepository(private val apiService: ApiService) {
             return apiService.crearPedido(pedido)
         } catch (e: Exception) {
             throw RuntimeException("Error creando pedido en la red", e)
+        }
+    }
+
+    suspend fun crearPedidoCliente(pedido: PedidoClienteRequest): CrearPedidoResponse {
+        try {
+            return apiService.crearPedidoCliente(pedido)
+        } catch (e: Exception) {
+            throw RuntimeException("Error creando pedido cliente en la red", e)
         }
     }
 
@@ -29,10 +36,21 @@ class PedidoRepository(private val apiService: ApiService) {
     suspend fun listarPedidos(): List<Pedido> {
         return try {
             val response = apiService.getPedidos()
-            response.pedidos 
+            response.pedidos
         } catch (e: Exception) {
             throw RuntimeException("Error obteniendo pedidos de la red", e)
         }
     }
 
+    suspend fun listarPedidosCliente(
+            page: Int = 1,
+            pageSize: Int = 10
+    ): List<PedidoResumenCliente> {
+        return try {
+            val response = apiService.getPedidosCliente(page, pageSize)
+            response.pedidos
+        } catch (e: Exception) {
+            throw RuntimeException("Error obteniendo pedidos cliente de la red", e)
+        }
+    }
 }

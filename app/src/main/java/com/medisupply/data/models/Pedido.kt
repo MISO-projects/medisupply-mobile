@@ -58,6 +58,32 @@ data class Pedido(
     val productos: List<PedidoItem>
 )
 
+data class PedidoResumenCliente(
+    @SerializedName("id")
+    val id: String,
+
+    @SerializedName("numero_orden")
+    val numeroPedido: String,
+
+    @SerializedName("fecha_creacion")
+    val fechaCreacion: String,
+
+    @SerializedName("estado")
+    val estado: String,
+
+    @SerializedName("valor_total")
+    val valor_total: Double,
+
+    @SerializedName("id_cliente")
+    val clienteId: String,
+
+    @SerializedName("cantidad_items")
+    val cantidadItems: Int,
+
+    @SerializedName("fecha_entrega_estimada")
+    val fechaEntregaEstimada: String,
+)
+
 data class PedidoRequest(
     @SerializedName("id_cliente")
     val clienteId: String,
@@ -65,6 +91,14 @@ data class PedidoRequest(
     @SerializedName("id_vendedor")
     val vendedorId: String,
 
+    @SerializedName("observaciones")
+    val observaciones: String?,
+
+    @SerializedName("detalles")
+    val productos: List<PedidoItem>
+)
+
+data class PedidoClienteRequest(
     @SerializedName("observaciones")
     val observaciones: String?,
 
@@ -97,3 +131,19 @@ data class ListarPedidosResponse(
     val totalPages: Int?
 )
 
+data class ListarPedidosResumenClienteResponse(
+    @SerializedName("total")
+    val total: Int,
+
+    @SerializedName("data")
+    val pedidos: List<PedidoResumenCliente>,
+
+    @SerializedName("page")
+    val page: Int?,
+
+    @SerializedName("page_size")
+    val pageSize: Int?,
+
+    @SerializedName("total_pages")
+    val totalPages: Int?
+)
