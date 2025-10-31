@@ -10,6 +10,7 @@ import com.medisupply.data.models.LoginRequest
 import com.medisupply.data.models.LoginResponse
 import com.medisupply.data.models.Pedido
 import com.medisupply.data.models.PedidoClienteRequest
+import com.medisupply.data.models.PedidoPorIdResponse
 import com.medisupply.data.models.PedidoRequest
 import com.medisupply.data.models.ProductoResponse
 import com.medisupply.data.models.RegisterRequest
@@ -38,7 +39,7 @@ interface ApiService {
             @Query("page_size") pageSize: Int = 10
     ): ListarPedidosResumenClienteResponse
 
-    @GET("ordenes/{id}") suspend fun getPedidoById(@Path("id") id: String): Pedido
+    @GET("ordenes/{id}") suspend fun getPedidoById(@Path("id") id: String): PedidoPorIdResponse
 
     @POST("ordenes/")
     suspend fun crearPedido(@Body pedidoRequest: PedidoRequest): CrearPedidoResponse

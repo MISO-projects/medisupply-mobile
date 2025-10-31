@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:gravity="center_vertical">
+
+    <!-- Product Image -->
+    <ImageView
+        android:id="@+id/product_image"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/rounded_background"
+        android:backgroundTint="#4A90A4"
+        android:contentDescription="@string/imagen_producto_description"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        tools:src="@drawable/ic_hospital_placeholder" />
+
+    <!-- Product Info -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/product_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Guantes de nitrilo" />
+
+        <TextView
+            android:id="@+id/product_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/md_theme_light_primary"
+            android:textSize="14sp"
+            tools:text="Cantidad: 2" />
+
+    </LinearLayout>
+
+</LinearLayout>
+

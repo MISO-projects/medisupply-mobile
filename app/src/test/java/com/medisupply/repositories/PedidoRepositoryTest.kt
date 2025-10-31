@@ -5,6 +5,9 @@ import com.medisupply.data.models.ListarPedidosResponse
 import com.medisupply.data.models.Pedido
 import com.medisupply.data.models.PedidoItem
 import com.medisupply.data.models.PedidoRequest
+import com.medisupply.data.models.PedidoDetalle
+import com.medisupply.data.models.PedidoPorIdResponse
+import com.medisupply.data.models.ProductoPedidoDetalle
 import com.medisupply.data.repositories.PedidoRepository
 import com.medisupply.data.repositories.network.ApiService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,6 +41,23 @@ class PedidoRepositoryTest {
             idProducto = "P002",
             cantidad = 5,
             precioUnitario = 25.00
+        )
+    )
+
+    private val mockProductoPedidoDetalle = listOf(
+        ProductoPedidoDetalle(
+            idProducto = "P001",
+            nombreProducto = "Producto 1",
+            cantidad = 10,
+            precioUnitario = 15.50,
+            subtotal = 155.00
+        ),
+        ProductoPedidoDetalle(
+            idProducto = "P002",
+            nombreProducto = "Producto 2",
+            cantidad = 5,
+            precioUnitario = 25.00,
+            subtotal = 125.00
         )
     )
 
@@ -86,6 +106,42 @@ class PedidoRepositoryTest {
     private val mockCrearPedidoResponse = CrearPedidoResponse(
         id = "ORD003",
         numeroPedido = "ORD-2024-003"
+    )
+
+    private val mockPedidoDetalle1 = PedidoDetalle(
+        id = "ORD001",
+        numeroPedido = "ORD-2024-001",
+        fechaCreacion = "2024-10-20T10:00:00Z",
+        fechaActualizacion = "2024-10-20T10:00:00Z",
+        fechaEntregaEstimada = "2024-10-25T10:00:00Z",
+        estado = "PENDIENTE",
+        valor_total = 280.00,
+        clienteId = "C001",
+        nombreCliente = "Hospital General",
+        vendedorId = "V001",
+        creadoPor = "Juan Pérez",
+        cantidadItems = 2,
+        observaciones = "Entrega urgente",
+        productos = mockProductoPedidoDetalle,
+        direccion = null
+    )
+
+    private val mockPedidoDetalle2 = PedidoDetalle(
+        id = "ORD002",
+        numeroPedido = "ORD-2024-002",
+        fechaCreacion = "2024-10-21T14:30:00Z",
+        fechaActualizacion = "2024-10-21T14:30:00Z",
+        fechaEntregaEstimada = "2024-10-26T14:30:00Z",
+        estado = "EN_PROCESO",
+        valor_total = 450.00,
+        clienteId = "C002",
+        nombreCliente = "Clínica San Martín",
+        vendedorId = "V001",
+        creadoPor = "María López",
+        cantidadItems = 3,
+        observaciones = null,
+        productos = mockProductoPedidoDetalle,
+        direccion = null
     )
 
     @Before
@@ -188,7 +244,7 @@ class PedidoRepositoryTest {
     fun `obtenerPedidoPorId should return pedido with valid data`() = runTest {
         // Given
         val pedidoId = "ORD001"
-        whenever(apiService.getPedidoById(pedidoId)).thenReturn(mockPedidos[0])
+        whenever(apiService.getPedidoById(pedidoId)).thenReturn(PedidoPorIdResponse(mockPedidoDetalle1))
 
         // When
         val pedido = repository.obtenerPedidoPorId(pedidoId)
@@ -204,7 +260,7 @@ class PedidoRepositoryTest {
     fun `obtenerPedidoPorId should return pedido with cliente information`() = runTest {
         // Given
         val pedidoId = "ORD001"
-        whenever(apiService.getPedidoById(pedidoId)).thenReturn(mockPedidos[0])
+        whenever(apiService.getPedidoById(pedidoId)).thenReturn(PedidoPorIdResponse(mockPedidoDetalle1))
 
         // When
         val pedido = repository.obtenerPedidoPorId(pedidoId)
@@ -218,7 +274,7 @@ class PedidoRepositoryTest {
     fun `obtenerPedidoPorId should return pedido with productos`() = runTest {
         // Given
         val pedidoId = "ORD001"
-        whenever(apiService.getPedidoById(pedidoId)).thenReturn(mockPedidos[0])
+        whenever(apiService.getPedidoById(pedidoId)).thenReturn(PedidoPorIdResponse(mockPedidoDetalle1))
 
         // When
         val pedido = repository.obtenerPedidoPorId(pedidoId)
@@ -233,7 +289,7 @@ class PedidoRepositoryTest {
     fun `obtenerPedidoPorId should return pedido with correct total value`() = runTest {
         // Given
         val pedidoId = "ORD001"
-        whenever(apiService.getPedidoById(pedidoId)).thenReturn(mockPedidos[0])
+        whenever(apiService.getPedidoById(pedidoId)).thenReturn(PedidoPorIdResponse(mockPedidoDetalle1))
 
         // When
         val pedido = repository.obtenerPedidoPorId(pedidoId)
@@ -246,7 +302,7 @@ class PedidoRepositoryTest {
     fun `obtenerPedidoPorId should return pedido with observaciones when present`() = runTest {
         // Given
         val pedidoId = "ORD001"
-        whenever(apiService.getPedidoById(pedidoId)).thenReturn(mockPedidos[0])
+        whenever(apiService.getPedidoById(pedidoId)).thenReturn(PedidoPorIdResponse(mockPedidoDetalle1))
 
         // When
         val pedido = repository.obtenerPedidoPorId(pedidoId)
@@ -260,7 +316,7 @@ class PedidoRepositoryTest {
     fun `obtenerPedidoPorId should return pedido with null observaciones when not present`() = runTest {
         // Given
         val pedidoId = "ORD002"
-        whenever(apiService.getPedidoById(pedidoId)).thenReturn(mockPedidos[1])
+        whenever(apiService.getPedidoById(pedidoId)).thenReturn(PedidoPorIdResponse(mockPedidoDetalle2))
 
         // When
         val pedido = repository.obtenerPedidoPorId(pedidoId)
