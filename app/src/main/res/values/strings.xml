@@ -95,4 +95,8 @@
     <string name="volver">Volver</string>
     <string name="cantidad">Cantidad: %d</string>
     <string name="entregas">Entregas</string>
+
+    <string name="no_hay_visitas_programadas">No hay visitas programadas</string>
+    <string name="icono_de_visita">icono_de_visita</string>
+
 </resources>

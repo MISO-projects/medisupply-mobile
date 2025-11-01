@@ -70,7 +70,7 @@ class HomeFragment : Fragment() {
 
         binding.navRutas.setOnClickListener {
             if (currentSelectedTab != R.id.nav_rutas) {
-                showFragment(RutasFragment())
+                showFragment(VisitasFragment())
                 updateTabSelection(R.id.nav_rutas)
             }
         }
