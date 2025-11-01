@@ -8,6 +8,7 @@ import com.medisupply.data.models.ListarPedidosResponse
 import com.medisupply.data.models.ListarPedidosResumenClienteResponse
 import com.medisupply.data.models.LoginRequest
 import com.medisupply.data.models.LoginResponse
+import com.medisupply.data.models.RutaVisitaItem
 import com.medisupply.data.models.Pedido
 import com.medisupply.data.models.PedidoClienteRequest
 import com.medisupply.data.models.PedidoPorIdResponse
@@ -56,4 +57,6 @@ interface ApiService {
     suspend fun register(@Body registerRequest: RegisterRequest): Response<Unit>
 
     @POST("clientes/") suspend fun crearCliente(@Body cliente: ClienteRequest): Response<Cliente>
+
+    @GET("visitas/rutas-del-dia/") suspend fun getRutasDelDia(@Query("fecha") fecha: String, @Query("vendedor_id") vendedorId: String): List<RutaVisitaItem>
 }
