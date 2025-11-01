@@ -17,100 +17,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="Ruta de visitas programadas"
-            android:textColor="@color/text_primary"
-            android:textSize="18sp"
+            android:layout_marginTop="24dp"
+            android:text="Visitas de Hoy"
+            android:textColor="@color/md_theme_light_primary"
+            android:textSize="28sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/date_selector_bar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_text">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_calendar_today"
-                    app:tint="@color/md_theme_light_primary" />
-
-                <TextView
-                    android:id="@+id/text_fecha_seleccionada"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:text="Hoy (Sábado, 1 de noviembre)" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_arrow_down"
-                    app:tint="@color/text_secondary" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <CalendarView
-            android:id="@+id/calendar_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:elevation="8dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@id/date_selector_bar"
-            app:layout_constraintStart_toStartOf="@id/date_selector_bar"
-            app:layout_constraintTop_toBottomOf="@id/date_selector_bar"
-            tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/visitas_recycler_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:clipToPadding="false"
             android:paddingBottom="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/date_selector_bar"
-            tools:listitem="@layout/item_visita" />
-
-        <ProgressBar
-            android:id="@+id/loading_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="10dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toBottomOf="@id/title_text" tools:listitem="@layout/item_visita" />
 
         <LinearLayout
             android:id="@+id/error_view"
@@ -123,8 +50,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/date_selector_bar"
-            tools:visibility="gone">
+            app:layout_constraintTop_toBottomOf="@id/title_text" tools:visibility="gone">
             <TextView
                 android:id="@+id/error_text"
                 android:layout_width="wrap_content"
@@ -147,14 +73,25 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="32dp"
-            android:text="@string/no_hay_visitas_programadas"
+            android:text="No_hay_visitas_programadas_hoy"
             android:textColor="@color/text_secondary"
             android:textSize="16sp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/date_selector_bar"
+            app:layout_constraintTop_toBottomOf="@id/title_text" tools:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/loading_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

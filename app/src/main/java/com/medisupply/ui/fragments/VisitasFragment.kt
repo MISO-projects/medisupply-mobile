@@ -16,9 +16,6 @@ import com.medisupply.databinding.FragmentVisitasBinding
 import com.medisupply.ui.adapters.VisitasAdapter
 import com.medisupply.ui.viewmodels.VisitasViewModel
 import com.medisupply.ui.viewmodels.VisitasViewModelFactory
-import java.util.Calendar
-
-
 class VisitasFragment : Fragment() {
 
     private var _binding: FragmentVisitasBinding? = null
@@ -40,22 +37,22 @@ class VisitasFragment : Fragment() {
 
         setupViewModel()
         setupRecyclerView()
-        setupDateSelector() // <-- Cambiamos el nombre de la función
         observeViewModel()
 
         return binding.root
     }
 
     private fun setupViewModel() {
+        val application = requireActivity().application
         val apiService = NetworkServiceAdapter.getApiService()
         val repository = VisitasRepository(apiService)
-        val factory = VisitasViewModelFactory(repository)
+        val factory = VisitasViewModelFactory(application, repository)
         viewModel = ViewModelProvider(this, factory)[VisitasViewModel::class.java]
     }
 
     private fun setupRecyclerView() {
         visitasAdapter = VisitasAdapter { visita ->
-            // TODO: Manejar clic en la visita
+            // TODO: Manejar clic en la visita (ej. navegar al detalle)
         }
 
         binding.visitasRecyclerView.apply {
@@ -63,30 +60,6 @@ class VisitasFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
         }
     }
-
-    // --- FUNCIÓN MODIFICADA ---
-    private fun setupDateSelector() {
-        // 1. Clic en la barra para MOSTRAR/OCULTAR el calendario
-        binding.dateSelectorBar.setOnClickListener {
-            toggleCalendarVisibility()
-        }
-
-        // 2. Al seleccionar una fecha en el calendario...
-        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            val calendar = Calendar.getInstance()
-            calendar.set(year, month, dayOfMonth)
-
-            viewModel.seleccionarFecha(calendar) // Cargar datos
-            binding.calendarView.isVisible = false // Ocultar calendario
-        }
-    }
-
-    // --- NUEVA FUNCIÓN HELPER ---
-    private fun toggleCalendarVisibility() {
-        // Simplemente invierte la visibilidad actual
-        binding.calendarView.isVisible = !binding.calendarView.isVisible
-    }
-    // --------------------------
 
     private fun observeViewModel() {
         // Observar lista de rutas (sin cambios)
@@ -116,12 +89,6 @@ class VisitasFragment : Fragment() {
             }
         }
 
-        // --- NUEVO OBSERVADOR ---
-        // 3. Observar la fecha formateada y actualizar la UI
-        viewModel.fechaFormateada.observe(viewLifecycleOwner) { fechaFormateada ->
-            binding.textFechaSeleccionada.text = fechaFormateada
-        }
-        // -------------------------
 
         // Botón de reintentar (sin cambios)
         binding.retryButton.setOnClickListener {

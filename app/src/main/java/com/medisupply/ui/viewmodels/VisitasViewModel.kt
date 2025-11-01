@@ -1,5 +1,6 @@
 package com.medisupply.ui.viewmodels
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,8 +13,15 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import androidx.lifecycle.AndroidViewModel
+import com.medisupply.data.session.SessionManager
 
-class VisitasViewModel(private val repository: VisitasRepository) : ViewModel() {
+class VisitasViewModel(
+    application: Application,
+    private val repository: VisitasRepository
+) : AndroidViewModel(application) {
+
+    private val sessionManager = SessionManager(application.applicationContext)
 
     // LiveData para la lista de visitas
     private val _rutas = MutableLiveData<List<RutaVisitaItem>>()
@@ -27,78 +35,41 @@ class VisitasViewModel(private val repository: VisitasRepository) : ViewModel() 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    // LiveData para la fecha seleccionada
-    private val _fechaSeleccionada = MutableLiveData<Calendar>()
-    val fechaSeleccionada: LiveData<Calendar> = _fechaSeleccionada
-
-    // LiveData para el texto de la fecha
-    private val _fechaFormateada = MutableLiveData<String>()
-    val fechaFormateada: LiveData<String> = _fechaFormateada
-
-    // --- ASEGÚRATE DE TENER AMBOS FORMATEADORES AQUÍ ---
     private val apiDateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    // Usamos Locale en español para el nombre del día y mes
-    private val uiDateFormatter = SimpleDateFormat("EEEE, d 'de' MMMM", Locale("es", "ES"))
-    // --- FIN DE LA SECCIÓN IMPORTANTE ---
-
 
     init {
-        // Cargar las rutas para el día actual al iniciar
-        seleccionarFecha(Calendar.getInstance())
+        // Cargar las rutas de HOY al iniciar
+        cargarRutasDeHoy()
     }
 
     /**
-     * Llama al ViewModel para cargar las rutas de la fecha seleccionada.
+     * Función principal para obtener los datos del repositorio PARA HOY.
      */
-    fun seleccionarFecha(fecha: Calendar) {
-        _fechaSeleccionada.value = fecha
-        _fechaFormateada.value = formatUiDate(fecha) // Actualiza el texto
-        cargarRutas()
-    }
-
-    /**
-     * Formatea la fecha para la UI, añadiendo "Hoy" si corresponde.
-     */
-    private fun formatUiDate(calendar: Calendar): String {
-        val today = Calendar.getInstance()
-        // Esta línea usa el 'uiDateFormatter'
-        val uiText = uiDateFormatter.format(calendar.time).replaceFirstChar { it.uppercase() }
-
-        return if (isSameDay(calendar, today)) {
-            // Usamos la fecha actual (Sábado, 1 de noviembre) como ejemplo
-            "Hoy ($uiText)"
-        } else {
-            uiText
-        }
-    }
-
-    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
-    }
-
-    /**
-     * Función principal para obtener los datos del repositorio.
-     */
-    private fun cargarRutas() {
+    private fun cargarRutasDeHoy() {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                // TODO: Obtener el ID del vendedor logueado (ej. SharedPreferences)
-                val vendedorId = "f4d5a8cd-5f3f-41eb-a0f3-28a3924c7f55"
+                //Obtener el ID del vendedor
+                val vendedorId = sessionManager.getIdSeller()
+                if (vendedorId == null) {
+                    _error.value = "Error: No se encontró ID de vendedor. Inicie sesión de nuevo."
+                    _isLoading.value = false
+                    _rutas.value = emptyList()
+                    return@launch
+                }
 
-                val fechaFormateada = _fechaSeleccionada.value?.let {
-                    apiDateFormatter.format(it.time)
-                } ?: return@launch
+                //Obtener la fecha de HOY
+                val fechaDeHoy = apiDateFormatter.format(Calendar.getInstance().time)
 
-                val resultado = repository.getRutasDelDia(fechaFormateada, vendedorId)
+                //Llamar al repositorio
+                val resultado = repository.getRutasDelDia(fechaDeHoy, vendedorId)
                 _rutas.value = resultado
 
             } catch (e: IOException) { // Error de red
                 _error.value = "Error de conexión. Revisa tu red."
-                _rutas.value = emptyList() // Limpiar lista anterior
-            } catch (e: Exception) { // Otros errores (ej. HTTP 404, 500)
+                _rutas.value = emptyList()
+            } catch (e: Exception) { // Otros errores
                 _error.value = "Error al cargar las visitas: ${e.message}"
                 _rutas.value = emptyList()
             } finally {
@@ -111,6 +82,9 @@ class VisitasViewModel(private val repository: VisitasRepository) : ViewModel() 
      * Permite al usuario reintentar la carga de datos.
      */
     fun retry() {
-        cargarRutas()
+        cargarRutasDeHoy()
     }
 }
+
+// --- La Factory (VisitasViewModelFactory) NO CAMBIA ---
+// (Sigue siendo necesaria para inyectar Application y Repository)
