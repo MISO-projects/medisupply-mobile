@@ -16,14 +16,17 @@ import com.medisupply.databinding.FragmentVisitasBinding
 import com.medisupply.ui.adapters.VisitasAdapter
 import com.medisupply.ui.viewmodels.VisitasViewModel
 import com.medisupply.ui.viewmodels.VisitasViewModelFactory
+import com.medisupply.data.session.SessionManager // <-- AÑADIDO: Importar
+
 class VisitasFragment : Fragment() {
 
+    // ... (binding, viewModel, adapter sin cambios)
     private var _binding: FragmentVisitasBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var viewModel: VisitasViewModel
     private lateinit var visitasAdapter: VisitasAdapter
 
+    // ... (onCreateView sin cambios)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,10 +49,14 @@ class VisitasFragment : Fragment() {
         val application = requireActivity().application
         val apiService = NetworkServiceAdapter.getApiService()
         val repository = VisitasRepository(apiService)
-        val factory = VisitasViewModelFactory(application, repository)
+        val sessionManager = SessionManager(application.applicationContext)
+
+        // 2. Pasa el 'repository' y el 'sessionManager' a la Factory
+        val factory = VisitasViewModelFactory(repository, sessionManager)
         viewModel = ViewModelProvider(this, factory)[VisitasViewModel::class.java]
     }
 
+    // ... (setupRecyclerView y observeViewModel sin cambios)
     private fun setupRecyclerView() {
         visitasAdapter = VisitasAdapter { visita ->
             // TODO: Manejar clic en la visita (ej. navegar al detalle)
@@ -62,7 +69,6 @@ class VisitasFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        // Observar lista de rutas (sin cambios)
         viewModel.rutas.observe(viewLifecycleOwner) { rutas ->
             visitasAdapter.submitList(rutas)
             binding.emptyView.isVisible = rutas.isEmpty() &&
@@ -70,7 +76,6 @@ class VisitasFragment : Fragment() {
                     !binding.errorView.isVisible
         }
 
-        // Observar estado de carga (sin cambios)
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.loadingProgressBar.isVisible = isLoading
             binding.visitasRecyclerView.isVisible = !isLoading
@@ -78,7 +83,6 @@ class VisitasFragment : Fragment() {
             binding.emptyView.isVisible = false
         }
 
-        // Observar errores (sin cambios)
         viewModel.error.observe(viewLifecycleOwner) { error ->
             val isError = error != null
             binding.errorView.isVisible = isError
@@ -89,8 +93,6 @@ class VisitasFragment : Fragment() {
             }
         }
 
-
-        // Botón de reintentar (sin cambios)
         binding.retryButton.setOnClickListener {
             viewModel.retry()
         }
