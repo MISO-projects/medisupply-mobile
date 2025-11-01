@@ -9,8 +9,9 @@ import com.medisupply.data.models.RutaVisitaItem
 import com.medisupply.data.repositories.VisitasRepository
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class VisitasViewModel(private val repository: VisitasRepository) : ViewModel() {
 
@@ -27,23 +28,53 @@ class VisitasViewModel(private val repository: VisitasRepository) : ViewModel() 
     val error: LiveData<String?> = _error
 
     // LiveData para la fecha seleccionada
-    private val _fechaSeleccionada = MutableLiveData<LocalDate>()
-    val fechaSeleccionada: LiveData<LocalDate> = _fechaSeleccionada
+    private val _fechaSeleccionada = MutableLiveData<Calendar>()
+    val fechaSeleccionada: LiveData<Calendar> = _fechaSeleccionada
 
-    // Formateador de fecha para la API
-    private val apiDateFormatter = DateTimeFormatter.ISO_LOCAL_DATE // "YYYY-MM-DD"
+    // LiveData para el texto de la fecha
+    private val _fechaFormateada = MutableLiveData<String>()
+    val fechaFormateada: LiveData<String> = _fechaFormateada
+
+    // --- ASEGÚRATE DE TENER AMBOS FORMATEADORES AQUÍ ---
+    private val apiDateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    // Usamos Locale en español para el nombre del día y mes
+    private val uiDateFormatter = SimpleDateFormat("EEEE, d 'de' MMMM", Locale("es", "ES"))
+    // --- FIN DE LA SECCIÓN IMPORTANTE ---
+
 
     init {
         // Cargar las rutas para el día actual al iniciar
-        seleccionarFecha(LocalDate.now())
+        seleccionarFecha(Calendar.getInstance())
     }
 
     /**
      * Llama al ViewModel para cargar las rutas de la fecha seleccionada.
      */
-    fun seleccionarFecha(fecha: LocalDate) {
+    fun seleccionarFecha(fecha: Calendar) {
         _fechaSeleccionada.value = fecha
+        _fechaFormateada.value = formatUiDate(fecha) // Actualiza el texto
         cargarRutas()
+    }
+
+    /**
+     * Formatea la fecha para la UI, añadiendo "Hoy" si corresponde.
+     */
+    private fun formatUiDate(calendar: Calendar): String {
+        val today = Calendar.getInstance()
+        // Esta línea usa el 'uiDateFormatter'
+        val uiText = uiDateFormatter.format(calendar.time).replaceFirstChar { it.uppercase() }
+
+        return if (isSameDay(calendar, today)) {
+            // Usamos la fecha actual (Sábado, 1 de noviembre) como ejemplo
+            "Hoy ($uiText)"
+        } else {
+            uiText
+        }
+    }
+
+    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
     /**
@@ -55,10 +86,11 @@ class VisitasViewModel(private val repository: VisitasRepository) : ViewModel() 
             _error.value = null
             try {
                 // TODO: Obtener el ID del vendedor logueado (ej. SharedPreferences)
-                // Usamos un ID harcodeado temporalmente, igual al de tu cURL
                 val vendedorId = "f4d5a8cd-5f3f-41eb-a0f3-28a3924c7f55"
 
-                val fechaFormateada = _fechaSeleccionada.value?.format(apiDateFormatter) ?: return@launch
+                val fechaFormateada = _fechaSeleccionada.value?.let {
+                    apiDateFormatter.format(it.time)
+                } ?: return@launch
 
                 val resultado = repository.getRutasDelDia(fechaFormateada, vendedorId)
                 _rutas.value = resultado
@@ -80,20 +112,5 @@ class VisitasViewModel(private val repository: VisitasRepository) : ViewModel() 
      */
     fun retry() {
         cargarRutas()
-    }
-}
-
-/**
- * Factory para crear el VisitasViewModel con su repositorio.
- */
-class VisitasViewModelFactory(
-    private val repository: VisitasRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(VisitasViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return VisitasViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

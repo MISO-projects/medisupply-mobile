@@ -16,8 +16,8 @@ import com.medisupply.databinding.FragmentVisitasBinding
 import com.medisupply.ui.adapters.VisitasAdapter
 import com.medisupply.ui.viewmodels.VisitasViewModel
 import com.medisupply.ui.viewmodels.VisitasViewModelFactory
-import java.time.LocalDate
 import java.util.Calendar
+
 
 class VisitasFragment : Fragment() {
 
@@ -40,14 +40,13 @@ class VisitasFragment : Fragment() {
 
         setupViewModel()
         setupRecyclerView()
-        setupCalendar()
+        setupDateSelector() // <-- Cambiamos el nombre de la función
         observeViewModel()
 
         return binding.root
     }
 
     private fun setupViewModel() {
-        // Asumiendo que NetworkServiceAdapter es tu singleton de Retrofit
         val apiService = NetworkServiceAdapter.getApiService()
         val repository = VisitasRepository(apiService)
         val factory = VisitasViewModelFactory(repository)
@@ -56,9 +55,7 @@ class VisitasFragment : Fragment() {
 
     private fun setupRecyclerView() {
         visitasAdapter = VisitasAdapter { visita ->
-            // TODO: Manejar clic en la visita (ej. navegar al detalle)
-            // val action = VisitasFragmentDirections.actionVisitasFragmentToVisitaDetalleFragment(visita.id)
-            // findNavController().navigate(action)
+            // TODO: Manejar clic en la visita
         }
 
         binding.visitasRecyclerView.apply {
@@ -67,35 +64,48 @@ class VisitasFragment : Fragment() {
         }
     }
 
-    private fun setupCalendar() {
+    // --- FUNCIÓN MODIFICADA ---
+    private fun setupDateSelector() {
+        // 1. Clic en la barra para MOSTRAR/OCULTAR el calendario
+        binding.dateSelectorBar.setOnClickListener {
+            toggleCalendarVisibility()
+        }
+
+        // 2. Al seleccionar una fecha en el calendario...
         binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            // month es 0-indexado, por eso se suma 1
-            val selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
-            viewModel.seleccionarFecha(selectedDate)
+            val calendar = Calendar.getInstance()
+            calendar.set(year, month, dayOfMonth)
+
+            viewModel.seleccionarFecha(calendar) // Cargar datos
+            binding.calendarView.isVisible = false // Ocultar calendario
         }
     }
 
+    // --- NUEVA FUNCIÓN HELPER ---
+    private fun toggleCalendarVisibility() {
+        // Simplemente invierte la visibilidad actual
+        binding.calendarView.isVisible = !binding.calendarView.isVisible
+    }
+    // --------------------------
+
     private fun observeViewModel() {
-        // Observar lista de rutas
+        // Observar lista de rutas (sin cambios)
         viewModel.rutas.observe(viewLifecycleOwner) { rutas ->
             visitasAdapter.submitList(rutas)
-
-            // Mostrar vista vacía solo si no está cargando y no hay error
             binding.emptyView.isVisible = rutas.isEmpty() &&
                     !binding.loadingProgressBar.isVisible &&
                     !binding.errorView.isVisible
         }
 
-        // Observar estado de carga
+        // Observar estado de carga (sin cambios)
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.loadingProgressBar.isVisible = isLoading
-            // Ocultar RecyclerView, error y vacío mientras carga
             binding.visitasRecyclerView.isVisible = !isLoading
             binding.errorView.isVisible = false
             binding.emptyView.isVisible = false
         }
 
-        // Observar errores
+        // Observar errores (sin cambios)
         viewModel.error.observe(viewLifecycleOwner) { error ->
             val isError = error != null
             binding.errorView.isVisible = isError
@@ -106,7 +116,14 @@ class VisitasFragment : Fragment() {
             }
         }
 
-        // Botón de reintentar
+        // --- NUEVO OBSERVADOR ---
+        // 3. Observar la fecha formateada y actualizar la UI
+        viewModel.fechaFormateada.observe(viewLifecycleOwner) { fechaFormateada ->
+            binding.textFechaSeleccionada.text = fechaFormateada
+        }
+        // -------------------------
+
+        // Botón de reintentar (sin cambios)
         binding.retryButton.setOnClickListener {
             viewModel.retry()
         }
@@ -114,6 +131,6 @@ class VisitasFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // Prevenir memory leaks
+        _binding = null
     }
 }
