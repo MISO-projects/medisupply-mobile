@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <!-- Variables de data binding si son necesarias -->
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="#F5F5F5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <!-- Icono de camión -->
+            <ImageView
+                android:id="@+id/icon_entrega"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/entregas"
+                android:contentDescription="Icono de entrega"
+                app:tint="@android:color/black" />
+
+            <!-- Información de la entrega -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical">
+
+                <!-- Número de orden del pedido -->
+                <TextView
+                    android:id="@+id/numero_orden"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ORD-251109-ABC123"
+                    android:textColor="#1A1A1A"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="ORD-251109-ABC123" />
+
+                <!-- Fecha -->
+                <TextView
+                    android:id="@+id/fecha_entrega"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="#2E86C1"
+                    android:textSize="14sp"
+                    tools:text="26 de sept, 2025" />
+
+            </LinearLayout>
+
+            <!-- Estado y Conductor -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical"
+                android:gravity="end">
+
+                <!-- Estado -->
+                <TextView
+                    android:id="@+id/estado_entrega"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="En_Curso"
+                    android:textColor="#1A1A1A"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="En_Curso" />
+
+                <!-- Conductor -->
+                <TextView
+                    android:id="@+id/conductor_entrega"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Juan Pérez"
+                    android:textColor="#666666"
+                    android:textSize="12sp"
+                    tools:text="Juan Pérez" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>
+
