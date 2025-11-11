@@ -16,17 +16,20 @@ import com.medisupply.databinding.FragmentVisitasBinding
 import com.medisupply.ui.adapters.VisitasAdapter
 import com.medisupply.ui.viewmodels.VisitasViewModel
 import com.medisupply.ui.viewmodels.VisitasViewModelFactory
-import com.medisupply.data.session.SessionManager // <-- AÑADIDO: Importar
+import com.medisupply.data.session.SessionManager
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class VisitasFragment : Fragment() {
 
-    // ... (binding, viewModel, adapter sin cambios)
     private var _binding: FragmentVisitasBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: VisitasViewModel
     private lateinit var visitasAdapter: VisitasAdapter
 
-    // ... (onCreateView sin cambios)
+    private val uiDateFormatter = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale.getDefault())
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,18 +48,36 @@ class VisitasFragment : Fragment() {
         return binding.root
     }
 
+    // --- onViewCreated para configurar los listeners de la vista ---
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Configurar el listener del calendario
+        binding.calendarView.setOnDateChangeListener { calendarView, year, month, dayOfMonth ->
+            val calendar = Calendar.getInstance()
+            calendar.set(year, month, dayOfMonth)
+
+            // Notificar al ViewModel la nueva fecha seleccionada
+            viewModel.seleccionarFecha(calendar.time)
+        }
+
+        // Configurar el botón de reintentar
+        binding.retryButton.setOnClickListener {
+            viewModel.retry()
+        }
+    }
+
+
     private fun setupViewModel() {
         val application = requireActivity().application
         val apiService = NetworkServiceAdapter.getApiService()
         val repository = VisitasRepository(apiService)
         val sessionManager = SessionManager(application.applicationContext)
 
-        // 2. Pasa el 'repository' y el 'sessionManager' a la Factory
         val factory = VisitasViewModelFactory(repository, sessionManager)
         viewModel = ViewModelProvider(this, factory)[VisitasViewModel::class.java]
     }
 
-    // ... (setupRecyclerView y observeViewModel sin cambios)
     private fun setupRecyclerView() {
         visitasAdapter = VisitasAdapter { visita ->
             // TODO: Manejar clic en la visita (ej. navegar al detalle)
@@ -71,16 +92,22 @@ class VisitasFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.rutas.observe(viewLifecycleOwner) { rutas ->
             visitasAdapter.submitList(rutas)
-            binding.emptyView.isVisible = rutas.isEmpty() &&
-                    !binding.loadingProgressBar.isVisible &&
-                    !binding.errorView.isVisible
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.loadingProgressBar.isVisible = isLoading
-            binding.visitasRecyclerView.isVisible = !isLoading
-            binding.errorView.isVisible = false
-            binding.emptyView.isVisible = false
+            if (!isLoading) {
+                val currentError = viewModel.error.value
+                val currentRutas = viewModel.rutas.value
+
+                binding.errorView.isVisible = currentError != null
+                binding.visitasRecyclerView.isVisible = currentError == null && !currentRutas.isNullOrEmpty()
+                binding.emptyView.isVisible = currentError == null && currentRutas.isNullOrEmpty()
+            } else {
+                binding.visitasRecyclerView.isVisible = false
+                binding.errorView.isVisible = false
+                binding.emptyView.isVisible = false
+            }
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -93,8 +120,12 @@ class VisitasFragment : Fragment() {
             }
         }
 
-        binding.retryButton.setOnClickListener {
-            viewModel.retry()
+        // --- Observador para la fecha seleccionada ---
+        viewModel.selectedDate.observe(viewLifecycleOwner) { date ->
+            binding.selectedDateTitle.text = "Visitas para ${uiDateFormatter.format(date)}"
+            if (binding.calendarView.date != date.time) {
+                binding.calendarView.date = date.time
+            }
         }
     }
 

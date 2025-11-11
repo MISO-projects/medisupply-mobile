@@ -12,19 +12,29 @@
         android:background="@android:color/white"
         tools:context=".ui.fragments.VisitasFragment">
 
-        <TextView
-            android:id="@+id/title_text"
-            android:layout_width="wrap_content"
+        <CalendarView
+            android:id="@+id/calendar_view"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:text="Visitas de Hoy"
-            android:textColor="@color/md_theme_light_primary"
-            android:textSize="28sp"
-            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/selected_date_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/md_theme_light_primary"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/calendar_view"
+            tools:text="Visitas para 10/11/2025" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/visitas_recycler_view"
@@ -37,7 +47,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_text" tools:listitem="@layout/item_visita" />
+            app:layout_constraintTop_toBottomOf="@id/selected_date_title"
+            tools:listitem="@layout/item_visita" />
 
         <LinearLayout
             android:id="@+id/error_view"
@@ -50,7 +61,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_text" tools:visibility="gone">
+            app:layout_constraintTop_toBottomOf="@id/selected_date_title"
+            tools:visibility="gone">
             <TextView
                 android:id="@+id/error_text"
                 android:layout_width="wrap_content"
@@ -73,14 +85,15 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="32dp"
-            android:text="No_hay_visitas_programadas_hoy"
+            android:text="No hay visitas programadas para esta fecha"
             android:textColor="@color/text_secondary"
             android:textSize="16sp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_text" tools:visibility="visible" />
+            app:layout_constraintTop_toBottomOf="@id/selected_date_title"
+            tools:visibility="visible" />
 
         <ProgressBar
             android:id="@+id/loading_progress_bar"
