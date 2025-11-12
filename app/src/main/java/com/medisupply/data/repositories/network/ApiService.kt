@@ -17,6 +17,7 @@ import com.medisupply.data.models.PedidoRequest
 import com.medisupply.data.models.ProductoResponse
 import com.medisupply.data.models.RegisterRequest
 import com.medisupply.data.models.UserProfileResponse
+import com.medisupply.data.models.VisitaDetalle
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -60,6 +61,9 @@ interface ApiService {
     @POST("clientes/") suspend fun crearCliente(@Body cliente: ClienteRequest): Response<Cliente>
 
     @GET("visitas/rutas-del-dia/") suspend fun getRutasDelDia(@Query("fecha") fecha: String, @Query("vendedor_id") vendedorId: String): List<RutaVisitaItem>
+
+    @GET("visitas/{id}")
+    suspend fun getVisitaById(@Path("id") id: String): VisitaDetalle
 
     @GET("movil/ordenes/mis-entregas-programadas")
     suspend fun getMisEntregasProgramadas(

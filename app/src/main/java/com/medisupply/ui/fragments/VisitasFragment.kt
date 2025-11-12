@@ -83,11 +83,6 @@ class VisitasFragment : Fragment() {
     private fun setupRecyclerView() {
         visitasAdapter = VisitasAdapter { visita ->
             onVisitaClick(visita)
-            Toast.makeText(
-                requireContext(),
-                "Visita seleccionada: ${visita.id}",
-                Toast.LENGTH_SHORT
-            ).show()
         }
 
         binding.visitasRecyclerView.apply {
