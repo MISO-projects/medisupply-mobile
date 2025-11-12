@@ -5,13 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.medisupply.R
+import com.medisupply.data.repositories.VisitasRepository
+import com.medisupply.data.repositories.network.NetworkServiceAdapter
 import com.medisupply.databinding.FragmentRegistrarVisitaBinding
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import java.util.Calendar // <-- NUEVO: Para obtener la hora actual
+import com.medisupply.ui.viewmodels.RegistrarVisitaViewModel
+import com.medisupply.ui.viewmodels.RegistrarVisitaViewModelFactory
+import java.util.Calendar
 import java.util.Locale
 
 class RegistrarVisitaFragment : Fragment() {
@@ -20,6 +26,14 @@ class RegistrarVisitaFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var visitaId: String? = null
+
+    private val viewModel: RegistrarVisitaViewModel by viewModels {
+        if (visitaId == null) {
+            throw IllegalStateException("El ID de la visita no puede ser nulo al crear el ViewModel")
+        }
+        val repository = VisitasRepository(NetworkServiceAdapter.getApiService())
+        RegistrarVisitaViewModelFactory(repository, visitaId!!)
+    }
 
     private var horaInicioSeleccionada: Pair<Int, Int>? = null
     private var horaFinSeleccionada: Pair<Int, Int>? = null
@@ -41,6 +55,11 @@ class RegistrarVisitaFragment : Fragment() {
         arguments?.let {
             visitaId = it.getString(ARG_VISITA_ID)
         }
+
+        if (visitaId == null) {
+            Toast.makeText(requireContext(), "Error: ID de visita no encontrado", Toast.LENGTH_LONG).show()
+            parentFragmentManager.popBackStack()
+        }
     }
 
     override fun onCreateView(
@@ -60,33 +79,87 @@ class RegistrarVisitaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Toast.makeText(
-            requireContext(),
-            "ID de visita a registrar: $visitaId",
-            Toast.LENGTH_LONG
-        ).show()
+        // Mensaje de prueba 
+        // Toast.makeText(requireContext(), "ID de visita a registrar: $visitaId", Toast.LENGTH_LONG).show()
 
-        // Configurar Listeners
+        configurarListeners()
+        observarViewModel()
+    }
+
+    /**
+     * Configura todos los listeners de la vista
+     */
+    private fun configurarListeners() {
+        // Listeners de Hora
         binding.startTimeEditText.setOnClickListener {
-            // "true" indica que es para la hora de inicio
             mostrarSelectorDeHora(esHoraInicio = true)
         }
-
         binding.endTimeEditText.setOnClickListener {
             mostrarSelectorDeHora(esHoraInicio = false)
         }
 
+        // Listener de Cancelar
         binding.btnCancelar.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            // Solo permite cancelar si no está cargando
+            if (viewModel.isLoading.value != true) {
+                parentFragmentManager.popBackStack()
+            }
+        }
+
+        // Listener del botón Guardar
+        binding.btnGuardar.setOnClickListener {
+            intentarGuardarVisita()
         }
     }
+
+    /**
+     * Observa los LiveData del ViewModel
+     */
+    private fun observarViewModel() {
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            // Muestra/oculta el ProgressBar
+            binding.loadingProgressBar.isVisible = isLoading
+            // Deshabilita los botones mientras carga
+            binding.btnGuardar.isEnabled = !isLoading
+            binding.btnCancelar.isEnabled = !isLoading
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            if (error != null) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        viewModel.registroExitoso.observe(viewLifecycleOwner) { visitaActualizada ->
+            if (visitaActualizada != null) {
+                Toast.makeText(requireContext(), "Visita guardada con éxito", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.popBackStack()
+            }
+        }
+    }
+
+    /**
+     * Valida los campos y llama al ViewModel para guardar
+     */
+    private fun intentarGuardarVisita() {
+        val horaInicio = binding.startTimeEditText.text.toString()
+        val horaFin = binding.endTimeEditText.text.toString()
+        val contacto = binding.contactEditText.text.toString()
+        val detalle = binding.descriptionEditText.text.toString()
+
+        if (horaInicio.isBlank() || horaFin.isBlank() || contacto.isBlank() || detalle.isBlank()) {
+            Toast.makeText(requireContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+            return
+        }
+        viewModel.guardarVisita(detalle, contacto, horaInicio, horaFin)
+    }
+
 
     private fun mostrarSelectorDeHora(esHoraInicio: Boolean) {
         val calendar = Calendar.getInstance()
         val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
         val currentMinute = calendar.get(Calendar.MINUTE)
 
-        // Si ya había una hora seleccionada, la usamos; si no, usamos la actual.
         val (defaultHour, defaultMinute) = if (esHoraInicio) {
             horaInicioSeleccionada ?: (currentHour to currentMinute)
         } else {
@@ -119,7 +192,7 @@ class RegistrarVisitaFragment : Fragment() {
 
                 if (!esHoraFinValida()) {
                     horaFinSeleccionada = null
-                    binding.endTimeEditText.setText("") // Limpiar si no es válida
+                    binding.endTimeEditText.setText("")
                     Toast.makeText(requireContext(), "Hora de fin reiniciada", Toast.LENGTH_SHORT).show()
                 }
 
@@ -140,24 +213,14 @@ class RegistrarVisitaFragment : Fragment() {
         picker.show(parentFragmentManager, "TIME_PICKER_TAG")
     }
 
-    /**
-     * Comprueba si una hora de fin (nueva) es válida
-     * comparada con la hora de inicio ya guardada.
-     */
     private fun esHoraFinValida(finHour: Int, finMinute: Int): Boolean {
         val (startHour, startMinute) = horaInicioSeleccionada ?: return true
         val inicioTotalMinutos = startHour * 60 + startMinute
         val finTotalMinutos = finHour * 60 + finMinute
-
-        return finTotalMinutos >= inicioTotalMinutos // La hora fin debe ser mayor o igual
+        return finTotalMinutos >= inicioTotalMinutos
     }
 
-    /**
-     * Comprueba si la hora de fin *existente* (la guardada en [horaFinSeleccionada])
-     * sigue siendo válida.
-     */
     private fun esHoraFinValida(): Boolean {
-        // Si no hay hora de fin guardada, no hay nada que re-validar
         val (finHour, finMinute) = horaFinSeleccionada ?: return true
         return esHoraFinValida(finHour, finMinute)
     }

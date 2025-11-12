@@ -16,6 +16,7 @@ import com.medisupply.data.models.PedidoPorIdResponse
 import com.medisupply.data.models.PedidoRequest
 import com.medisupply.data.models.ProductoResponse
 import com.medisupply.data.models.RegisterRequest
+import com.medisupply.data.models.RegistroVisitaRequest
 import com.medisupply.data.models.UserProfileResponse
 import com.medisupply.data.models.VisitaDetalle
 import retrofit2.Call
@@ -24,6 +25,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -64,6 +66,12 @@ interface ApiService {
 
     @GET("visitas/{id}")
     suspend fun getVisitaById(@Path("id") id: String): VisitaDetalle
+
+    @PUT("visitas/{id}")
+    suspend fun registrarVisita(
+        @Path("id") visitaId: String,
+        @Body body: RegistroVisitaRequest
+    ): Response<VisitaDetalle>
 
     @GET("movil/ordenes/mis-entregas-programadas")
     suspend fun getMisEntregasProgramadas(
