@@ -123,7 +123,24 @@ class DetalleVisitaFragment : Fragment() {
         binding.retryButton.setOnClickListener {
             viewModel.retry()
         }
+
+        binding.btnIniciarVisita.setOnClickListener {
+            // Muestra un mensaje temporal (Toast) con el ID
+            Toast.makeText(
+                requireContext(),
+                "Iniciaste la visita.. $visitaId",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        binding.btnMarcarNoRealizada.setOnClickListener {
+            // Crea una instancia y muestra el BottomSheet
+            val bottomSheet = NoRealizadaBottomSheet.newInstance()
+            bottomSheet.show(parentFragmentManager, NoRealizadaBottomSheet.TAG)
+        }
     }
+
+
 
     private fun poblarDatos(visita: VisitaDetalle) {
         binding.textNombreInstitucionHeader.text = visita.nombreInstitucion
