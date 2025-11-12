@@ -125,12 +125,17 @@ class DetalleVisitaFragment : Fragment() {
         }
 
         binding.btnIniciarVisita.setOnClickListener {
-            // Muestra un mensaje temporal (Toast) con el ID
-            Toast.makeText(
-                requireContext(),
-                "Iniciaste la visita.. $visitaId",
-                Toast.LENGTH_SHORT
-            ).show()
+            if (visitaId == null) {
+                Toast.makeText(requireContext(), "Error: ID de visita no disponible", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val registrarVisitaFragment = RegistrarVisitaFragment.newInstance(visitaId!!)
+
+            parentFragmentManager.beginTransaction()
+                .replace((requireView().parent as ViewGroup).id, registrarVisitaFragment)
+                .addToBackStack(null) // Para poder volver atrás
+                .commit()
         }
 
         binding.btnMarcarNoRealizada.setOnClickListener {
