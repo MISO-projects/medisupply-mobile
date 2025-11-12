@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.medisupply.R
+import com.medisupply.data.models.RutaVisitaItem
 import com.medisupply.data.repositories.VisitasRepository
 import com.medisupply.data.repositories.network.NetworkServiceAdapter
 import com.medisupply.databinding.FragmentVisitasBinding
@@ -81,6 +82,7 @@ class VisitasFragment : Fragment() {
 
     private fun setupRecyclerView() {
         visitasAdapter = VisitasAdapter { visita ->
+            onVisitaClick(visita)
             Toast.makeText(
                 requireContext(),
                 "Visita seleccionada: ${visita.id}",
@@ -92,6 +94,15 @@ class VisitasFragment : Fragment() {
             adapter = visitasAdapter
             layoutManager = LinearLayoutManager(context)
         }
+    }
+
+    private fun onVisitaClick(visita: RutaVisitaItem) {
+        val detailFragment = DetalleVisitaFragment.newInstance(visita.id)
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, detailFragment)
+            .addToBackStack(null) // Esto permite al usuario presionar "atrás"
+            .commit()
     }
 
     private fun observeViewModel() {
