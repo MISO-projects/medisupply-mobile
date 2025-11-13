@@ -2,6 +2,7 @@ package com.medisupply.data.repositories
 
 import com.medisupply.data.models.Producto
 import com.medisupply.data.models.ProductoResponse
+import com.medisupply.data.models.InventarioResponse
 import com.medisupply.data.repositories.network.ApiService
 import kotlinx.coroutines.delay
 
@@ -18,6 +19,17 @@ class InventarioRepository(private val apiService: ApiService) {
         return apiService.getProductos(nombre)
 
     }
+
+suspend fun getInventario(
+        page: Int = 1,
+        pageSize: Int = 10,
+        textSearch: String? = null,
+        estado: String? = null,
+        categoria: String? = null
+): InventarioResponse {
+    return apiService.getInventario(page, pageSize, textSearch, estado, categoria)
+}
+
 
     /**
      * Datos mock para desarrollo

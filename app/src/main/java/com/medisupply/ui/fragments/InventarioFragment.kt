@@ -52,7 +52,10 @@ class InventarioFragment : Fragment() {
     private fun setupViewModel() {
         val apiService = NetworkServiceAdapter.getApiService()
         val repository = InventarioRepository(apiService)
-        val factory = InventarioViewModelFactory(repository)
+        val factory = InventarioViewModelFactory(
+            requireContext().applicationContext as android.app.Application,
+            repository
+        )
         viewModel = ViewModelProvider(this, factory)[InventarioViewModel::class.java]
     }
 
@@ -115,8 +118,9 @@ class InventarioFragment : Fragment() {
     private fun showDisponibilidadDialog() {
         val opciones = arrayOf(
             getString(R.string.todos),
-            getString(R.string.disponibles),
-            getString(R.string.no_disponibles)
+            getString(R.string.disponible),
+            getString(R.string.bloqueado),
+            getString(R.string.en_revision)
         )
         
         AlertDialog.Builder(requireContext())
@@ -130,13 +134,18 @@ class InventarioFragment : Fragment() {
                     }
                     1 -> {
                         // Disponibles
-                        viewModel.filtrarPorDisponibilidad(true)
-                        binding.btnDisponibilidad.text = getString(R.string.disponibles)
+                        viewModel.filtrarPorDisponibilidad("DISPONIBLE")
+                        binding.btnDisponibilidad.text = getString(R.string.disponible)
                     }
                     2 -> {
-                        // No disponibles
-                        viewModel.filtrarPorDisponibilidad(false)
-                        binding.btnDisponibilidad.text = getString(R.string.no_disponibles)
+                        // BLoequeados
+                        viewModel.filtrarPorDisponibilidad("BLOQUEADO")
+                        binding.btnDisponibilidad.text = getString(R.string.bloqueado)
+                    }
+                    3 -> {
+                        // En revisión
+                        viewModel.filtrarPorDisponibilidad("EN_REVISION")
+                        binding.btnDisponibilidad.text = getString(R.string.en_revision)
                     }
                 }
             }

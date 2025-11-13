@@ -1,23 +1,27 @@
 package com.medisupply.ui.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.medisupply.data.models.Producto
+import com.medisupply.R
+import com.medisupply.data.models.Inventario
 import com.medisupply.data.repositories.InventarioRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
  * ViewModel para la pantalla de Inventario
  */
-class InventarioViewModel(private val inventarioRepository: InventarioRepository) : ViewModel() {
+class InventarioViewModel(
+    application: Application,
+    private val inventarioRepository: InventarioRepository
+) : AndroidViewModel(application) {
 
-    private val _productos = MutableLiveData<List<Producto>>()
-    val productos: LiveData<List<Producto>> = _productos
-
-    private val _productosFiltrados = MutableLiveData<List<Producto>>()
-    val productosFiltrados: LiveData<List<Producto>> = _productosFiltrados
+    private val _productosFiltrados = MutableLiveData<List<Inventario>>()
+    val productosFiltrados: LiveData<List<Inventario>> = _productosFiltrados
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -29,31 +33,54 @@ class InventarioViewModel(private val inventarioRepository: InventarioRepository
     val categorias: LiveData<List<String>> = _categorias
 
     private var categoriaSeleccionada: String? = null
-    private var disponibilidadSeleccionada: Boolean? = null
+    private var disponibilidadSeleccionada: String? = null
     private var textoBusqueda: String = ""
+    
+    private var searchJob: Job? = null
+    
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY_MS = 500L // 500ms de delay para debounce
+        private val CATEGORIAS_STRING_IDS = listOf(
+            R.string.categoria_medicamento,
+            R.string.categoria_insumos_medicos,
+            R.string.categoria_equipamiento,
+            R.string.categoria_dispositivos,
+            R.string.categoria_consumibles,
+            R.string.categoria_material_quirurgico,
+            R.string.categoria_reactivos,
+            R.string.categoria_otros
+        )
+    }
 
     init {
         loadProductos()
     }
 
     /**
-     * Carga la lista de productos
+     * Carga la lista de productos con los filtros aplicados
      */
-    fun loadProductos() {
+    private fun loadProductos() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 _error.value = null
                 
-                val response = inventarioRepository.getProductos()
-                _productos.value = response.productos
+                val response = inventarioRepository.getInventario(
+                    page = 1,
+                    pageSize = 20, 
+                    textSearch = textoBusqueda.takeIf { it.isNotEmpty() },
+                    estado = disponibilidadSeleccionada,
+                    categoria = categoriaSeleccionada
+                )
                 
-                // Extraer categorías únicas
-                val categoriasUnicas = response.productos.map { it.categoria }.distinct().sorted()
-                _categorias.value = categoriasUnicas
+                // Usar lista fija de categorías desde recursos de strings
+                val categoriasStrings = CATEGORIAS_STRING_IDS.map { 
+                    getApplication<Application>().getString(it) 
+                }
+                _categorias.value = categoriasStrings
                 
-                // Inicializar productos filtrados con todos los productos
-                _productosFiltrados.value = response.productos
+                // Actualizar productos filtrados con la respuesta del backend
+                _productosFiltrados.value = response.items
                 
             } catch (e: Exception) {
                 _error.value = "Error al cargar productos: ${e.message}"
@@ -64,11 +91,17 @@ class InventarioViewModel(private val inventarioRepository: InventarioRepository
     }
 
     /**
-     * Filtra productos por búsqueda de texto
+     * Filtra productos por búsqueda de texto con debounce
      */
     fun buscarProductos(query: String) {
         textoBusqueda = query.trim()
-        aplicarFiltros()
+        
+        searchJob?.cancel()
+        
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY_MS)
+            loadProductos()
+        }
     }
 
     /**
@@ -76,47 +109,15 @@ class InventarioViewModel(private val inventarioRepository: InventarioRepository
      */
     fun filtrarPorCategoria(categoria: String?) {
         categoriaSeleccionada = categoria
-        aplicarFiltros()
+        loadProductos()
     }
 
     /**
      * Filtra productos por disponibilidad
      */
-    fun filtrarPorDisponibilidad(disponible: Boolean?) {
+    fun filtrarPorDisponibilidad(disponible: String?) {
         disponibilidadSeleccionada = disponible
-        aplicarFiltros()
-    }
-
-    /**
-     * Aplica todos los filtros activos
-     */
-    private fun aplicarFiltros() {
-        val productosActuales = _productos.value ?: return
-        
-        var productosFiltradosTemp = productosActuales
-        
-        // Filtrar por texto de búsqueda
-        if (textoBusqueda.isNotEmpty()) {
-            productosFiltradosTemp = productosFiltradosTemp.filter { producto ->
-                producto.nombre.contains(textoBusqueda, ignoreCase = true)
-            }
-        }
-        
-        // Filtrar por categoría
-        if (categoriaSeleccionada != null) {
-            productosFiltradosTemp = productosFiltradosTemp.filter { producto ->
-                producto.categoria == categoriaSeleccionada
-            }
-        }
-        
-        // Filtrar por disponibilidad
-        if (disponibilidadSeleccionada != null) {
-            productosFiltradosTemp = productosFiltradosTemp.filter { producto ->
-                producto.disponible == disponibilidadSeleccionada
-            }
-        }
-        
-        _productosFiltrados.value = productosFiltradosTemp
+        loadProductos()
     }
 
     /**
@@ -126,7 +127,7 @@ class InventarioViewModel(private val inventarioRepository: InventarioRepository
         textoBusqueda = ""
         categoriaSeleccionada = null
         disponibilidadSeleccionada = null
-        _productosFiltrados.value = _productos.value
+        loadProductos()
     }
 
     /**
