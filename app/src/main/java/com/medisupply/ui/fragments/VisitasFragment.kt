@@ -30,7 +30,7 @@ class VisitasFragment : Fragment() {
     private lateinit var viewModel: VisitasViewModel
     private lateinit var visitasAdapter: VisitasAdapter
 
-    private val uiDateFormatter = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale.getDefault())
+    private val uiDateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -143,5 +143,13 @@ class VisitasFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Esto fuerza a recargar las visitas de la fecha que ya estaba seleccionada
+        // cada vez que vuelves a esta pantalla.
+        val fechaActual = viewModel.selectedDate.value ?: java.util.Date()
+        viewModel.seleccionarFecha(fechaActual)
     }
 }

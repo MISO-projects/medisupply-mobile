@@ -19,6 +19,8 @@ import com.medisupply.ui.viewmodels.RegistrarVisitaViewModel
 import com.medisupply.ui.viewmodels.RegistrarVisitaViewModelFactory
 import java.util.Calendar
 import java.util.Locale
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 
 class RegistrarVisitaFragment : Fragment() {
 
@@ -133,6 +135,7 @@ class RegistrarVisitaFragment : Fragment() {
         viewModel.registroExitoso.observe(viewLifecycleOwner) { visitaActualizada ->
             if (visitaActualizada != null) {
                 Toast.makeText(requireContext(), "Visita guardada con éxito", Toast.LENGTH_SHORT).show()
+                setFragmentResult("request_refresh", bundleOf("should_refresh" to true))
                 parentFragmentManager.popBackStack()
             }
         }

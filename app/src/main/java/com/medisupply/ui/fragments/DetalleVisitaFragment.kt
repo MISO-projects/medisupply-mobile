@@ -61,6 +61,13 @@ class DetalleVisitaFragment : Fragment() {
                 viewModel.cancelarVisita(motivo)
             }
         }
+
+        setFragmentResultListener("request_refresh") { _, bundle ->
+            val shouldRefresh = bundle.getBoolean("should_refresh", false)
+            if (shouldRefresh) {
+                parentFragmentManager.popBackStack()
+            }
+        }
     }
 
     override fun onCreateView(
