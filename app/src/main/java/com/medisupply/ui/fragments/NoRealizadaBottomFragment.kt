@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton // <-- Importa RadioButton
+import android.widget.RadioButton
 import android.widget.Toast
+import androidx.core.os.bundleOf 
+import androidx.fragment.app.setFragmentResult 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.medisupply.databinding.FragmentNoRealizadaBottomBinding
 
@@ -30,30 +32,23 @@ class NoRealizadaBottomSheet : BottomSheetDialogFragment() {
         }
 
         binding.btnConfirmarBottomSheet.setOnClickListener {
-
             val selectedRadioId = binding.radioGroupMotivos.checkedRadioButtonId
             if (selectedRadioId == -1) {
                 Toast.makeText(requireContext(), "Por favor, selecciona un motivo", Toast.LENGTH_SHORT).show()
-            } else {
-                // Usamos requireView() (o binding.root) para encontrar el RadioButton por su ID
-                val motivoSeleccionado = requireView().findViewById<RadioButton>(selectedRadioId).text.toString()
-
-                val detallesOpcionales = binding.editTextDetalles.text.toString()
-
-                val mensajeBase = "Marcaste como no realizada porque $motivoSeleccionado"
-
-                val mensajeFinal = if (detallesOpcionales.isNotBlank()) {
-                    "$mensajeBase: $detallesOpcionales" // Con detalles
-                } else {
-                    mensajeBase // Sin detalles
-                }
-
-                Toast.makeText(requireContext(), mensajeFinal, Toast.LENGTH_LONG).show()
-
-                dismiss()
+                return@setOnClickListener
             }
-        }
 
+            val motivoSeleccionado = requireView().findViewById<RadioButton>(selectedRadioId).text.toString()
+            val detallesOpcionales = binding.editTextDetalles.text.toString().trim()
+            val motivoFinal = if (detallesOpcionales.isNotEmpty()) {
+                "$motivoSeleccionado. $detallesOpcionales"
+            } else {
+                motivoSeleccionado
+            }
+            setFragmentResult("request_cancelar_visita", bundleOf("motivo" to motivoFinal))
+
+            dismiss()
+        }
     }
 
     override fun onDestroyView() {
@@ -63,9 +58,6 @@ class NoRealizadaBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "NoRealizadaBottomSheet"
-
-        fun newInstance(): NoRealizadaBottomSheet {
-            return NoRealizadaBottomSheet()
-        }
+        fun newInstance() = NoRealizadaBottomSheet()
     }
 }

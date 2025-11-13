@@ -9,18 +9,18 @@ data class RegistroVisitaRequest(
     @SerializedName("detalle")
     val detalle: String,
 
+    @SerializedName("estado")
+    val estado: String,
+
     @SerializedName("evidencia")
-    val evidencia: String,
+    val evidencia: String? = null,
 
     @SerializedName("cliente_contacto")
-    val clienteContacto: String,
+    val clienteContacto: String? = null,
 
     @SerializedName("inicio")
-    val inicio: String,
+    val inicio: String? = null,
 
     @SerializedName("fin")
-    val fin: String,
-
-    @SerializedName("estado")
-    val estado: String
+    val fin: String? = null
 )

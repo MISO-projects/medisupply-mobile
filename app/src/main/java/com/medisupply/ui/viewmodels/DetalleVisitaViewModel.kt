@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.medisupply.data.models.RegistroVisitaRequest
 import com.medisupply.data.models.VisitaDetalle
 import com.medisupply.data.repositories.VisitasRepository
 import kotlinx.coroutines.launch
@@ -23,6 +24,9 @@ class DetalleVisitaViewModel(
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
+
+    private val _cancelacionExitosa = MutableLiveData<Boolean>()
+    val cancelacionExitosa: LiveData<Boolean> = _cancelacionExitosa
 
     init {
         cargarDetalleVisita()
@@ -47,5 +51,24 @@ class DetalleVisitaViewModel(
 
     fun retry() {
         cargarDetalleVisita()
+    }
+
+    fun cancelarVisita(motivoConcatenado: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val request = RegistroVisitaRequest(
+                    detalle = motivoConcatenado,
+                    estado = "CANCELADA"
+                )
+                repository.registrarVisita(visitaId, request)
+                _cancelacionExitosa.value = true
+
+            } catch (e: Exception) {
+                _error.value = "Error al cancelar: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 }
