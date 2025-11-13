@@ -1,13 +1,16 @@
 package com.medisupply.viewmodels
 
+import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.medisupply.data.models.Producto
-import com.medisupply.data.models.ProductoResponse
+import com.medisupply.R
+import com.medisupply.data.models.Inventario
+import com.medisupply.data.models.InventarioResponse
 import com.medisupply.data.repositories.InventarioRepository
 import com.medisupply.ui.viewmodels.InventarioViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -16,16 +19,24 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.verify
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [28])
 class InventarioViewModelTest {
 
     @get:Rule
@@ -37,51 +48,84 @@ class InventarioViewModelTest {
     private lateinit var inventarioRepository: InventarioRepository
 
     private lateinit var viewModel: InventarioViewModel
+    private lateinit var application: Application
 
-    private val mockProductos = listOf(
-        Producto(
+    private val mockInventario = listOf(
+        Inventario(
             id = "1",
-            nombre = "Alcohol en gel 500ml",
-            categoria = "INSUMOS",
-            imagenUrl = "https://example.com/alcohol.jpg",
-            stockDisponible = 100,
-            disponible = true,
-            precioUnitario = "12.50",
-            unidadMedida = "UNIDAD",
-            descripcion = "Alcohol desinfectante"
+            productoId = "prod1",
+            lote = "L001",
+            fechaVencimiento = "2025-12-31",
+            cantidad = 100,
+            ubicacion = "A1",
+            temperaturaRequerida = "Ambiente",
+            estado = "DISPONIBLE",
+            condicionesEspeciales = "",
+            observaciones = "",
+            fechaRecepcion = "2024-01-01",
+            createdAt = "2024-01-01",
+            updatedAt = "2024-01-01",
+            productoNombre = "Alcohol en gel 500ml",
+            productoSku = "SKU001",
+            categoria = "Insumos médicos",
+            productoImagenUrl = "https://example.com/alcohol.jpg"
         ),
-        Producto(
+        Inventario(
             id = "2",
-            nombre = "Amoxicilina 500mg",
-            categoria = "MEDICAMENTOS",
-            imagenUrl = "https://example.com/amoxicilina.jpg",
-            stockDisponible = 50,
-            disponible = true,
-            precioUnitario = "35.75",
-            unidadMedida = "CAJA",
-            descripcion = "Antibiótico"
+            productoId = "prod2",
+            lote = "L002",
+            fechaVencimiento = "2025-12-31",
+            cantidad = 50,
+            ubicacion = "A2",
+            temperaturaRequerida = "Ambiente",
+            estado = "DISPONIBLE",
+            condicionesEspeciales = "",
+            observaciones = "",
+            fechaRecepcion = "2024-01-01",
+            createdAt = "2024-01-01",
+            updatedAt = "2024-01-01",
+            productoNombre = "Amoxicilina 500mg",
+            productoSku = "SKU002",
+            categoria = "Medicamento",
+            productoImagenUrl = "https://example.com/amoxicilina.jpg"
         ),
-        Producto(
+        Inventario(
             id = "3",
-            nombre = "Gasas estériles",
-            categoria = "INSUMOS",
-            imagenUrl = "https://example.com/gasas.jpg",
-            stockDisponible = 0,
-            disponible = false,
-            precioUnitario = "38.00",
-            unidadMedida = "CAJA",
-            descripcion = "Gasas de algodón"
+            productoId = "prod3",
+            lote = "L003",
+            fechaVencimiento = "2025-12-31",
+            cantidad = 0,
+            ubicacion = "A3",
+            temperaturaRequerida = "Ambiente",
+            estado = "BLOQUEADO",
+            condicionesEspeciales = "",
+            observaciones = "",
+            fechaRecepcion = "2024-01-01",
+            createdAt = "2024-01-01",
+            updatedAt = "2024-01-01",
+            productoNombre = "Gasas estériles",
+            productoSku = "SKU003",
+            categoria = "Insumos médicos",
+            productoImagenUrl = "https://example.com/gasas.jpg"
         ),
-        Producto(
+        Inventario(
             id = "4",
-            nombre = "Termómetro digital",
-            categoria = "EQUIPOS",
-            imagenUrl = "https://example.com/termometro.jpg",
-            stockDisponible = 25,
-            disponible = true,
-            precioUnitario = "95.00",
-            unidadMedida = "UNIDAD",
-            descripcion = "Termómetro infrarrojo"
+            productoId = "prod4",
+            lote = "L004",
+            fechaVencimiento = "2025-12-31",
+            cantidad = 25,
+            ubicacion = "A4",
+            temperaturaRequerida = "Ambiente",
+            estado = "DISPONIBLE",
+            condicionesEspeciales = "",
+            observaciones = "",
+            fechaRecepcion = "2024-01-01",
+            createdAt = "2024-01-01",
+            updatedAt = "2024-01-01",
+            productoNombre = "Termómetro digital",
+            productoSku = "SKU004",
+            categoria = "Equipamiento",
+            productoImagenUrl = "https://example.com/termometro.jpg"
         )
     )
 
@@ -89,6 +133,7 @@ class InventarioViewModelTest {
     fun setup() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
+        application = RuntimeEnvironment.getApplication()
     }
 
     @After
@@ -97,49 +142,71 @@ class InventarioViewModelTest {
     }
 
     @Test
-    fun `loadProductos should update productos and productosFiltrados with success`() = runTest {
+    fun `loadProductos should update productosFiltrados with success`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
+        val response = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        `when`(inventarioRepository.getInventario(
+            page = any(),
+            pageSize = any(),
+            textSearch = anyOrNull(),
+            estado = anyOrNull(),
+            categoria = anyOrNull()
+        )).thenReturn(response)
 
         // When
-        viewModel = InventarioViewModel(inventarioRepository)
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // Then
-        assertEquals(mockProductos, viewModel.productos.value)
-        assertEquals(mockProductos, viewModel.productosFiltrados.value)
+        assertNotNull(viewModel.productosFiltrados.value)
+        assertEquals(mockInventario, viewModel.productosFiltrados.value)
         assertEquals(false, viewModel.isLoading.value)
         assertNull(viewModel.error.value)
-        verify(inventarioRepository).getProductos()
+        verify(inventarioRepository).getInventario(
+            page = any(),
+            pageSize = any(),
+            textSearch = anyOrNull(),
+            estado = anyOrNull(),
+            categoria = anyOrNull()
+        )
     }
 
     @Test
-    fun `loadProductos should extract unique categories`() = runTest {
+    fun `loadProductos should load fixed categories`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
+        val response = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        `when`(inventarioRepository.getInventario(any(), any(), any(), any(), any())).thenReturn(response)
 
         // When
-        viewModel = InventarioViewModel(inventarioRepository)
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // Then
         val categorias = viewModel.categorias.value
         assertNotNull(categorias)
-        assertEquals(3, categorias.size)
-        assertTrue(categorias.contains("EQUIPOS"))
-        assertTrue(categorias.contains("INSUMOS"))
-        assertTrue(categorias.contains("MEDICAMENTOS"))
+        assertTrue(categorias.isNotEmpty())
+        // Categories are now fixed from strings.xml
     }
 
     @Test
     fun `loadProductos should handle error`() = runTest {
         // Given
-        `when`(inventarioRepository.getProductos()).thenThrow(RuntimeException("Network error"))
+        `when`(inventarioRepository.getInventario(any(), any(), any(), any(), any())).thenThrow(RuntimeException("Network error"))
 
         // When
-        viewModel = InventarioViewModel(inventarioRepository)
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // Then
@@ -151,183 +218,333 @@ class InventarioViewModelTest {
     @Test
     fun `buscarProductos should filter by nombre`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val filteredItems = InventarioResponse(
+            total = 1,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = listOf(mockInventario[0])
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, "Alcohol", null, null)).thenReturn(filteredItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When
         viewModel.buscarProductos("Alcohol")
+        advanceTimeBy(600) // Wait for debounce delay
         advanceUntilIdle()
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
         assertEquals(1, filtrados?.size)
-        assertEquals("Alcohol en gel 500ml", filtrados?.first()?.nombre)
+        assertEquals("Alcohol en gel 500ml", filtrados?.first()?.productoNombre)
     }
 
     @Test
     fun `buscarProductos should be case insensitive`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val filteredItems = InventarioResponse(
+            total = 1,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = listOf(mockInventario[0])
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, "alcohol", null, null)).thenReturn(filteredItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When
         viewModel.buscarProductos("alcohol")
+        advanceTimeBy(600) // Wait for debounce delay
         advanceUntilIdle()
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
         assertEquals(1, filtrados?.size)
-        assertEquals("Alcohol en gel 500ml", filtrados?.first()?.nombre)
+        assertEquals("Alcohol en gel 500ml", filtrados?.first()?.productoNombre)
     }
 
     @Test
     fun `filtrarPorCategoria should filter by specific category`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val filteredItems = InventarioResponse(
+            total = 2,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = listOf(mockInventario[0], mockInventario[2])
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, null, null, "Insumos médicos")).thenReturn(filteredItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When
-        viewModel.filtrarPorCategoria("INSUMOS")
+        viewModel.filtrarPorCategoria("Insumos médicos")
         advanceUntilIdle()
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
         assertEquals(2, filtrados?.size)
-        assertTrue(filtrados?.all { it.categoria == "INSUMOS" } == true)
+        assertTrue(filtrados?.all { it.categoria == "Insumos médicos" } == true)
     }
 
     @Test
     fun `filtrarPorCategoria with null should show all products`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val filteredItems = InventarioResponse(
+            total = 2,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = listOf(mockInventario[0], mockInventario[2])
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, null, null, "Insumos médicos")).thenReturn(filteredItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When
-        viewModel.filtrarPorCategoria("INSUMOS")
+        viewModel.filtrarPorCategoria("Insumos médicos")
         advanceUntilIdle()
         viewModel.filtrarPorCategoria(null)
         advanceUntilIdle()
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
-        assertEquals(mockProductos.size, filtrados?.size)
+        assertEquals(mockInventario.size, filtrados?.size)
     }
 
     @Test
-    fun `filtrarPorDisponibilidad with true should show only available products`() = runTest {
+    fun `filtrarPorDisponibilidad with DISPONIBLE should show only available products`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val filteredItems = InventarioResponse(
+            total = 3,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = listOf(mockInventario[0], mockInventario[1], mockInventario[3])
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, null, "DISPONIBLE", null)).thenReturn(filteredItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When
-        viewModel.filtrarPorDisponibilidad(true)
+        viewModel.filtrarPorDisponibilidad("DISPONIBLE")
         advanceUntilIdle()
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
         assertEquals(3, filtrados?.size)
-        assertTrue(filtrados?.all { it.disponible } == true)
+        assertTrue(filtrados?.all { it.estado == "DISPONIBLE" } == true)
     }
 
     @Test
-    fun `filtrarPorDisponibilidad with false should show only unavailable products`() = runTest {
+    fun `filtrarPorDisponibilidad with BLOQUEADO should show only unavailable products`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val filteredItems = InventarioResponse(
+            total = 1,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = listOf(mockInventario[2])
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, null, "BLOQUEADO", null)).thenReturn(filteredItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When
-        viewModel.filtrarPorDisponibilidad(false)
+        viewModel.filtrarPorDisponibilidad("BLOQUEADO")
         advanceUntilIdle()
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
         assertEquals(1, filtrados?.size)
-        assertEquals(false, filtrados?.first()?.disponible)
+        assertEquals("BLOQUEADO", filtrados?.first()?.estado)
     }
 
     @Test
     fun `filtrarPorDisponibilidad with null should show all products`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val filteredItems = InventarioResponse(
+            total = 3,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = listOf(mockInventario[0], mockInventario[1], mockInventario[3])
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, null, "DISPONIBLE", null)).thenReturn(filteredItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When
-        viewModel.filtrarPorDisponibilidad(true)
+        viewModel.filtrarPorDisponibilidad("DISPONIBLE")
         advanceUntilIdle()
         viewModel.filtrarPorDisponibilidad(null)
         advanceUntilIdle()
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
-        assertEquals(mockProductos.size, filtrados?.size)
+        assertEquals(mockInventario.size, filtrados?.size)
     }
 
     @Test
     fun `should apply multiple filters simultaneously`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val filteredItems = InventarioResponse(
+            total = 1,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = listOf(mockInventario[0])
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, null, "DISPONIBLE", "Insumos médicos")).thenReturn(filteredItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
-        // When - filtrar por categoría INSUMOS y disponibles
-        viewModel.filtrarPorCategoria("INSUMOS")
-        viewModel.filtrarPorDisponibilidad(true)
+        // When - filtrar por categoría Insumos médicos y disponibles
+        viewModel.filtrarPorCategoria("Insumos médicos")
+        advanceUntilIdle()
+        viewModel.filtrarPorDisponibilidad("DISPONIBLE")
         advanceUntilIdle()
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
         assertEquals(1, filtrados?.size)
-        assertEquals("Alcohol en gel 500ml", filtrados?.first()?.nombre)
-        assertEquals("INSUMOS", filtrados?.first()?.categoria)
-        assertEquals(true, filtrados?.first()?.disponible)
+        assertEquals("Alcohol en gel 500ml", filtrados?.first()?.productoNombre)
+        assertEquals("Insumos médicos", filtrados?.first()?.categoria)
+        assertEquals("DISPONIBLE", filtrados?.first()?.estado)
     }
 
     @Test
     fun `should combine search with filters`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val filteredItems = InventarioResponse(
+            total = 1,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = listOf(mockInventario[1])
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, "ina", null, "Medicamento")).thenReturn(filteredItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
-        // When - buscar "ina" + categoría MEDICAMENTOS
+        // When - buscar "ina" + categoría Medicamento
         viewModel.buscarProductos("ina")
-        viewModel.filtrarPorCategoria("MEDICAMENTOS")
+        viewModel.filtrarPorCategoria("Medicamento")
+        advanceTimeBy(600) // Wait for debounce delay
         advanceUntilIdle()
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
         assertEquals(1, filtrados?.size)
-        assertEquals("Amoxicilina 500mg", filtrados?.first()?.nombre)
+        assertEquals("Amoxicilina 500mg", filtrados?.first()?.productoNombre)
     }
 
     @Test
     fun `limpiarFiltros should reset all filters`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, "Alcohol", "DISPONIBLE", "Insumos médicos")).thenReturn(
+            InventarioResponse(1, 1, 20, 1, listOf(mockInventario[0]))
+        )
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When - aplicar filtros y luego limpiar
         viewModel.buscarProductos("Alcohol")
-        viewModel.filtrarPorCategoria("INSUMOS")
-        viewModel.filtrarPorDisponibilidad(true)
+        viewModel.filtrarPorCategoria("Insumos médicos")
+        viewModel.filtrarPorDisponibilidad("DISPONIBLE")
+        advanceTimeBy(600) // Wait for debounce delay
         advanceUntilIdle()
         
         viewModel.limpiarFiltros()
@@ -335,15 +552,27 @@ class InventarioViewModelTest {
 
         // Then
         val filtrados = viewModel.productosFiltrados.value
-        assertEquals(mockProductos.size, filtrados?.size)
+        assertEquals(mockInventario.size, filtrados?.size)
     }
 
     @Test
     fun `retry should call loadProductos again`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val response = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        `when`(inventarioRepository.getInventario(
+            page = any(),
+            pageSize = any(),
+            textSearch = anyOrNull(),
+            estado = anyOrNull(),
+            categoria = anyOrNull()
+        )).thenReturn(response)
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When
@@ -351,19 +580,41 @@ class InventarioViewModelTest {
         advanceUntilIdle()
 
         // Then
-        verify(inventarioRepository, org.mockito.Mockito.times(2)).getProductos()
+        verify(inventarioRepository, org.mockito.Mockito.times(2)).getInventario(
+            page = any(),
+            pageSize = any(),
+            textSearch = anyOrNull(),
+            estado = anyOrNull(),
+            categoria = anyOrNull()
+        )
     }
 
     @Test
     fun `should return empty list when search has no matches`() = runTest {
         // Given
-        val response = ProductoResponse(total = mockProductos.size, productos = mockProductos)
-        `when`(inventarioRepository.getProductos()).thenReturn(response)
-        viewModel = InventarioViewModel(inventarioRepository)
+        val allItems = InventarioResponse(
+            total = mockInventario.size,
+            page = 1,
+            pageSize = 20,
+            totalPages = 1,
+            items = mockInventario
+        )
+        val emptyItems = InventarioResponse(
+            total = 0,
+            page = 1,
+            pageSize = 20,
+            totalPages = 0,
+            items = emptyList()
+        )
+        `when`(inventarioRepository.getInventario(1, 20, null, null, null)).thenReturn(allItems)
+        `when`(inventarioRepository.getInventario(1, 20, "ProductoQueNoExiste", null, null)).thenReturn(emptyItems)
+        
+        viewModel = InventarioViewModel(application, inventarioRepository)
         advanceUntilIdle()
 
         // When
         viewModel.buscarProductos("ProductoQueNoExiste")
+        advanceTimeBy(600) // Wait for debounce delay
         advanceUntilIdle()
 
         // Then

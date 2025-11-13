@@ -107,7 +107,7 @@ class InventarioFragmentTest {
 
         // Then - verificamos que el diálogo se abre
         onView(withText(R.string.todos)).check(matches(isDisplayed()))
-        onView(withText(R.string.disponibles)).check(matches(isDisplayed()))
+        onView(withText(R.string.disponible)).check(matches(isDisplayed()))
     }
 
     @Test
@@ -209,12 +209,12 @@ class InventarioFragmentTest {
         // When - filtramos por disponibles
         onView(withId(R.id.btn_disponibilidad)).perform(click())
         Thread.sleep(300)
-        onView(withText(R.string.disponibles)).perform(click())
+        onView(withText(R.string.disponible)).perform(click())
         Thread.sleep(500)
 
         // Then - el botón debería mostrar "Disponibles"
         onView(withId(R.id.btn_disponibilidad))
-            .check(matches(withText(R.string.disponibles)))
+            .check(matches(withText(R.string.disponible)))
     }
 
     @Test
