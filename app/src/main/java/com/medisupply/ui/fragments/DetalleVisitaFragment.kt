@@ -77,6 +77,15 @@ class DetalleVisitaFragment : Fragment() {
         return binding.root
     }
 
+    private fun limpiarDireccion(direccionCompleta: String?): String {
+        if (direccionCompleta.isNullOrEmpty()) return "N/A"
+        val partes = direccionCompleta.split(",")
+        if (partes.size > 2) {
+            return partes.subList(2, partes.size).joinToString(",")
+        }
+        return direccionCompleta
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -144,7 +153,8 @@ class DetalleVisitaFragment : Fragment() {
         binding.textNombreInstitucionHeader.text = visita.nombreInstitucion
         binding.textHoraVisitaHeader.text = formatHora(visita.fechaVisitaProgramada)
         setupFila(binding.rowNombre, "Nombre", visita.nombreInstitucion)
-        setupFila(binding.rowDireccion, "Dirección", visita.direccion)
+        val dirLimp = limpiarDireccion(visita.direccion)
+        setupFila(binding.rowDireccion, "Dirección", dirLimp)
         setupFila(binding.rowContacto, "Contacto", visita.clienteContacto ?: "N/A")
         setupFila(binding.rowProductos, "Productos Preferidos", "N/A")
         setupFila(binding.rowTiempo, "Tiempo de Desplazamiento", "N/A")

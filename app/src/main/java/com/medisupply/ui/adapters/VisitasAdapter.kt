@@ -35,7 +35,8 @@ class VisitasAdapter(
 
         fun bind(visita: RutaVisitaItem, onItemClicked: (RutaVisitaItem) -> Unit) {
             binding.textNombreCliente.text = visita.nombre
-            binding.textDireccionCliente.text = visita.direccion
+            val dirLimp = limpiarDireccion(visita.direccion)
+            binding.textDireccionCliente.text = dirLimp
             binding.textHoraVisita.text = visita.horaDeLaCita
 
             // --- Lógica para el ESTADO ---
@@ -66,6 +67,15 @@ class VisitasAdapter(
             binding.root.setOnClickListener {
                 onItemClicked(visita)
             }
+        }
+
+        private fun limpiarDireccion(direccionCompleta: String?): String {
+            if (direccionCompleta.isNullOrEmpty()) return "N/A"
+            val partes = direccionCompleta.split(",")
+            if (partes.size > 2) {
+                return partes.subList(2, partes.size).joinToString(",")
+            }
+            return direccionCompleta
         }
     }
 
