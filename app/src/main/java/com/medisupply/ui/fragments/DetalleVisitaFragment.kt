@@ -84,8 +84,9 @@ class DetalleVisitaFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-        binding.toolbarDetalle.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
-        binding.toolbarDetalle.setNavigationOnClickListener { parentFragmentManager.popBackStack() }
+        binding.btnBack.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     private fun setupObservers() {
