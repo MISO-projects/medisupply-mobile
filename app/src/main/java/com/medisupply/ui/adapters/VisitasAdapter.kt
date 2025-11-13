@@ -48,9 +48,9 @@ class VisitasAdapter(
                     binding.textEstado.text = "PENDIENTE"
                     binding.textEstado.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_pendiente)
                 }
-                "TOMADA" -> {
-                    binding.textEstado.text = "TOMADA"
-                    binding.textEstado.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_tomada)
+                "REALIZADA" -> {
+                    binding.textEstado.text = "REALIZADA"
+                    binding.textEstado.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_realizada)
                 }
                 "CANCELADA" -> {
                     binding.textEstado.text = "CANCELADA"

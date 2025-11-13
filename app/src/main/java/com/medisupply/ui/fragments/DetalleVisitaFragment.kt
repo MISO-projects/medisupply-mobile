@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener // <-- Importante
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.medisupply.R
 import com.medisupply.data.models.VisitaDetalle
@@ -141,6 +141,9 @@ class DetalleVisitaFragment : Fragment() {
         setupFila(binding.rowProductos, "Productos Preferidos", "N/A")
         setupFila(binding.rowTiempo, "Tiempo de Desplazamiento", "N/A")
         setupFila(binding.rowNotas, "Notas de Visita anterior", visita.detalle ?: "N/A")
+
+        val esPendiente = visita.estado == "PENDIENTE"
+        binding.layoutBotones.isVisible = esPendiente
     }
 
     private fun setupFila(filaBinding: ItemDetalleFilaBinding, label: String, value: String) {
