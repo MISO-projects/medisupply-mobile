@@ -5,6 +5,7 @@ import com.medisupply.data.models.Cliente
 import com.medisupply.data.models.ClienteRequest
 import com.medisupply.data.models.ClientesAsignadosResponse
 import com.medisupply.data.models.CrearPedidoResponse
+import com.medisupply.data.models.EntregasProgramadasResponse
 import com.medisupply.data.models.InventarioResponse
 import com.medisupply.data.models.ListarPedidosResponse
 import com.medisupply.data.models.ListarPedidosResumenClienteResponse
@@ -70,4 +71,12 @@ interface ApiService {
     @POST("clientes/") suspend fun crearCliente(@Body cliente: ClienteRequest): Response<Cliente>
 
     @GET("visitas/rutas-del-dia") suspend fun getRutasDelDia(@Query("fecha") fecha: String, @Query("vendedor_id") vendedorId: String): List<RutaVisitaItem>
+
+    @GET("movil/ordenes/mis-entregas-programadas")
+    suspend fun getMisEntregasProgramadas(
+        @Query("estado_parada") estadoParada: String? = null,
+        @Query("estado_ruta") estadoRuta: String? = null,
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 20
+    ): EntregasProgramadasResponse
 }
