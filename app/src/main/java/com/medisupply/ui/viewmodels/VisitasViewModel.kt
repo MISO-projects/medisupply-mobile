@@ -26,29 +26,26 @@ class VisitasViewModel(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    // --- LiveData para la fecha seleccionada ---
     private val _selectedDate = MutableLiveData<Date>()
     val selectedDate: LiveData<Date> = _selectedDate
 
     private val apiDateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     init {
-        seleccionarFecha(Calendar.getInstance().time)
+        _selectedDate.value = Calendar.getInstance().time
     }
 
     /**
      * Función pública para que el Fragment actualice la fecha.
-     * Esto actualizará el LiveData y disparará la carga de rutas.
      */
     fun seleccionarFecha(date: Date) {
         _selectedDate.value = date
-        cargarRutasParaFechaSeleccionada()
     }
 
     /**
-     * Función genérica que carga rutas para la fecha guardada en _selectedDate.
+     * Función que carga rutas. Acepta lat/lon opcionales.
      */
-    private fun cargarRutasParaFechaSeleccionada() {
+    fun cargarRutasParaFechaSeleccionada(lat: Double?, lon: Double?) {
         val dateToLoad = _selectedDate.value ?: return // No hacer nada si no hay fecha
 
         viewModelScope.launch {
@@ -65,7 +62,7 @@ class VisitasViewModel(
                 }
 
                 val fechaFormateada = apiDateFormatter.format(dateToLoad)
-                val resultado = repository.getRutasDelDia(fechaFormateada, vendedorId)
+                val resultado = repository.getRutasDelDia(fechaFormateada, vendedorId, lat, lon)
                 _rutas.value = resultado
 
             } catch (e: IOException) {
@@ -81,6 +78,6 @@ class VisitasViewModel(
     }
 
     fun retry() {
-        cargarRutasParaFechaSeleccionada()
+        cargarRutasParaFechaSeleccionada(null, null)
     }
 }

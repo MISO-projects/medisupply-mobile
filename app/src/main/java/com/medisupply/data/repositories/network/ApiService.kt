@@ -62,7 +62,13 @@ interface ApiService {
 
     @POST("clientes/") suspend fun crearCliente(@Body cliente: ClienteRequest): Response<Cliente>
 
-    @GET("visitas/rutas-del-dia/") suspend fun getRutasDelDia(@Query("fecha") fecha: String, @Query("vendedor_id") vendedorId: String): List<RutaVisitaItem>
+    @GET("visitas/rutas-del-dia/")
+    suspend fun getRutasDelDia(
+        @Query("fecha") fecha: String,
+        @Query("vendedor_id") vendedorId: String,
+        @Query("lat_actual") lat: Double?,
+        @Query("lon_actual") lon: Double?
+    ): List<RutaVisitaItem>
 
     @GET("visitas/{id}")
     suspend fun getVisitaById(@Path("id") id: String): VisitaDetalle

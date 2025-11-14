@@ -15,9 +15,18 @@ class VisitasRepository(private val apiService: ApiService) {
     /**
      * Obtiene la lista de rutas de visita desde el BFF
      */
-    suspend fun getRutasDelDia(fecha: String, vendedorId: String): List<RutaVisitaItem> {
-        // En un futuro, aquí puedes añadir lógica de caché
-        return apiService.getRutasDelDia(fecha, vendedorId)
+    suspend fun getRutasDelDia(
+        fecha: String,
+        vendedorId: String,
+        lat: Double?,
+        lon: Double?
+    ): List<RutaVisitaItem> {
+        return apiService.getRutasDelDia(
+            fecha = fecha,
+            vendedorId = vendedorId,
+            lat = lat,
+            lon = lon
+        )
     }
 
     suspend fun getVisitaById(id: String): VisitaDetalle {

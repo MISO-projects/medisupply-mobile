@@ -99,4 +99,7 @@
     <string name="no_hay_visitas_programadas">No hay visitas programadas</string>
     <string name="icono_de_visita">icono_de_visita</string>
 
+    <string name="formato_tiempo_viaje_primero">a %1$s de tu ubicación</string>
+    <string name="formato_tiempo_viaje_siguiente">a %1$s de %2$s</string>
+
 </resources>
