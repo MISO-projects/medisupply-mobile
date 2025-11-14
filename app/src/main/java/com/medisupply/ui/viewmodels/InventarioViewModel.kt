@@ -37,6 +37,7 @@ class InventarioViewModel(
     private var textoBusqueda: String = ""
     
     private var searchJob: Job? = null
+    private var hasLoadedData = false
     
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY_MS = 500L // 500ms de delay para debounce
@@ -50,10 +51,6 @@ class InventarioViewModel(
             R.string.categoria_reactivos,
             R.string.categoria_otros
         )
-    }
-
-    init {
-        loadProductos()
     }
 
     /**
@@ -81,6 +78,7 @@ class InventarioViewModel(
                 
                 // Actualizar productos filtrados con la respuesta del backend
                 _productosFiltrados.value = response.items
+                hasLoadedData = true
                 
             } catch (e: Exception) {
                 _error.value = "Error al cargar productos: ${e.message}"
@@ -88,6 +86,17 @@ class InventarioViewModel(
                 _isLoading.value = false
             }
         }
+    }
+    
+    fun loadProductosIfNeeded() {
+        if (!hasLoadedData) {
+            loadProductos()
+        }
+    }
+    
+    fun hasDataLoaded(): Boolean {
+        val hasData = hasLoadedData || (productosFiltrados.value != null && productosFiltrados.value!!.isNotEmpty())
+        return hasData
     }
 
     /**

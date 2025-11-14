@@ -41,7 +41,11 @@ class ProductosAdapterTest {
             productoNombre = "Alcohol en gel 500ml",
             productoSku = "SKU001",
             categoria = "Insumos médicos",
-            productoImagenUrl = "https://example.com/alcohol.jpg"
+            productoImagenUrl = "https://example.com/alcohol.jpg",
+            productoUnidadMedida = "ml",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "5.50",
+            productoDescripcion = "Alcohol en gel para desinfección de manos"
         ),
         Inventario(
             id = "2",
@@ -60,7 +64,11 @@ class ProductosAdapterTest {
             productoNombre = "Amoxicilina 500mg",
             productoSku = "SKU002",
             categoria = "Medicamento",
-            productoImagenUrl = "https://example.com/amoxicilina.jpg"
+            productoImagenUrl = "https://example.com/amoxicilina.jpg",
+            productoUnidadMedida = "tableta",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "12.00",
+            productoDescripcion = "Antibiótico de amplio espectro"
         ),
         Inventario(
             id = "3",
@@ -79,7 +87,11 @@ class ProductosAdapterTest {
             productoNombre = "Gasas estériles",
             productoSku = "SKU003",
             categoria = "Insumos médicos",
-            productoImagenUrl = "https://example.com/gasas.jpg"
+            productoImagenUrl = "https://example.com/gasas.jpg",
+            productoUnidadMedida = "unidad",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "3.25",
+            productoDescripcion = "Gasas estériles para uso médico"
         )
     )
 

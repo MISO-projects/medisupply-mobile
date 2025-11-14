@@ -68,7 +68,11 @@ class InventarioViewModelTest {
             productoNombre = "Alcohol en gel 500ml",
             productoSku = "SKU001",
             categoria = "Insumos médicos",
-            productoImagenUrl = "https://example.com/alcohol.jpg"
+            productoImagenUrl = "https://example.com/alcohol.jpg",
+            productoUnidadMedida = "ml",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "5.50",
+            productoDescripcion = "Alcohol en gel para desinfección de manos"
         ),
         Inventario(
             id = "2",
@@ -87,7 +91,11 @@ class InventarioViewModelTest {
             productoNombre = "Amoxicilina 500mg",
             productoSku = "SKU002",
             categoria = "Medicamento",
-            productoImagenUrl = "https://example.com/amoxicilina.jpg"
+            productoImagenUrl = "https://example.com/amoxicilina.jpg",
+            productoUnidadMedida = "tableta",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "12.00",
+            productoDescripcion = "Antibiótico de amplio espectro"
         ),
         Inventario(
             id = "3",
@@ -106,7 +114,11 @@ class InventarioViewModelTest {
             productoNombre = "Gasas estériles",
             productoSku = "SKU003",
             categoria = "Insumos médicos",
-            productoImagenUrl = "https://example.com/gasas.jpg"
+            productoImagenUrl = "https://example.com/gasas.jpg",
+            productoUnidadMedida = "unidad",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "3.25",
+            productoDescripcion = "Gasas estériles para uso médico"
         ),
         Inventario(
             id = "4",
@@ -125,7 +137,11 @@ class InventarioViewModelTest {
             productoNombre = "Termómetro digital",
             productoSku = "SKU004",
             categoria = "Equipamiento",
-            productoImagenUrl = "https://example.com/termometro.jpg"
+            productoImagenUrl = "https://example.com/termometro.jpg",
+            productoUnidadMedida = "unidad",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "25.00",
+            productoDescripcion = "Termómetro digital para medición de temperatura"
         )
     )
 
@@ -161,6 +177,7 @@ class InventarioViewModelTest {
 
         // When
         viewModel = InventarioViewModel(application, inventarioRepository)
+        viewModel.loadProductosIfNeeded()
         advanceUntilIdle()
 
         // Then
@@ -191,6 +208,7 @@ class InventarioViewModelTest {
 
         // When
         viewModel = InventarioViewModel(application, inventarioRepository)
+        viewModel.loadProductosIfNeeded()
         advanceUntilIdle()
 
         // Then
@@ -207,6 +225,7 @@ class InventarioViewModelTest {
 
         // When
         viewModel = InventarioViewModel(application, inventarioRepository)
+        viewModel.loadProductosIfNeeded()
         advanceUntilIdle()
 
         // Then
@@ -573,6 +592,7 @@ class InventarioViewModelTest {
             categoria = anyOrNull()
         )).thenReturn(response)
         viewModel = InventarioViewModel(application, inventarioRepository)
+        viewModel.loadProductosIfNeeded()
         advanceUntilIdle()
 
         // When

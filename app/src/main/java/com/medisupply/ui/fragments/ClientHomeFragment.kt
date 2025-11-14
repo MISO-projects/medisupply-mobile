@@ -57,7 +57,7 @@ class ClientHomeFragment : Fragment() {
     private fun setupBottomNavigation() {
         binding.navInventario.setOnClickListener {
             if (currentSelectedTab != R.id.nav_inventario) {
-                showFragment(InventarioClienteFragment())
+                showFragment(InventarioFragment())
                 updateTabSelection(R.id.nav_inventario)
             }
         }

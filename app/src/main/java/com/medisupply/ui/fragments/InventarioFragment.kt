@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.medisupply.R
 import com.medisupply.data.repositories.InventarioRepository
@@ -25,8 +25,17 @@ class InventarioFragment : Fragment() {
     private var _binding: FragmentInventarioBinding? = null
     private val binding get() = _binding!!
     
-    private lateinit var viewModel: InventarioViewModel
     private lateinit var productosAdapter: ProductosAdapter
+    private var hasAttemptedInitialLoad = false
+
+    private val viewModel: InventarioViewModel by viewModels {
+        val apiService = NetworkServiceAdapter.getApiService()
+        val repository = InventarioRepository(apiService)
+        InventarioViewModelFactory(
+            requireContext().applicationContext as android.app.Application,
+            repository
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,23 +49,17 @@ class InventarioFragment : Fragment() {
             false
         )
 
-        setupViewModel()
         setupRecyclerView()
         setupSearchBar()
         setupFilterButtons()
         observeViewModel()
+        
+        if (!hasAttemptedInitialLoad && !viewModel.hasDataLoaded()) {
+            hasAttemptedInitialLoad = true
+            viewModel.loadProductosIfNeeded()
+        }
 
         return binding.root
-    }
-
-    private fun setupViewModel() {
-        val apiService = NetworkServiceAdapter.getApiService()
-        val repository = InventarioRepository(apiService)
-        val factory = InventarioViewModelFactory(
-            requireContext().applicationContext as android.app.Application,
-            repository
-        )
-        viewModel = ViewModelProvider(this, factory)[InventarioViewModel::class.java]
     }
 
     private fun setupRecyclerView() {
@@ -72,6 +75,16 @@ class InventarioFragment : Fragment() {
             adapter = productosAdapter
             layoutManager = LinearLayoutManager(context)
         }
+        
+        // Setup SwipeRefreshLayout
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.retry()
+        }
+        
+        binding.swipeRefreshLayout.setColorSchemeResources(
+            R.color.md_theme_light_primary,
+            R.color.md_theme_light_secondary
+        )
     }
 
     private fun setupSearchBar() {
@@ -169,9 +182,20 @@ class InventarioFragment : Fragment() {
 
         // Observar estado de carga
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.loadingProgressBar.isVisible = isLoading
-            binding.productosRecyclerView.isVisible = !isLoading
-            binding.errorView.isVisible = false
+            if (isLoading) {
+                val hasData = viewModel.productosFiltrados.value?.isNotEmpty() == true
+                if (hasData) {
+                    binding.swipeRefreshLayout.isRefreshing = true
+                    binding.loadingProgressBar.isVisible = false
+                } else {
+                    binding.loadingProgressBar.isVisible = true
+                    binding.swipeRefreshLayout.isRefreshing = false
+                }
+            } else {
+                binding.loadingProgressBar.isVisible = false
+                binding.swipeRefreshLayout.isRefreshing = false
+                binding.productosRecyclerView.isVisible = true
+            }
         }
 
         // Observar errores
@@ -183,6 +207,10 @@ class InventarioFragment : Fragment() {
                 binding.loadingProgressBar.isVisible = false
             } else {
                 binding.errorView.isVisible = false
+                val productos = viewModel.productosFiltrados.value
+                if (productos != null && productos.isNotEmpty()) {
+                    binding.productosRecyclerView.isVisible = true
+                }
             }
         }
 
