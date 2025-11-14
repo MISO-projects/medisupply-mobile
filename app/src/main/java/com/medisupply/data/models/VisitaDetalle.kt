@@ -13,6 +13,17 @@ data class NotaVisita(
     val detalle: String?
 )
 
+data class ProductoPreferido(
+    @SerializedName("id_producto")
+    val idProducto: String,
+
+    @SerializedName("nombre")
+    val nombre: String,
+
+    @SerializedName("cantidad_total")
+    val cantidadTotal: Int
+)
+
 /**
  * Representa la respuesta JSON del endpoint: /visitas/{id}
  */
@@ -45,5 +56,8 @@ data class VisitaDetalle(
     val direccion: String,
 
     @SerializedName("notas_visitas_anteriores")
-    val notasVisitasAnteriores: List<NotaVisita>? = null
+    val notasVisitasAnteriores: List<NotaVisita>? = null,
+
+    @SerializedName("productos_preferidos")
+    val productosPreferidos: List<ProductoPreferido>? = null
 )

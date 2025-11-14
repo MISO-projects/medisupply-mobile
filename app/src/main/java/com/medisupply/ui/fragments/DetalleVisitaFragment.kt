@@ -180,7 +180,18 @@ class DetalleVisitaFragment : Fragment() {
         val dirLimp = limpiarDireccion(visita.direccion)
         setupFila(binding.rowDireccion, "Dirección", dirLimp)
         setupFila(binding.rowContacto, "Contacto", visita.clienteContacto ?: "N/A")
-        setupFila(binding.rowProductos, "Productos Preferidos", "N/A")
+        val productosTexto: String
+        if (visita.productosPreferidos?.isNotEmpty() == true) {
+            val builder = StringBuilder()
+            for (producto in visita.productosPreferidos) {
+                // Formato: "• Producto (10 unidades) " (${producto.cantidadTotal} unidades)
+                builder.append("• ${producto.nombre} \n")
+            }
+            productosTexto = builder.trim().toString()
+        } else {
+            productosTexto = "N/A"
+        }
+        setupFila(binding.rowProductos, "Sugerencia de productos:", productosTexto)
         setupFila(binding.rowTiempo, "Tiempo de Desplazamiento", "N/A")
 
         val notasTexto: String
@@ -204,7 +215,7 @@ class DetalleVisitaFragment : Fragment() {
 
         val esPendiente = visita.estado == "PENDIENTE"
         binding.layoutBotones.isVisible = esPendiente
-/*
+
         val coordenadas = obtenerCoordenadas(visita.direccion)
 
         if (coordenadas != null) {
@@ -238,7 +249,7 @@ class DetalleVisitaFragment : Fragment() {
         } else {
             // Si no hay coordenadas o son inválidas, ocultamos el mapa
             binding.mapCardView.isVisible = false
-        }*/
+        }
     }
 
     private fun setupFila(filaBinding: ItemDetalleFilaBinding, label: String, value: String) {
