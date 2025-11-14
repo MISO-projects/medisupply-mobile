@@ -104,4 +104,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.contrib)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.rules)
+
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 }

@@ -1,5 +1,6 @@
 package com.medisupply.ui.fragments
-
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.medisupply.R
 import com.medisupply.data.models.VisitaDetalle
 import com.medisupply.data.repositories.VisitasRepository
@@ -38,6 +43,7 @@ class DetalleVisitaFragment : Fragment() {
         timeZone = TimeZone.getTimeZone("UTC")
     }
     private val timeFormatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
+    private val notaDateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
     companion object {
         private const val ARG_VISITA_ID = "visita_id"
@@ -75,6 +81,24 @@ class DetalleVisitaFragment : Fragment() {
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detalle_visita, container, false)
         return binding.root
+    }
+
+    private fun obtenerCoordenadas(direccionCompleta: String?): LatLng? {
+        if (direccionCompleta.isNullOrEmpty()) return null
+
+        try {
+            val partes = direccionCompleta.split(",")
+            if (partes.size >= 2) {
+                val lat = partes[0].trim().toDouble()
+                val lng = partes[1].trim().toDouble()
+
+                return LatLng(lat, lng)
+            }
+        } catch (e: Exception) {
+            // Si falla el parseo (ej: era "NA", texto basura o formato incorrecto) retornamos null
+            return null
+        }
+        return null
     }
 
     private fun limpiarDireccion(direccionCompleta: String?): String {
@@ -158,10 +182,63 @@ class DetalleVisitaFragment : Fragment() {
         setupFila(binding.rowContacto, "Contacto", visita.clienteContacto ?: "N/A")
         setupFila(binding.rowProductos, "Productos Preferidos", "N/A")
         setupFila(binding.rowTiempo, "Tiempo de Desplazamiento", "N/A")
-        setupFila(binding.rowNotas, "Notas de Visita anterior", visita.detalle ?: "N/A")
+
+        val notasTexto: String
+        if (visita.notasVisitasAnteriores?.isNotEmpty() == true) {
+
+            val notasBuilder = StringBuilder()
+
+            for (nota in visita.notasVisitasAnteriores) {
+                val fechaFormateada = formatNotaFecha(nota.fechaVisitaProgramada)
+
+                notasBuilder.append("• $fechaFormateada: ")
+                notasBuilder.append(nota.detalle ?: "Sin detalle")
+                notasBuilder.append("\n") // Salto de línea
+            }
+            notasTexto = notasBuilder.trim().toString()
+        } else {
+            notasTexto = visita.detalle ?: "N/A"
+        }
+
+        setupFila(binding.rowNotas, "Notas de Visita anterior", notasTexto)
 
         val esPendiente = visita.estado == "PENDIENTE"
         binding.layoutBotones.isVisible = esPendiente
+/*
+        val coordenadas = obtenerCoordenadas(visita.direccion)
+
+        if (coordenadas != null) {
+            // 1. Hacemos visible el contenedor del mapa
+            binding.mapCardView.isVisible = true
+
+            // 2. Obtenemos el fragmento del mapa y cargamos la ubicación
+            val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
+
+            mapFragment?.getMapAsync { googleMap ->
+                // Configuración básica del mapa
+                googleMap.uiSettings.isMapToolbarEnabled = false // Quitamos botones de Google por diseño limpio
+
+                // Agregar marcador
+                googleMap.addMarker(MarkerOptions().position(coordenadas).title(visita.nombreInstitucion))
+
+                // Mover cámara
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordenadas, 15f))
+
+                // Tipo de mapa (opcional)
+                googleMap.mapType = com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL
+            }
+
+            // 3. (Opcional) Click en el mapa para abrir Google Maps / Waze
+            view?.findViewById<View>(R.id.map_overlay_click)?.setOnClickListener {
+                val uri = "geo:${coordenadas.latitude},${coordenadas.longitude}?q=${coordenadas.latitude},${coordenadas.longitude}(${visita.nombreInstitucion})"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                startActivity(intent)
+            }
+
+        } else {
+            // Si no hay coordenadas o son inválidas, ocultamos el mapa
+            binding.mapCardView.isVisible = false
+        }*/
     }
 
     private fun setupFila(filaBinding: ItemDetalleFilaBinding, label: String, value: String) {
@@ -175,5 +252,13 @@ class DetalleVisitaFragment : Fragment() {
             val date = isoFormatter.parse(isoDate)
             date?.let { timeFormatter.format(it) } ?: "N/A"
         } catch (e: Exception) { "N/A" }
+    }
+
+    private fun formatNotaFecha(isoDate: String?): String {
+        if (isoDate.isNullOrEmpty()) return "Fecha inv."
+        return try {
+            val date = isoFormatter.parse(isoDate)
+            date?.let { notaDateFormatter.format(it) } ?: "Fecha inv."
+        } catch (e: Exception) { "Fecha inv." }
     }
 }

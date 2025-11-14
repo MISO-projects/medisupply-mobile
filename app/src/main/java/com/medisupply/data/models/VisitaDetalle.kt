@@ -3,6 +3,17 @@ package com.medisupply.data.models
 import com.google.gson.annotations.SerializedName
 
 /**
+ * Modelo para la lista anidada de notas anteriores
+ */
+data class NotaVisita(
+    @SerializedName("fecha_visita_programada")
+    val fechaVisitaProgramada: String,
+
+    @SerializedName("detalle")
+    val detalle: String?
+)
+
+/**
  * Representa la respuesta JSON del endpoint: /visitas/{id}
  */
 data class VisitaDetalle(
@@ -22,7 +33,7 @@ data class VisitaDetalle(
     val vendedorId: String,
 
     @SerializedName("detalle")
-    val detalle: String?, // sería "Notas de Visita anterior"
+    val detalle: String?,
 
     @SerializedName("estado")
     val estado: String,
@@ -31,8 +42,8 @@ data class VisitaDetalle(
     val nombreInstitucion: String,
 
     @SerializedName("direccion")
-    val direccion: String
-    // Faltan campos del UI:
-    // - "Productos Preferidos"
-    // - "Tiempo de Desplazamiento"
+    val direccion: String,
+
+    @SerializedName("notas_visitas_anteriores")
+    val notasVisitasAnteriores: List<NotaVisita>? = null
 )
