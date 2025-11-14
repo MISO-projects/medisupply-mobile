@@ -61,7 +61,11 @@ class InventarioFragment : Fragment() {
 
     private fun setupRecyclerView() {
         productosAdapter = ProductosAdapter { producto ->
-            // TODO: Manejar click en producto
+            val detailFragment = DetalleInventarioFragment.newInstance(producto)
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, detailFragment)
+                .addToBackStack(null)
+                .commit()
         }
 
         binding.productosRecyclerView.apply {

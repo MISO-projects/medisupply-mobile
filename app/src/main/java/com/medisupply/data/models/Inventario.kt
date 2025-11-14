@@ -1,6 +1,7 @@
 package com.medisupply.data.models
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Inventario(
     @SerializedName("id")
@@ -52,8 +53,20 @@ data class Inventario(
     val categoria: String,
 
     @SerializedName("producto_imagen_url")
-    val productoImagenUrl: String
-)
+    val productoImagenUrl: String,
+
+    @SerializedName("producto_unidad_medida")
+    val productoUnidadMedida: String,
+
+    @SerializedName("producto_tipo_almacenamiento")
+    val productoTipoAlmacenamiento: String,
+
+    @SerializedName("producto_precio_unitario")
+    val productoPrecioUnitario: String,
+
+    @SerializedName("producto_descripcion")
+    val productoDescripcion: String,
+) : Serializable
 
 data class InventarioResponse(
     @SerializedName("total")
