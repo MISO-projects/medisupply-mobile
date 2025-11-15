@@ -1,10 +1,12 @@
 package com.medisupply.data.repositories.network
 
+import android.icu.text.StringSearch
 import com.medisupply.data.models.Cliente
 import com.medisupply.data.models.ClienteRequest
 import com.medisupply.data.models.ClientesAsignadosResponse
 import com.medisupply.data.models.CrearPedidoResponse
 import com.medisupply.data.models.EntregasProgramadasResponse
+import com.medisupply.data.models.InventarioResponse
 import com.medisupply.data.models.ListarPedidosResponse
 import com.medisupply.data.models.ListarPedidosResumenClienteResponse
 import com.medisupply.data.models.LoginRequest
@@ -33,8 +35,17 @@ interface ApiService {
 
     @GET("clientes/asignados") suspend fun getClientesAsignados(): ClientesAsignadosResponse
 
-    @GET("productos/disponibles/")
+    @GET("productos/disponibles")
     suspend fun getProductos(@Query("nombre") nombre: String? = null): ProductoResponse
+
+    @GET("inventario/")
+    suspend fun getInventario(
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 10,
+        @Query("text_search") textSearch: String? = null,
+        @Query("estado") estado: String? = null,
+        @Query("categoria") categoria: String? = null,
+    ): InventarioResponse
 
     @GET("ordenes/") suspend fun getPedidos(): ListarPedidosResponse
 
@@ -82,7 +93,6 @@ interface ApiService {
         @Path("id") visitaId: String,
         @Body body: RegistroVisitaRequest
     ): Response<VisitaDetalle>
-
     @GET("movil/ordenes/mis-entregas-programadas")
     suspend fun getMisEntregasProgramadas(
         @Query("estado_parada") estadoParada: String? = null,

@@ -17,12 +17,21 @@
     <string name="cargando_productos">Cargando productos…</string>
     <string name="no_hay_productos">No hay productos disponibles</string>
     <string name="todos">Todos</string>
-    <string name="disponibles">Disponibles</string>
-    <string name="no_disponibles">No disponibles</string>
+    <string name="disponible">Disponible</string>
+    <string name="bloqueado">Bloqueado</string>
+    <string name="en_revision">En Revision</string>
     <string name="categoria_todos">Todas las categorías</string>
     <string name="categoria_medicamentos">Medicamentos</string>
     <string name="categoria_insumos">Insumos</string>
     <string name="categoria_equipos">Equipos</string>
+    <string name="categoria_medicamento">Medicamento</string>
+    <string name="categoria_insumos_medicos">Insumos médicos</string>
+    <string name="categoria_equipamiento">Equipamiento</string>
+    <string name="categoria_dispositivos">Dispositivos</string>
+    <string name="categoria_consumibles">Consumibles</string>
+    <string name="categoria_material_quirurgico">Material quirúrgico</string>
+    <string name="categoria_reactivos">Reactivos</string>
+    <string name="categoria_otros">Otros</string>
 
     <!-- Login -->
     <string name="email">Correo electrónico</string>

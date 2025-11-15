@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.medisupply.data.models.Producto
+import com.medisupply.data.models.Inventario
 import com.medisupply.ui.adapters.ProductosAdapter
 import org.junit.Before
 import org.junit.Test
@@ -21,48 +21,84 @@ import kotlin.test.assertNotNull
 class ProductosAdapterTest {
 
     private lateinit var adapter: ProductosAdapter
-    private var clickedProducto: Producto? = null
+    private var clickedInventario: Inventario? = null
 
-    private val mockProductos = listOf(
-        Producto(
+    private val mockInventario = listOf(
+        Inventario(
             id = "1",
-            nombre = "Alcohol en gel 500ml",
-            categoria = "INSUMOS",
-            imagenUrl = "https://example.com/alcohol.jpg",
-            stockDisponible = 100,
-            disponible = true,
-            precioUnitario = "12.50",
-            unidadMedida = "UNIDAD",
-            descripcion = "Alcohol desinfectante"
+            productoId = "prod1",
+            lote = "L001",
+            fechaVencimiento = "2025-12-31",
+            cantidad = 100,
+            ubicacion = "A1",
+            temperaturaRequerida = "Ambiente",
+            estado = "DISPONIBLE",
+            condicionesEspeciales = "",
+            observaciones = "",
+            fechaRecepcion = "2024-01-01",
+            createdAt = "2024-01-01",
+            updatedAt = "2024-01-01",
+            productoNombre = "Alcohol en gel 500ml",
+            productoSku = "SKU001",
+            categoria = "Insumos médicos",
+            productoImagenUrl = "https://example.com/alcohol.jpg",
+            productoUnidadMedida = "ml",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "5.50",
+            productoDescripcion = "Alcohol en gel para desinfección de manos"
         ),
-        Producto(
+        Inventario(
             id = "2",
-            nombre = "Amoxicilina 500mg",
-            categoria = "MEDICAMENTOS",
-            imagenUrl = "https://example.com/amoxicilina.jpg",
-            stockDisponible = 25,
-            disponible = true,
-            precioUnitario = "35.75",
-            unidadMedida = "CAJA",
-            descripcion = "Antibiótico"
+            productoId = "prod2",
+            lote = "L002",
+            fechaVencimiento = "2025-12-31",
+            cantidad = 25,
+            ubicacion = "A2",
+            temperaturaRequerida = "Ambiente",
+            estado = "DISPONIBLE",
+            condicionesEspeciales = "",
+            observaciones = "",
+            fechaRecepcion = "2024-01-01",
+            createdAt = "2024-01-01",
+            updatedAt = "2024-01-01",
+            productoNombre = "Amoxicilina 500mg",
+            productoSku = "SKU002",
+            categoria = "Medicamento",
+            productoImagenUrl = "https://example.com/amoxicilina.jpg",
+            productoUnidadMedida = "tableta",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "12.00",
+            productoDescripcion = "Antibiótico de amplio espectro"
         ),
-        Producto(
+        Inventario(
             id = "3",
-            nombre = "Gasas estériles",
-            categoria = "INSUMOS",
-            imagenUrl = "https://example.com/gasas.jpg",
-            stockDisponible = 15,
-            disponible = true,
-            precioUnitario = "38.00",
-            unidadMedida = "CAJA",
-            descripcion = "Gasas de algodón"
+            productoId = "prod3",
+            lote = "L003",
+            fechaVencimiento = "2025-12-31",
+            cantidad = 15,
+            ubicacion = "A3",
+            temperaturaRequerida = "Ambiente",
+            estado = "DISPONIBLE",
+            condicionesEspeciales = "",
+            observaciones = "",
+            fechaRecepcion = "2024-01-01",
+            createdAt = "2024-01-01",
+            updatedAt = "2024-01-01",
+            productoNombre = "Gasas estériles",
+            productoSku = "SKU003",
+            categoria = "Insumos médicos",
+            productoImagenUrl = "https://example.com/gasas.jpg",
+            productoUnidadMedida = "unidad",
+            productoTipoAlmacenamiento = "Ambiente",
+            productoPrecioUnitario = "3.25",
+            productoDescripcion = "Gasas estériles para uso médico"
         )
     )
 
     @Before
     fun setup() {
-        adapter = ProductosAdapter { producto ->
-            clickedProducto = producto
+        adapter = ProductosAdapter { inventario ->
+            clickedInventario = inventario
         }
     }
     
@@ -74,7 +110,7 @@ class ProductosAdapterTest {
     @Test
     fun `adapter should have correct item count after submitList`() {
         // When
-        adapter.submitList(mockProductos)
+        adapter.submitList(mockInventario)
 
         // Then
         assertEquals(3, adapter.itemCount)
@@ -89,7 +125,7 @@ class ProductosAdapterTest {
     @Test
     fun `adapter should update item count when list changes`() {
         // Given - Primera lista
-        val firstList = listOf(mockProductos[0], mockProductos[1], mockProductos[2])
+        val firstList = listOf(mockInventario[0], mockInventario[1], mockInventario[2])
         adapter.submitList(firstList)
         processMainLooper()
         
@@ -101,7 +137,7 @@ class ProductosAdapterTest {
         adapter.submitList(null)
         processMainLooper()
         
-        val secondList = listOf(mockProductos[0], mockProductos[1])
+        val secondList = listOf(mockInventario[0], mockInventario[1])
         adapter.submitList(secondList)
         processMainLooper()
 
@@ -113,14 +149,14 @@ class ProductosAdapterTest {
     @Test
     fun `getItemId should return correct item`() {
         // Given
-        adapter.submitList(mockProductos)
+        adapter.submitList(mockInventario)
 
         // When
         val item = adapter.currentList[0]
 
         // Then
         assertEquals("1", item.id)
-        assertEquals("Alcohol en gel 500ml", item.nombre)
+        assertEquals("Alcohol en gel 500ml", item.productoNombre)
     }
 
     @Test
@@ -135,22 +171,22 @@ class ProductosAdapterTest {
     @Test
     fun `adapter should handle single item list`() {
         // When
-        adapter.submitList(listOf(mockProductos.first()))
+        adapter.submitList(listOf(mockInventario.first()))
 
         // Then
         assertEquals(1, adapter.itemCount)
-        assertEquals("Alcohol en gel 500ml", adapter.currentList[0].nombre)
+        assertEquals("Alcohol en gel 500ml", adapter.currentList[0].productoNombre)
     }
 
     @Test
     fun `ProductoDiffCallback should identify same items by id`() {
         // Given
-        val producto1 = mockProductos[0]
-        val producto2 = producto1.copy(stockDisponible = 200)
+        val inventario1 = mockInventario[0]
+        val inventario2 = inventario1.copy(cantidad = 200)
 
         // When - submitList debería reconocer que es el mismo item
-        adapter.submitList(listOf(producto1))
-        adapter.submitList(listOf(producto2))
+        adapter.submitList(listOf(inventario1))
+        adapter.submitList(listOf(inventario2))
 
         // Then - el adapter debería tener 1 item (actualizado, no agregado)
         assertEquals(1, adapter.itemCount)
@@ -159,62 +195,59 @@ class ProductosAdapterTest {
     @Test
     fun `adapter should maintain list order`() {
         // When
-        adapter.submitList(mockProductos)
+        adapter.submitList(mockInventario)
 
         // Then
-        assertEquals("Alcohol en gel 500ml", adapter.currentList[0].nombre)
-        assertEquals("Amoxicilina 500mg", adapter.currentList[1].nombre)
-        assertEquals("Gasas estériles", adapter.currentList[2].nombre)
+        assertEquals("Alcohol en gel 500ml", adapter.currentList[0].productoNombre)
+        assertEquals("Amoxicilina 500mg", adapter.currentList[1].productoNombre)
+        assertEquals("Gasas estériles", adapter.currentList[2].productoNombre)
     }
 
     @Test
     fun `adapter should handle products with different categories`() {
         // Given
-        val productos = listOf(
-            mockProductos[0], // INSUMOS
-            mockProductos[1], // MEDICAMENTOS
-            mockProductos[2]  // INSUMOS
+        val inventarios = listOf(
+            mockInventario[0], // Insumos médicos
+            mockInventario[1], // Medicamento
+            mockInventario[2]  // Insumos médicos
         )
 
         // When
-        adapter.submitList(productos)
+        adapter.submitList(inventarios)
 
         // Then
         assertEquals(3, adapter.itemCount)
-        assertEquals("INSUMOS", adapter.currentList[0].categoria)
-        assertEquals("MEDICAMENTOS", adapter.currentList[1].categoria)
-        assertEquals("INSUMOS", adapter.currentList[2].categoria)
+        assertEquals("Insumos médicos", adapter.currentList[0].categoria)
+        assertEquals("Medicamento", adapter.currentList[1].categoria)
+        assertEquals("Insumos médicos", adapter.currentList[2].categoria)
     }
 
     @Test
     fun `adapter should handle products with different stock levels`() {
         // Given
-        adapter.submitList(mockProductos)
+        adapter.submitList(mockInventario)
 
         // Then
-        assertEquals(100, adapter.currentList[0].stockDisponible) // Alto
-        assertEquals(25, adapter.currentList[1].stockDisponible)  // Medio
-        assertEquals(15, adapter.currentList[2].stockDisponible)  // Bajo
+        assertEquals(100, adapter.currentList[0].cantidad) // Alto
+        assertEquals(25, adapter.currentList[1].cantidad)  // Medio
+        assertEquals(15, adapter.currentList[2].cantidad)  // Bajo
     }
 
     @Test
     fun `adapter should preserve product properties`() {
         // Given
-        adapter.submitList(mockProductos)
+        adapter.submitList(mockInventario)
 
         // When
-        val producto = adapter.currentList[0]
+        val inventario = adapter.currentList[0]
 
         // Then
-        assertEquals("1", producto.id)
-        assertEquals("Alcohol en gel 500ml", producto.nombre)
-        assertEquals("INSUMOS", producto.categoria)
-        assertEquals("https://example.com/alcohol.jpg", producto.imagenUrl)
-        assertEquals(100, producto.stockDisponible)
-        assertEquals(true, producto.disponible)
-        assertEquals("12.50", producto.precioUnitario)
-        assertEquals("UNIDAD", producto.unidadMedida)
-        assertEquals("Alcohol desinfectante", producto.descripcion)
+        assertEquals("1", inventario.id)
+        assertEquals("Alcohol en gel 500ml", inventario.productoNombre)
+        assertEquals("Insumos médicos", inventario.categoria)
+        assertEquals("https://example.com/alcohol.jpg", inventario.productoImagenUrl)
+        assertEquals(100, inventario.cantidad)
+        assertEquals("DISPONIBLE", inventario.estado)
     }
 
     @Test
@@ -224,9 +257,9 @@ class ProductosAdapterTest {
         // son optimizadas por DiffUtil
         
         // Given
-        val list1 = listOf(mockProductos[0])
-        val list2 = listOf(mockProductos[0], mockProductos[1])
-        val list3 = mockProductos
+        val list1 = listOf(mockInventario[0])
+        val list2 = listOf(mockInventario[0], mockInventario[1])
+        val list3 = mockInventario
 
         // When - Enviar múltiples actualizaciones rápidas
         adapter.submitList(list1)
@@ -253,7 +286,7 @@ class ProductosAdapterTest {
     @Test
     fun `adapter should handle null list as empty`() {
         // Given
-        adapter.submitList(mockProductos)
+        adapter.submitList(mockInventario)
         assertEquals(3, adapter.itemCount)
 
         // When
@@ -266,7 +299,7 @@ class ProductosAdapterTest {
     @Test
     fun `adapter currentList should be accessible`() {
         // Given
-        adapter.submitList(mockProductos)
+        adapter.submitList(mockInventario)
 
         // When
         val currentList = adapter.currentList
@@ -274,16 +307,16 @@ class ProductosAdapterTest {
         // Then
         assertNotNull(currentList)
         assertEquals(3, currentList.size)
-        assertEquals(mockProductos, currentList)
+        assertEquals(mockInventario, currentList)
     }
 
     @Test
     fun `adapter should handle products with all available status`() {
         // Given
-        val todosDisponibles = mockProductos.all { it.disponible }
+        val todosDisponibles = mockInventario.all { it.estado == "DISPONIBLE" }
 
         // When
-        adapter.submitList(mockProductos)
+        adapter.submitList(mockInventario)
 
         // Then
         assertEquals(true, todosDisponibles)
@@ -293,20 +326,20 @@ class ProductosAdapterTest {
     @Test
     fun `adapter should handle products with mixed availability`() {
         // Given
-        val productos = listOf(
-            mockProductos[0].copy(disponible = true),
-            mockProductos[1].copy(disponible = false),
-            mockProductos[2].copy(disponible = true)
+        val inventarios = listOf(
+            mockInventario[0].copy(estado = "DISPONIBLE"),
+            mockInventario[1].copy(estado = "BLOQUEADO"),
+            mockInventario[2].copy(estado = "DISPONIBLE")
         )
 
         // When
-        adapter.submitList(productos)
+        adapter.submitList(inventarios)
 
         // Then
         assertEquals(3, adapter.itemCount)
-        assertEquals(true, adapter.currentList[0].disponible)
-        assertEquals(false, adapter.currentList[1].disponible)
-        assertEquals(true, adapter.currentList[2].disponible)
+        assertEquals("DISPONIBLE", adapter.currentList[0].estado)
+        assertEquals("BLOQUEADO", adapter.currentList[1].estado)
+        assertEquals("DISPONIBLE", adapter.currentList[2].estado)
     }
 }
 

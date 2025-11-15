@@ -9,15 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.medisupply.R
-import com.medisupply.data.models.Producto
+import com.medisupply.data.models.Inventario
 import com.medisupply.databinding.ItemProductoBinding
 
 /**
  * Adaptador para la lista de productos
  */
 class ProductosAdapter(
-    private val onProductoClick: (Producto) -> Unit = {}
-) : ListAdapter<Producto, ProductosAdapter.ProductoViewHolder>(ProductoDiffCallback()) {
+    private val onProductoClick: (Inventario) -> Unit = {}
+) : ListAdapter<Inventario, ProductosAdapter.ProductoViewHolder>(ProductoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductoViewHolder {
         val binding: ItemProductoBinding = DataBindingUtil.inflate(
@@ -37,16 +37,16 @@ class ProductosAdapter(
         private val binding: ItemProductoBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(producto: Producto) {
+        fun bind(inventario: Inventario) {
             binding.apply {
                 // Configurar datos del producto
-                nombreProducto.text = producto.nombre
-                stockProducto.text = "${producto.stockDisponible} disponibles"
+                nombreProducto.text = inventario.productoNombre
+                stockProducto.text = "${inventario.cantidad} disponibles"
                 
                 // Cambiar color del stock según disponibilidad
-                val stockColor = if (producto.stockDisponible > 50) {
+                val stockColor = if (inventario.cantidad > 50) {
                     root.context.getColor(R.color.md_theme_light_secondary)
-                } else if (producto.stockDisponible > 20) {
+                } else if (inventario.cantidad > 20) {
                     root.context.getColor(R.color.text_secondary)
                 } else {
                     root.context.getColor(android.R.color.holo_orange_dark)
@@ -55,7 +55,7 @@ class ProductosAdapter(
 
                 // Cargar imagen con Glide
                 Glide.with(imagenProducto.context)
-                    .load(producto.imagenUrl)
+                    .load(inventario.productoImagenUrl)
                     .placeholder(R.drawable.ic_hospital_placeholder)
                     .error(R.drawable.ic_hospital_placeholder)
                     .transition(DrawableTransitionOptions.withCrossFade())
@@ -63,7 +63,7 @@ class ProductosAdapter(
 
                 // Configurar click listener
                 root.setOnClickListener {
-                    onProductoClick(producto)
+                    onProductoClick(inventario)
                 }
 
                 executePendingBindings()
@@ -74,12 +74,12 @@ class ProductosAdapter(
     /**
      * DiffUtil callback para optimizar las actualizaciones de la lista
      */
-    private class ProductoDiffCallback : DiffUtil.ItemCallback<Producto>() {
-        override fun areItemsTheSame(oldItem: Producto, newItem: Producto): Boolean {
+    private class ProductoDiffCallback : DiffUtil.ItemCallback<Inventario>() {
+        override fun areItemsTheSame(oldItem: Inventario, newItem: Inventario): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Producto, newItem: Producto): Boolean {
+        override fun areContentsTheSame(oldItem: Inventario, newItem: Inventario): Boolean {
             return oldItem == newItem
         }
     }
