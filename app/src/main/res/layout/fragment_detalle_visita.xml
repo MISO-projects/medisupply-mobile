@@ -93,17 +93,6 @@
                     tools:text="Hospital San Rafael" />
 
                 <TextView
-                    android:id="@+id/text_hora_visita_header"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="@id/text_nombre_institucion_header"
-                    app:layout_constraintStart_toStartOf="@id/text_nombre_institucion_header"
-                    app:layout_constraintTop_toBottomOf="@id/text_nombre_institucion_header"
-                    tools:text="10:00 AM" />
-
-                <TextView
                     android:id="@+id/subtitle_detalles"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
