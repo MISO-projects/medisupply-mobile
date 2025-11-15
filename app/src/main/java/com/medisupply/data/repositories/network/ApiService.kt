@@ -18,13 +18,16 @@ import com.medisupply.data.models.PedidoPorIdResponse
 import com.medisupply.data.models.PedidoRequest
 import com.medisupply.data.models.ProductoResponse
 import com.medisupply.data.models.RegisterRequest
+import com.medisupply.data.models.RegistroVisitaRequest
 import com.medisupply.data.models.UserProfileResponse
+import com.medisupply.data.models.VisitaDetalle
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -48,8 +51,8 @@ interface ApiService {
 
     @GET("ordenes/mis-ordenes")
     suspend fun getPedidosCliente(
-            @Query("page") page: Int = 1,
-            @Query("page_size") pageSize: Int = 10
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 10
     ): ListarPedidosResumenClienteResponse
 
     @GET("ordenes/{id}") suspend fun getPedidoById(@Path("id") id: String): PedidoPorIdResponse
@@ -70,8 +73,26 @@ interface ApiService {
 
     @POST("clientes/") suspend fun crearCliente(@Body cliente: ClienteRequest): Response<Cliente>
 
-    @GET("visitas/rutas-del-dia") suspend fun getRutasDelDia(@Query("fecha") fecha: String, @Query("vendedor_id") vendedorId: String): List<RutaVisitaItem>
+    @GET("visitas/rutas-del-dia/")
+    suspend fun getRutasDelDia(
+        @Query("fecha") fecha: String,
+        @Query("vendedor_id") vendedorId: String,
+        @Query("lat_actual") lat: Double?,
+        @Query("lon_actual") lon: Double?
+    ): List<RutaVisitaItem>
 
+    @GET("visitas/{id}")
+    suspend fun getVisitaById(
+        @Path("id") id: String,
+        @Query("lat_actual") lat: Double?,
+        @Query("lon_actual") lon: Double?
+    ): VisitaDetalle
+
+    @PUT("visitas/{id}")
+    suspend fun registrarVisita(
+        @Path("id") visitaId: String,
+        @Body body: RegistroVisitaRequest
+    ): Response<VisitaDetalle>
     @GET("movil/ordenes/mis-entregas-programadas")
     suspend fun getMisEntregasProgramadas(
         @Query("estado_parada") estadoParada: String? = null,

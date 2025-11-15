@@ -36,6 +36,11 @@ class RegisterFragment : Fragment() {
         val nit = view.findViewById<TextInputEditText>(R.id.nit_edit_text)
         val nitLayout = view.findViewById<TextInputLayout>(R.id.nit_layout)
         val address = view.findViewById<TextInputEditText>(R.id.address_edit_text)
+        val latitude = view.findViewById<TextInputEditText>(R.id.latitude_edit_text)
+        val latitudeLayout = view.findViewById<TextInputLayout>(R.id.latitude_layout)
+        val longitude = view.findViewById<TextInputEditText>(R.id.longitude_edit_text)
+        val longitudeLayout = view.findViewById<TextInputLayout>(R.id.longitude_layout)
+
         val responsibleName = view.findViewById<TextInputEditText>(R.id.responsible_name_edit_text)
         val email = view.findViewById<TextInputEditText>(R.id.email_edit_text)
         val emailLayout = view.findViewById<TextInputLayout>(R.id.email_layout)
@@ -46,7 +51,9 @@ class RegisterFragment : Fragment() {
         registerButton.setOnClickListener {
             val institutionNameValue = institutionName.text.toString()
             val nitValue = nit.text.toString()
-            val addressValue = address.text.toString()
+            var addressValue = address.text.toString()
+            val latitudeValue = latitude.text.toString()
+            val longitudeValue = longitude.text.toString()
             val responsibleNameValue = responsibleName.text.toString()
             val emailValue = email.text.toString()
             val passwordValue = password.text.toString()
@@ -55,7 +62,28 @@ class RegisterFragment : Fragment() {
             val isEmailValid = isValidEmail(emailValue)
             val isPasswordValid = isValidPassword(passwordValue)
 
-            if (isNitValid && isEmailValid && isPasswordValid) {
+            var isLatitudeValid = true
+            if (latitudeValue.isNotEmpty() && !isNumeric(latitudeValue)) {
+                isLatitudeValid = false
+                latitudeLayout.error = "Debe ser un número"
+            } else {
+                latitudeLayout.error = null
+            }
+
+            var isLongitudeValid = true
+            if (longitudeValue.isNotEmpty() && !isNumeric(longitudeValue)) {
+                isLongitudeValid = false
+                longitudeLayout.error = "Debe ser un número"
+            } else {
+                longitudeLayout.error = null
+            }
+
+            if (isNitValid && isEmailValid && isPasswordValid && isLatitudeValid && isLongitudeValid) {
+                val fullAddressBuilder = StringBuilder()
+                val finalLat = if (latitudeValue.isNotEmpty()) latitudeValue else "NA"
+                val finalLon = if (longitudeValue.isNotEmpty()) longitudeValue else "NA"
+                addressValue = "$finalLat,$finalLon,$addressValue"
+
                 val registerRequest = RegisterRequest(
                     email = emailValue,
                     username = responsibleNameValue,
@@ -69,21 +97,9 @@ class RegisterFragment : Fragment() {
 
                 registerViewModel.register(registerRequest)
             } else {
-                if (!isNitValid) {
-                    nitLayout.error = "El NIT debe contener solo números"
-                } else {
-                    nitLayout.error = null
-                }
-                if (!isEmailValid) {
-                    emailLayout.error = "Ingrese un correo electrónico válido"
-                } else {
-                    emailLayout.error = null
-                }
-                if (!isPasswordValid) {
-                    passwordLayout.error = "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número"
-                } else {
-                    passwordLayout.error = null
-                }
+                if (!isNitValid) nitLayout.error = "El NIT debe contener solo números" else nitLayout.error = null
+                if (!isEmailValid) emailLayout.error = "Ingrese un correo electrónico válido" else emailLayout.error = null
+                if (!isPasswordValid) passwordLayout.error = "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número" else passwordLayout.error = null
             }
         }
 
@@ -112,5 +128,9 @@ class RegisterFragment : Fragment() {
 
     private fun isValidPassword(password: String): Boolean {
         return password.matches(Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"))
+    }
+
+    private fun isNumeric(s: String): Boolean {
+        return s.matches("-?\\d+(\\.\\d+)?".toRegex())
     }
 }

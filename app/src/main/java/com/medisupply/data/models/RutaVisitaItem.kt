@@ -23,5 +23,5 @@ data class RutaVisitaItem(
     val horaDeLaCita: String,
 
     @SerializedName("estado")
-    val estado: String // "PENDIENTE", "TOMADA", "CANCELADA"
+    val estado: String // "PENDIENTE", "REALIZADA", "CANCELADA"
 )

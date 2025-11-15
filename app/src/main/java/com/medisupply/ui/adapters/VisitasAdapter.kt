@@ -26,19 +26,54 @@ class VisitasAdapter(
     }
 
     override fun onBindViewHolder(holder: VisitaViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item, onItemClicked)
+        val itemActual = getItem(position)
+        val context = holder.binding.root.context
+
+        val textoTiempoViaje: String
+
+        // Verificamos si la visita está PENDIENTE
+        if (itemActual.estado == "PENDIENTE") {
+            // Verificamos si es el primer ítem PENDIENTE en la lista
+            // (El backend ya nos da las PENDIENTES primero, así que position == 0 es válido)
+            if (position == 0) {
+                // Formato: "a 14 mins de tu ubicación"
+                textoTiempoViaje = context.getString(
+                    R.string.formato_tiempo_viaje_primero,
+                    itemActual.horaDeLaCita // "14 mins"
+                )
+            } else {
+                // Es una visita PENDIENTE intermedia
+                val itemAnterior = getItem(position - 1)
+
+                // Formato: "a 7 mins de institucion3"
+                textoTiempoViaje = context.getString(
+                    R.string.formato_tiempo_viaje_siguiente,
+                    itemActual.horaDeLaCita, // "7 mins"
+                    itemAnterior.nombre      // "institucion3"
+                )
+            }
+        } else {
+            // Es REALIZADA o CANCELADA, el backend ya nos envía "N/A"
+            textoTiempoViaje = itemActual.horaDeLaCita // "N/A"
+        }
+
+        // Llamamos a bind con el texto ya formateado
+        holder.bind(itemActual, textoTiempoViaje, onItemClicked)
     }
 
-    class VisitaViewHolder(private val binding: ItemVisitaBinding) :
+    class VisitaViewHolder(val binding: ItemVisitaBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(visita: RutaVisitaItem, onItemClicked: (RutaVisitaItem) -> Unit) {
+        fun bind(
+            visita: RutaVisitaItem,
+            textoTiempoViaje: String,
+            onItemClicked: (RutaVisitaItem) -> Unit
+        ) {
             binding.textNombreCliente.text = visita.nombre
-            binding.textDireccionCliente.text = visita.direccion
-            binding.textHoraVisita.text = visita.horaDeLaCita
+            val dirLimp = limpiarDireccion(visita.direccion)
+            binding.textDireccionCliente.text = dirLimp
+            binding.textHoraVisita.text = textoTiempoViaje
 
-            // --- Lógica para el ESTADO ---
             val context = binding.root.context
             binding.textEstado.isVisible = true
             binding.textNombreCliente.paintFlags = 0 // Resetear strike-through
@@ -48,9 +83,9 @@ class VisitasAdapter(
                     binding.textEstado.text = "PENDIENTE"
                     binding.textEstado.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_pendiente)
                 }
-                "TOMADA" -> {
-                    binding.textEstado.text = "TOMADA"
-                    binding.textEstado.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_tomada)
+                "REALIZADA", "TOMADA" -> {
+                    binding.textEstado.text = visita.estado
+                    binding.textEstado.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_realizada)
                 }
                 "CANCELADA" -> {
                     binding.textEstado.text = "CANCELADA"
@@ -62,10 +97,20 @@ class VisitasAdapter(
                     binding.textEstado.isVisible = false
                 }
             }
-            
+
             binding.root.setOnClickListener {
                 onItemClicked(visita)
             }
+        }
+
+        private fun limpiarDireccion(direccionCompleta: String?): String {
+            if (direccionCompleta.isNullOrEmpty()) return "N/A"
+            val partes = direccionCompleta.split(",")
+            // Formato: "Lat,Lon,Direccion"
+            if (partes.size > 2) {
+                return partes.subList(2, partes.size).joinToString(",")
+            }
+            return direccionCompleta
         }
     }
 
