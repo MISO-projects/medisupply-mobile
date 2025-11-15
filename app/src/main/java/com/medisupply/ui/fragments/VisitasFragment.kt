@@ -1,21 +1,15 @@
 package com.medisupply.ui.fragments
 
-import android.Manifest 
-import android.annotation.SuppressLint
-import android.content.pm.PackageManager 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts 
-import androidx.core.content.ContextCompat 
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.LocationServices 
 import com.medisupply.R
 import com.medisupply.data.models.RutaVisitaItem
 import com.medisupply.data.repositories.VisitasRepository
@@ -39,23 +33,6 @@ class VisitasFragment : Fragment() {
 
     private val uiDateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-    private val fusedLocationClient by lazy {
-        LocationServices.getFusedLocationProviderClient(requireActivity())
-    }
-    private val locationPermissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                recargarRutaConUbicacionActual()
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                recargarRutaConUbicacionActual()
-            } else -> {
-            recargarRutaSinUbicacion()
-        }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,7 +60,7 @@ class VisitasFragment : Fragment() {
             calendar.set(year, month, dayOfMonth)
             val nuevaFecha = calendar.time
 
-            viewModel.seleccionarFecha(nuevaFecha) 
+            viewModel.seleccionarFecha(nuevaFecha)
             pedirPermisoYRecargarRuta()
         }
 
@@ -103,7 +80,6 @@ class VisitasFragment : Fragment() {
         val apiService = NetworkServiceAdapter.getApiService()
         val repository = VisitasRepository(apiService)
         val sessionManager = SessionManager(application.applicationContext)
-
         val factory = VisitasViewModelFactory(repository, sessionManager)
         viewModel = ViewModelProvider(this, factory)[VisitasViewModel::class.java]
     }
@@ -163,48 +139,7 @@ class VisitasFragment : Fragment() {
     }
 
     private fun pedirPermisoYRecargarRuta() {
-        when {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                recargarRutaConUbicacionActual()
-            }
-            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                // (Opcional) Mostrar un diálogo explicando por qué
-                Toast.makeText(requireContext(), "Se necesita ubicación para optimizar la ruta.", Toast.LENGTH_SHORT).show()
-                locationPermissionRequest.launch(arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ))
-            }
-            else -> {
-                locationPermissionRequest.launch(arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ))
-            }
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun recargarRutaConUbicacionActual() {
-        val fechaActual = viewModel.selectedDate.value ?: Date()
-
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    viewModel.cargarRutasParaFechaSeleccionada(
-                        lat = location.latitude,
-                        lon = location.longitude
-                    )
-                } else {
-                    recargarRutaSinUbicacion()
-                }
-            }
-            .addOnFailureListener {
-                recargarRutaSinUbicacion()
-            }
+        recargarRutaSinUbicacion()
     }
 
     private fun recargarRutaSinUbicacion() {

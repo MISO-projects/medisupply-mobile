@@ -29,11 +29,16 @@ class VisitasRepository(private val apiService: ApiService) {
         )
     }
 
-    suspend fun getVisitaById(id: String): VisitaDetalle {
-        return apiService.getVisitaById(id)
+    /**
+     * Obtiene el detalle de una visita, pasando opcionalmente la ubicación
+     * para calcular el tiempo de viaje.
+     */
+    suspend fun getVisitaById(id: String, lat: Double?, lon: Double?): VisitaDetalle {
+        // Pasa los nuevos parámetros al ApiService
+        return apiService.getVisitaById(id, lat, lon)
     }
 
-    suspend fun registrarVisita(visitaId: String, data: RegistroVisitaRequest): VisitaDetalle { 
+    suspend fun registrarVisita(visitaId: String, data: RegistroVisitaRequest): VisitaDetalle {
         return withContext(Dispatchers.IO) {
             val response = apiService.registrarVisita(visitaId, data)
 

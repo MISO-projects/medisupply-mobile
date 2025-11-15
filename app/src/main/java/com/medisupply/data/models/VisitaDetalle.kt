@@ -46,8 +46,23 @@ data class VisitaDetalle(
     @SerializedName("detalle")
     val detalle: String?,
 
+    @SerializedName("evidencia")
+    val evidencia: String?,
+
+    @SerializedName("inicio")
+    val inicio: String?,
+
+    @SerializedName("fin")
+    val fin: String?,
+
     @SerializedName("estado")
     val estado: String,
+
+    @SerializedName("created_at")
+    val createdAt: String?,
+
+    @SerializedName("updated_at")
+    val updatedAt: String?,
 
     @SerializedName("nombre_institucion")
     val nombreInstitucion: String,
@@ -59,5 +74,8 @@ data class VisitaDetalle(
     val notasVisitasAnteriores: List<NotaVisita>? = null,
 
     @SerializedName("productos_preferidos")
-    val productosPreferidos: List<ProductoPreferido>? = null
+    val productosPreferidos: List<ProductoPreferido>? = null,
+
+    @SerializedName("tiempo_desplazamiento")
+    val tiempoDesplazamiento: String? = null
 )

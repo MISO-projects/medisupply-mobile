@@ -40,8 +40,8 @@ interface ApiService {
 
     @GET("ordenes/mis-ordenes")
     suspend fun getPedidosCliente(
-            @Query("page") page: Int = 1,
-            @Query("page_size") pageSize: Int = 10
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 10
     ): ListarPedidosResumenClienteResponse
 
     @GET("ordenes/{id}") suspend fun getPedidoById(@Path("id") id: String): PedidoPorIdResponse
@@ -71,7 +71,11 @@ interface ApiService {
     ): List<RutaVisitaItem>
 
     @GET("visitas/{id}")
-    suspend fun getVisitaById(@Path("id") id: String): VisitaDetalle
+    suspend fun getVisitaById(
+        @Path("id") id: String,
+        @Query("lat_actual") lat: Double?,
+        @Query("lon_actual") lon: Double?
+    ): VisitaDetalle
 
     @PUT("visitas/{id}")
     suspend fun registrarVisita(
