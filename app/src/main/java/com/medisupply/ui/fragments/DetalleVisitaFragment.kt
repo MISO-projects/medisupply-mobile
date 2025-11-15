@@ -212,7 +212,7 @@ class DetalleVisitaFragment : Fragment() {
         if (visita.productosPreferidos?.isNotEmpty() == true) {
             val builder = StringBuilder()
             for (producto in visita.productosPreferidos) {
-                builder.append("• ${producto.nombre} (${producto.cantidadTotal} unidades)\n")
+                builder.append("• ${producto.nombre}\n")
             }
             productosTexto = builder.trim().toString()
         } else {
