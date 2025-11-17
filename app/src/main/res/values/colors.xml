@@ -29,7 +29,7 @@
     <color name="navigation_text_inactive">#CCCCCC</color>
 
     <color name="badge_color_pendiente">#FF9800</color>
-    <color name="badge_color_tomada">#4CAF50</color>
+    <color name="badge_color_realizada">#4CAF50</color>
     <color name="badge_color_cancelada">#757575</color>
 
 </resources>

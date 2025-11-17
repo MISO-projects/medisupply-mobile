@@ -1,29 +1,24 @@
 package com.medisupply.ui.viewmodels
 
-// QUITA: import android.app.Application
-// QUITA: import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel // <-- CAMBIO: Importar ViewModel normal
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.medisupply.data.models.RutaVisitaItem
 import com.medisupply.data.repositories.VisitasRepository
-import com.medisupply.data.session.SessionManager // <-- AÑADIDO: Importar
+import com.medisupply.data.session.SessionManager
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
-// --- CAMBIOS AL CONSTRUCTOR ---
 class VisitasViewModel(
     private val repository: VisitasRepository,
-    private val sessionManager: SessionManager // <-- 1. RECIBIRLO AQUÍ
-) : ViewModel() { // <-- 2. HEREDAR DE ViewModel NORMAL
-
-
-   
+    private val sessionManager: SessionManager
+) : ViewModel() {
     private val _rutas = MutableLiveData<List<RutaVisitaItem>>()
     val rutas: LiveData<List<RutaVisitaItem>> = _rutas
     private val _isLoading = MutableLiveData<Boolean>()
@@ -31,13 +26,28 @@ class VisitasViewModel(
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
+    private val _selectedDate = MutableLiveData<Date>()
+    val selectedDate: LiveData<Date> = _selectedDate
+
     private val apiDateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     init {
-        cargarRutasDeHoy()
+        _selectedDate.value = Calendar.getInstance().time
     }
 
-    private fun cargarRutasDeHoy() {
+    /**
+     * Función pública para que el Fragment actualice la fecha.
+     */
+    fun seleccionarFecha(date: Date) {
+        _selectedDate.value = date
+    }
+
+    /**
+     * Función que carga rutas. Acepta lat/lon opcionales.
+     */
+    fun cargarRutasParaFechaSeleccionada(lat: Double?, lon: Double?) {
+        val dateToLoad = _selectedDate.value ?: return // No hacer nada si no hay fecha
+
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
@@ -51,8 +61,8 @@ class VisitasViewModel(
                     return@launch
                 }
 
-                val fechaDeHoy = apiDateFormatter.format(Calendar.getInstance().time)
-                val resultado = repository.getRutasDelDia(fechaDeHoy, vendedorId)
+                val fechaFormateada = apiDateFormatter.format(dateToLoad)
+                val resultado = repository.getRutasDelDia(fechaFormateada, vendedorId, lat, lon)
                 _rutas.value = resultado
 
             } catch (e: IOException) {
@@ -68,6 +78,6 @@ class VisitasViewModel(
     }
 
     fun retry() {
-        cargarRutasDeHoy()
+        cargarRutasParaFechaSeleccionada(null, null)
     }
 }
