@@ -194,6 +194,26 @@ class DetalleVisitaFragment : Fragment() {
             binding.evidenceTitle.isVisible = false
             binding.evidenceCard.isVisible = false
         }
+        setupFila(binding.rowProductos, "Recomendación", visita.recomendacionLlm ?: "No disponible")
+
+        // Usar el tiempo de desplazamiento de la API
+        setupFila(binding.rowTiempo, "Tiempo de Desplazamiento", visita.tiempoDesplazamiento ?: "N/A")
+
+        val notasTexto: String
+        if (visita.notasVisitasAnteriores?.isNotEmpty() == true) {
+            val notasBuilder = StringBuilder()
+            for (nota in visita.notasVisitasAnteriores) {
+                val fechaFormateada = formatNotaFecha(nota.fechaVisitaProgramada)
+                notasBuilder.append("• $fechaFormateada: ")
+                notasBuilder.append(nota.detalle ?: "Sin detalle")
+                notasBuilder.append("\n")
+            }
+            notasTexto = notasBuilder.trim().toString()
+        } else {
+            notasTexto = visita.detalle ?: "N/A"
+        }
+
+        setupFila(binding.rowNotas, "Notas de Visita anterior", notasTexto)
 
         val esPendiente = visita.estado == "PENDIENTE"
         binding.layoutBotones.isVisible = esPendiente
