@@ -3,9 +3,7 @@ package com.medisupply.ui.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.medisupply.data.models.RegistroVisitaRequest
 import com.medisupply.data.models.VisitaDetalle
 import com.medisupply.data.repositories.VisitasRepository
 import kotlinx.coroutines.launch
@@ -56,11 +54,15 @@ class DetalleVisitaViewModel(
             _isLoading.value = true
             _error.value = null
             try {
-                val request = RegistroVisitaRequest(
+                repository.registrarVisita(
+                    visitaId = visitaId,
                     detalle = motivo,
-                    estado = "CANCELADA"
+                    clienteContacto = "",
+                    inicio = "",
+                    fin = "",
+                    estado = "CANCELADA",
+                    archivoEvidencia = null
                 )
-                repository.registrarVisita(visitaId, request) // Reutiliza el endpoint
                 _cancelacionExitosa.value = true
             } catch (e: Exception) {
                 _error.value = "Error al cancelar la visita: ${e.message}"
