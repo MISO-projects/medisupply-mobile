@@ -30,6 +30,10 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.Multipart
+import retrofit2.http.Part
 
 interface ApiService {
 
@@ -88,10 +92,16 @@ interface ApiService {
         @Query("lon_actual") lon: Double?
     ): VisitaDetalle
 
+    @Multipart
     @PUT("visitas/{id}")
     suspend fun registrarVisita(
         @Path("id") visitaId: String,
-        @Body body: RegistroVisitaRequest
+        @Part("detalle") detalle: RequestBody?,
+        @Part("cliente_contacto") contacto: RequestBody?,
+        @Part("inicio") inicio: RequestBody?,
+        @Part("fin") fin: RequestBody?,
+        @Part("estado") estado: RequestBody?,
+        @Part evidencia: MultipartBody.Part?
     ): Response<VisitaDetalle>
     @GET("movil/ordenes/mis-entregas-programadas")
     suspend fun getMisEntregasProgramadas(

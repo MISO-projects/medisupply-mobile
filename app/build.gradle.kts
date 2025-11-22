@@ -36,15 +36,15 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    
+
     buildFeatures {
         dataBinding = true
     }
-    
+
     lint {
         disable.add("NotificationPermission")
     }
-    
+
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -60,33 +60,31 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.databinding.runtime)
-    implementation(libs.androidx.uiautomator)
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
-    
+
     // Navigation dependencies
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    
+
     // Networking dependencies
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.retrofit.coroutines.adapter)
-    
-    // Image loading
-    implementation(libs.glide)
-    kapt(libs.glide.compiler)
-    
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
+
     // Lifecycle components
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
-    
+
     // Room database
     implementation(libs.room.runtime)
     kapt(libs.room.compiler)
     implementation(libs.room.ktx)
-    
+
     // Testing dependencies
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
@@ -97,7 +95,7 @@ dependencies {
     testImplementation("androidx.test:core:1.5.0")
     testImplementation("androidx.test.ext:junit:1.1.5")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
-    
+
     // Android testing dependencies
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

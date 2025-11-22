@@ -1,10 +1,14 @@
 package com.medisupply.ui.fragments
 
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -17,6 +21,9 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.medisupply.ui.viewmodels.RegistrarVisitaViewModel
 import com.medisupply.ui.viewmodels.RegistrarVisitaViewModelFactory
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.util.Calendar
 import java.util.Locale
 import androidx.core.os.bundleOf
@@ -39,6 +46,21 @@ class RegistrarVisitaFragment : Fragment() {
 
     private var horaInicioSeleccionada: Pair<Int, Int>? = null
     private var horaFinSeleccionada: Pair<Int, Int>? = null
+
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        if (uri != null) {
+            val file = getFileFromUri(requireContext(), uri)
+
+            if (file != null) {
+                viewModel.setArchivoEvidencia(file)
+                binding.tvFileName.text = "Archivo seleccionado:\n${file.name}"
+                binding.tvFileName.setTextColor(resources.getColor(R.color.md_theme_light_primary, null))
+                Toast.makeText(requireContext(), "Evidencia adjuntada", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Error al procesar el archivo", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     companion object {
         private const val ARG_VISITA_ID = "visita_id"
@@ -80,10 +102,6 @@ class RegistrarVisitaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Mensaje de prueba 
-        // Toast.makeText(requireContext(), "ID de visita a registrar: $visitaId", Toast.LENGTH_LONG).show()
-
         configurarListeners()
         observarViewModel()
     }
@@ -102,7 +120,6 @@ class RegistrarVisitaFragment : Fragment() {
 
         // Listener de Cancelar
         binding.btnCancelar.setOnClickListener {
-            // Solo permite cancelar si no está cargando
             if (viewModel.isLoading.value != true) {
                 parentFragmentManager.popBackStack()
             }
@@ -112,6 +129,13 @@ class RegistrarVisitaFragment : Fragment() {
         binding.btnGuardar.setOnClickListener {
             intentarGuardarVisita()
         }
+
+        binding.btnUpload.setOnClickListener {
+            getContent.launch("*/*")
+        }
+        binding.uploadArea.setOnClickListener {
+            getContent.launch("*/*")
+        }
     }
 
     /**
@@ -119,11 +143,10 @@ class RegistrarVisitaFragment : Fragment() {
      */
     private fun observarViewModel() {
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            // Muestra/oculta el ProgressBar
             binding.loadingProgressBar.isVisible = isLoading
-            // Deshabilita los botones mientras carga
             binding.btnGuardar.isEnabled = !isLoading
             binding.btnCancelar.isEnabled = !isLoading
+            binding.btnUpload.isEnabled = !isLoading
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -228,6 +251,47 @@ class RegistrarVisitaFragment : Fragment() {
         return esHoraFinValida(finHour, finMinute)
     }
 
+    /**
+     * Convierte una URI de Android (content://...) en un Archivo físico (File)
+     * copiando el contenido a la caché de la app. Retrofit necesita un File real.
+     */
+    private fun getFileFromUri(context: Context, uri: Uri): File? {
+        return try {
+            val contentResolver = context.contentResolver
+            val inputStream: InputStream? = contentResolver.openInputStream(uri)
+            val fileName = getFileName(context, uri)
+
+            // Creamos un archivo en la carpeta cache de la app
+            val file = File(context.cacheDir, fileName)
+            val outputStream = FileOutputStream(file)
+
+            inputStream?.copyTo(outputStream)
+            inputStream?.close()
+            outputStream.close()
+
+            file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private fun getFileName(context: Context, uri: Uri): String {
+        var name = "temp_evidencia"
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (nameIndex != -1) {
+                    name = it.getString(nameIndex)
+                }
+            }
+        }
+        if (!name.contains(".")) {
+            name += ".tmp"
+        }
+        return name
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
