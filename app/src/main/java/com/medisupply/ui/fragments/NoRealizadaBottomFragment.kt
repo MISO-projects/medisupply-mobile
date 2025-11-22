@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.os.bundleOf 
 import androidx.fragment.app.setFragmentResult 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.medisupply.R
 import com.medisupply.databinding.FragmentNoRealizadaBottomBinding
 
 class NoRealizadaBottomSheet : BottomSheetDialogFragment() {
@@ -34,7 +35,7 @@ class NoRealizadaBottomSheet : BottomSheetDialogFragment() {
         binding.btnConfirmarBottomSheet.setOnClickListener {
             val selectedRadioId = binding.radioGroupMotivos.checkedRadioButtonId
             if (selectedRadioId == -1) {
-                Toast.makeText(requireContext(), "Por favor, selecciona un motivo", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.seleccionar_motivo), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

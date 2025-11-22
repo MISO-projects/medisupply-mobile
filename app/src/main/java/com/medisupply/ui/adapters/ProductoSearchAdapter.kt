@@ -33,8 +33,8 @@ class ProductoSearchAdapter(
         fun bind(producto: Producto) {
             nombreTextView.text = producto.nombre
             categoriaTextView.text = producto.categoria
-            precioTextView.text = "$${producto.precioUnitario}"
-            stockTextView.text = "Stock: ${producto.stockDisponible}"
+            precioTextView.text = itemView.context.getString(R.string.precio_formato, producto.precioUnitario.toString())
+            stockTextView.text = itemView.context.getString(R.string.stock_label, producto.stockDisponible)
 
             itemView.setOnClickListener {
                 onProductoClick(producto)

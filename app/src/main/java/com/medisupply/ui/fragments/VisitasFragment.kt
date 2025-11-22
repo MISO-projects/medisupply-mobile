@@ -80,7 +80,7 @@ class VisitasFragment : Fragment() {
         val apiService = NetworkServiceAdapter.getApiService()
         val repository = VisitasRepository(apiService)
         val sessionManager = SessionManager(application.applicationContext)
-        val factory = VisitasViewModelFactory(repository, sessionManager)
+        val factory = VisitasViewModelFactory(application, repository, sessionManager)
         viewModel = ViewModelProvider(this, factory)[VisitasViewModel::class.java]
     }
 
@@ -131,7 +131,7 @@ class VisitasFragment : Fragment() {
             }
         }
         viewModel.selectedDate.observe(viewLifecycleOwner) { date ->
-            binding.selectedDateTitle.text = "Visitas para ${uiDateFormatter.format(date)}"
+            binding.selectedDateTitle.text = getString(R.string.visitas_para_fecha, uiDateFormatter.format(date))
             if (binding.calendarView.date != date.time) {
                 binding.calendarView.date = date.time
             }

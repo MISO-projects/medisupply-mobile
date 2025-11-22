@@ -1,6 +1,8 @@
 package com.medisupply.viewmodels
 
+import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.medisupply.R
 import com.medisupply.data.models.RutaVisitaItem
 import com.medisupply.data.repositories.VisitasRepository
 import com.medisupply.data.session.SessionManager
@@ -17,6 +19,7 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 import java.io.IOException
 import java.util.Date
@@ -37,6 +40,9 @@ class VisitasViewModelTest {
 
     @Mock
     private lateinit var sessionManager: SessionManager
+
+    @Mock
+    private lateinit var application: Application
 
     private lateinit var viewModel: VisitasViewModel
 
@@ -63,8 +69,17 @@ class VisitasViewModelTest {
     fun setup() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
-
-        viewModel = VisitasViewModel(repository, sessionManager)
+        
+        // Mock Application para devolver strings
+        whenever(application.getString(R.string.error_no_vendedor_id)).thenReturn("Error: No se encontró ID de vendedor. Inicie sesión de nuevo.")
+        whenever(application.getString(R.string.error_conexion)).thenReturn("Error de conexión. Revisa tu red.")
+        whenever(application.getString(eq(R.string.error_cargar_visitas), anyOrNull())).thenAnswer {
+            val message = it.arguments[1] as? String ?: ""
+            "Error al cargar las visitas: $message"
+        }
+        whenever(application.applicationContext).thenReturn(application)
+        
+        viewModel = VisitasViewModel(application, repository, sessionManager)
     }
 
     @After
@@ -104,7 +119,7 @@ class VisitasViewModelTest {
 
         // Then
         assertNotNull(viewModel.error.value)
-        assertTrue(viewModel.error.value!!.contains("No se encontró ID de vendedor"))
+        assertTrue(viewModel.error.value!!.contains("No se encontró ID de vendedor") || viewModel.error.value!!.contains("Seller ID not found"))
         // Verificamos que limpie la lista
         assertEquals(0, viewModel.rutas.value?.size ?: 0)
         assertEquals(false, viewModel.isLoading.value)
@@ -126,7 +141,7 @@ class VisitasViewModelTest {
 
         // Then
         assertNotNull("El error debería haber sido capturado", viewModel.error.value)
-        assertTrue("El mensaje debe ser de conexión", viewModel.error.value!!.contains("Error de conexión"))
+        assertTrue("El mensaje debe ser de conexión", viewModel.error.value!!.contains("Error de conexión") || viewModel.error.value!!.contains("Connection error"))
         assertEquals(0, viewModel.rutas.value?.size ?: 0)
         assertEquals(false, viewModel.isLoading.value)
     }

@@ -26,6 +26,7 @@ class EntregasClienteFragment : Fragment() {
 
     private val viewModel: EntregasProgramadasViewModel by viewModels {
         EntregasProgramadasViewModelFactory(
+            requireActivity().application,
             EntregasRepository(
                 NetworkServiceAdapter.getApiService()
             )

@@ -65,7 +65,7 @@ class RegisterFragment : Fragment() {
             var isLatitudeValid = true
             if (latitudeValue.isNotEmpty() && !isNumeric(latitudeValue)) {
                 isLatitudeValid = false
-                latitudeLayout.error = "Debe ser un número"
+                latitudeLayout.error = getString(R.string.debe_ser_numero)
             } else {
                 latitudeLayout.error = null
             }
@@ -73,7 +73,7 @@ class RegisterFragment : Fragment() {
             var isLongitudeValid = true
             if (longitudeValue.isNotEmpty() && !isNumeric(longitudeValue)) {
                 isLongitudeValid = false
-                longitudeLayout.error = "Debe ser un número"
+                longitudeLayout.error = getString(R.string.debe_ser_numero)
             } else {
                 longitudeLayout.error = null
             }
@@ -97,18 +97,18 @@ class RegisterFragment : Fragment() {
 
                 registerViewModel.register(registerRequest)
             } else {
-                if (!isNitValid) nitLayout.error = "El NIT debe contener solo números" else nitLayout.error = null
-                if (!isEmailValid) emailLayout.error = "Ingrese un correo electrónico válido" else emailLayout.error = null
-                if (!isPasswordValid) passwordLayout.error = "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número" else passwordLayout.error = null
+                if (!isNitValid) nitLayout.error = getString(R.string.nit_solo_numeros) else nitLayout.error = null
+                if (!isEmailValid) emailLayout.error = getString(R.string.email_invalido) else emailLayout.error = null
+                if (!isPasswordValid) passwordLayout.error = getString(R.string.password_requisitos) else passwordLayout.error = null
             }
         }
 
         registerViewModel.registrationStatus.observe(viewLifecycleOwner) { success ->
             if (success) {
-                Toast.makeText(requireContext(), "Registro exitoso", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.registro_exitoso), Toast.LENGTH_SHORT).show()
                 findNavController().navigateUp()
             } else {
-                Toast.makeText(requireContext(), "Error en el registro", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.error_registro), Toast.LENGTH_SHORT).show()
             }
         }
 

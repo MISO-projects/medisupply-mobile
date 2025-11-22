@@ -1,16 +1,19 @@
 package com.medisupply.ui.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.medisupply.R
 import com.medisupply.data.models.EntregaProgramadaItem
 import com.medisupply.data.repositories.EntregasRepository
 import kotlinx.coroutines.launch
 
 class EntregasProgramadasViewModel(
+    application: Application,
     private val entregasRepository: EntregasRepository
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val _entregas = MutableLiveData<List<EntregaProgramadaItem>>()
     val entregas: LiveData<List<EntregaProgramadaItem>> = _entregas
@@ -45,7 +48,7 @@ class EntregasProgramadasViewModel(
                 _entregas.value = entregasList
 
             } catch (e: Exception) {
-                _error.value = "Error al cargar entregas: ${e.message}"
+                _error.value = getApplication<Application>().getString(R.string.error_cargar_entregas, e.message ?: "")
             } finally {
                 _isLoading.value = false
             }

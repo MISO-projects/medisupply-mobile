@@ -53,23 +53,24 @@ class DetalleEntregaProgramadaFragment : Fragment() {
             binding.numeroOrden.text = it.pedido.numeroOrden
             binding.estadoPedido.text = it.pedido.estado
             binding.valorTotal.text = "S/ ${String.format("%.2f", it.pedido.valorTotal)}"
-            binding.cantidadItems.text = "${it.pedido.cantidadItems} ${if (it.pedido.cantidadItems == 1) "item" else "items"}"
+            val itemText = if (it.pedido.cantidadItems == 1) getString(R.string.item_singular) else getString(R.string.items_plural)
+            binding.cantidadItems.text = getString(R.string.cantidad_items, it.pedido.cantidadItems, itemText)
             binding.nombreCliente.text = it.pedido.nombreCliente
 
             // Información de la ruta
             binding.fechaRuta.text = formatearFecha(it.ruta.fecha)
             binding.estadoRuta.text = formatearEstado(it.ruta.estado)
             binding.bodegaOrigen.text = it.ruta.bodegaOrigen
-            binding.conductorNombre.text = it.ruta.conductorNombre ?: "Sin asignar"
-            binding.vehiculoPlaca.text = it.ruta.vehiculoPlaca ?: "N/A"
-            binding.vehiculoInfo.text = it.ruta.vehiculoInfo ?: "N/A"
-            binding.condicionesAlmacenamiento.text = it.ruta.condicionesAlmacenamiento ?: "N/A"
+            binding.conductorNombre.text = it.ruta.conductorNombre ?: getString(R.string.sin_asignar)
+            binding.vehiculoPlaca.text = it.ruta.vehiculoPlaca ?: getString(R.string.na)
+            binding.vehiculoInfo.text = it.ruta.vehiculoInfo ?: getString(R.string.na)
+            binding.condicionesAlmacenamiento.text = it.ruta.condicionesAlmacenamiento ?: getString(R.string.na)
 
             // Información de la parada
             binding.direccionEntrega.text = it.parada.direccion
             binding.contacto.text = it.parada.contacto
             binding.estadoParada.text = formatearEstado(it.parada.estado)
-            binding.ordenParada.text = "#${it.parada.orden}"
+            binding.ordenParada.text = getString(R.string.orden_parada, it.parada.orden)
         }
     }
 

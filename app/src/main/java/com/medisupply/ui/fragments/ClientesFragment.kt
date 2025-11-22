@@ -109,7 +109,7 @@ class ClientesFragment : Fragment() {
     private fun onClienteClick(cliente: Cliente) {
         Toast.makeText(
             requireContext(), 
-            "Cliente seleccionado: ${cliente.nombre}", 
+            getString(R.string.cliente_seleccionado, cliente.nombre), 
             Toast.LENGTH_SHORT
         ).show()
         // TODO: Navegar a detalle del cliente o realizar acción específica

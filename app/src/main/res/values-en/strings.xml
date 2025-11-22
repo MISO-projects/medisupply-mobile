@@ -1,0 +1,179 @@
+<resources>
+    <string name="app_name">MediSupply</string>
+
+    <!-- Clientes -->
+    <string name="logo_cliente_description">Client logo</string>
+    <string name="error_cargar_clientes">Error loading clients</string>
+    <string name="reintentar">Retry</string>
+    <string name="cargando_clientes">Loading clients…</string>
+    <string name="no_hay_clientes">No clients available</string>
+
+    <!-- Inventario -->
+    <string name="buscar_productos">Search products</string>
+    <string name="categorias">Categories</string>
+    <string name="disponibilidad">Availability</string>
+    <string name="imagen_producto_description">Product image</string>
+    <string name="error_cargar_productos">Error loading products: %1$s</string>
+    <string name="cargando_productos">Loading products…</string>
+    <string name="no_hay_productos">No products available</string>
+    <string name="todos">All</string>
+    <string name="disponible">Available</string>
+    <string name="bloqueado">Blocked</string>
+    <string name="en_revision">Under Review</string>
+    <string name="categoria_todos">All categories</string>
+    <string name="categoria_medicamentos">Medications</string>
+    <string name="categoria_insumos">Supplies</string>
+    <string name="categoria_equipos">Equipment</string>
+    <string name="categoria_medicamento">Medication</string>
+    <string name="categoria_insumos_medicos">Medical supplies</string>
+    <string name="categoria_equipamiento">Equipment</string>
+    <string name="categoria_dispositivos">Devices</string>
+    <string name="categoria_consumibles">Consumables</string>
+    <string name="categoria_material_quirurgico">Surgical material</string>
+    <string name="categoria_reactivos">Reagents</string>
+    <string name="categoria_otros">Other</string>
+
+    <!-- Login -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="iniciar_sesion">Sign in</string>
+    <string name="create_account">Don\'t have an account yet? Create one</string>
+    <string name="app_logo">Application logo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="estado_pedido">status</string>
+    <string name="fecha_pedido">date</string>
+    <string name="buscar_pedidos">Search orders</string>
+    <string name="no_hay_pedidos_disponibles">No orders available</string>
+    <string name="crear_nuevo_pedido">Create new order</string>
+    <string name="seleccionar_institucion">Select institution</string>
+    <string name="productos">Products</string>
+    <string name="informacion_adicional">Additional Information</string>
+    <string name="notas_adicionales">Additional notes</string>
+    <string name="crear_pedido">Create Order</string>
+    <string name="cerrar_sesion">Sign out</string>
+    <string name="clientes">Clients</string>
+    <string name="inventario">Inventory</string>
+    <string name="rutas">Routes</string>
+    <string name="pedidos">Orders</string>
+    <string name="unidades_disponibles">%d units available</string>
+    <string name="cero">0</string>
+    <string name="menos">-</string>
+    <string name="mas">+</string>
+    <string name="producto">Product</string>
+    <string name="cero_unidades_disponibles">0 units available</string>
+    <string name="resumen_de_costos">Cost Summary</string>
+    <string name="resumen_del_pedido">Order summary</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="impuestos">Taxes</string>
+    <string name="total">Total</string>
+    <string name="notas_o_instrucciones_especiales">Notes or Special Instructions</string>
+    <string name="opcional">Optional</string>
+    <string name="confirmar_pedido">Confirm Order</string>
+    <string name="editar_pedido">Edit Order</string>
+    <string name="iniciar_visita">Start Visit</string>
+
+    <string name="hora_de_inicio">Start time</string>
+    <string name="hora_de_fin">End time</string>
+    <string name="seleccionar">Select</string>
+
+    <string name="contacto_que_atendio">Contact who attended</string>
+    <string name="nombre_del_contacto">Contact name</string>
+
+    <string name="hallazgos_tecnicos_y_clinicos">Technical and Clinical Findings</string>
+    <string name="descripcion">Description</string>
+    <string name="detalles_de_los_hallazgos">Findings details</string>
+
+    <string name="evidencia_de_hallazgos">Evidence of findings.</string>
+    <string name="adjuntar_archivos">Attach files</string>
+    <string name="toca_para_adjuntar_evidencia">Tap to attach evidence.</string>
+    <string name="subir">Upload</string>
+
+    <string name="guardar">Save</string>
+    <string name="cancelar">Cancel</string>
+
+
+    <string name="detalles_del_pedido">Order details</string>
+    <string name="numero_de_pedido">Order\nnumber</string>
+    <string name="fecha_del_pedido">Order\ndate</string>
+    <string name="estado">Status</string>
+    <string name="envio">Shipping</string>
+    <string name="direccion">Address</string>
+    <string name="metodo_de_envio">Shipping\nmethod</string>
+    <string name="fecha_de_entrega_estimada">Estimated\ndelivery\ndate</string>
+    <string name="volver">Back</string>
+    <string name="cantidad">Quantity: %d</string>
+    <string name="entregas">Deliveries</string>
+
+    <string name="no_hay_visitas_programadas">No scheduled visits</string>
+    <string name="icono_de_visita">visit_icon</string>
+
+    <string name="formato_tiempo_viaje_primero">%1$s from your location</string>
+    <string name="formato_tiempo_viaje_siguiente">%1$s from %2$s</string>
+
+    <!-- Mensajes Toast -->
+    <string name="evidencia_adjuntada">Evidence attached</string>
+    <string name="error_procesar_archivo">Error processing file</string>
+    <string name="error_id_visita_no_encontrado">Error: Visit ID not found</string>
+    <string name="visita_guardada_exito">Visit saved successfully</string>
+    <string name="completar_todos_los_campos">Please complete all fields</string>
+    <string name="hora_fin_reiniciada">End time reset</string>
+    <string name="hora_fin_anterior_inicio">End time cannot be earlier than start time</string>
+    <string name="registro_exitoso">Registration successful</string>
+    <string name="error_registro">Registration error</string>
+    <string name="seleccionar_motivo">Please select a reason</string>
+    <string name="cliente_seleccionado">Client selected: %1$s</string>
+    <string name="error_datos_pedido_no_validos">Error: invalid order data</string>
+    <string name="pedido_creado_exitosamente">Order created successfully: %1$s</string>
+    <string name="error_no_vendedor_id">Error: Seller ID not found. Please sign in again.</string>
+    <string name="error_conexion">Connection error. Check your network.</string>
+    <string name="error_cargar_visitas">Error loading visits: %1$s</string>
+    <string name="error_cargar_detalle">Error loading details: %1$s</string>
+    <string name="error_cancelar_visita">Error canceling visit: %1$s</string>
+    <string name="error_cargar_entregas">Error loading deliveries: %1$s</string>
+
+    <!-- Textos de UI -->
+    <string name="archivo_seleccionado">Selected file:\n%1$s</string>
+    <string name="seleccionar_hora_inicio">Select start time</string>
+    <string name="seleccionar_hora_fin">Select end time</string>
+    <string name="visitas_para_fecha">Visits for %1$s</string>
+    <string name="pendiente">PENDING</string>
+    <string name="cancelada">CANCELED</string>
+    <string name="disponibles">%1$d available</string>
+    <string name="nit_prefix">NIT %1$s</string>
+    <string name="pedido_numero">Order #%1$s</string>
+    <string name="stock_label">Stock: %1$d</string>
+    <string name="precio_formato">$%1$s</string>
+    <string name="unidades_formato">%1$d units</string>
+    <string name="item_singular">item</string>
+    <string name="items_plural">items</string>
+    <string name="cantidad_items">%1$d %2$s</string>
+    <string name="sin_asignar">Not assigned</string>
+    <string name="na">N/A</string>
+    <string name="envio_estandar">Standard shipping</string>
+    <string name="orden_parada">#%1$d</string>
+    <string name="aproximadamente_tiempo">Approx. %1$s travel time</string>
+    <string name="nombre">Name</string>
+    <string name="contacto">Contact</string>
+    <string name="sugerencia">Suggestion:</string>
+    <string name="tiempo_desplazamiento">Travel Time</string>
+    <string name="notas_detalle">Notes/Details</string>
+    <string name="recomendacion">Recommendation</string>
+    <string name="no_disponible">Not available</string>
+    <string name="notas_visita_anterior">Previous Visit Notes</string>
+    <string name="sin_detalle">No details</string>
+    <string name="fecha_invalida">Invalid date</string>
+    <string name="tiempo_desplazamiento_completo">Travel Time</string>
+
+    <!-- Errores de validación -->
+    <string name="debe_ser_numero">Must be a number</string>
+    <string name="nit_solo_numeros">NIT must contain only numbers</string>
+    <string name="email_invalido">Enter a valid email address</string>
+    <string name="password_requisitos">Password must have at least 8 characters, one uppercase letter, one lowercase letter and one number</string>
+
+    <!-- Estados -->
+    <string name="realizada">COMPLETED</string>
+    <string name="tomada">TAKEN</string>
+
+</resources>
+

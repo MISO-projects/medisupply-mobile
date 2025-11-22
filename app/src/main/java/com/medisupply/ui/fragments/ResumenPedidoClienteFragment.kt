@@ -109,7 +109,7 @@ class ResumenPedidoClienteFragment : Fragment() {
             } else {
                 Toast.makeText(
                     requireContext(),
-                    "Error: datos de pedido no válidos",
+                    getString(R.string.error_datos_pedido_no_validos),
                     Toast.LENGTH_SHORT
                 ).show()
                 parentFragmentManager.popBackStack()
@@ -129,15 +129,15 @@ class ResumenPedidoClienteFragment : Fragment() {
         }
 
         viewModel.subtotal.observe(viewLifecycleOwner) { subtotal ->
-            binding.subtotalValue.text = "$${decimalFormat.format(subtotal)}"
+            binding.subtotalValue.text = getString(R.string.precio_formato, decimalFormat.format(subtotal))
         }
 
         viewModel.impuestos.observe(viewLifecycleOwner) { impuestos ->
-            binding.impuestosValue.text = "$${decimalFormat.format(impuestos)}"
+            binding.impuestosValue.text = getString(R.string.precio_formato, decimalFormat.format(impuestos))
         }
 
         viewModel.total.observe(viewLifecycleOwner) { total ->
-            binding.totalValue.text = "$${decimalFormat.format(total)}"
+            binding.totalValue.text = getString(R.string.precio_formato, decimalFormat.format(total))
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
@@ -157,7 +157,7 @@ class ResumenPedidoClienteFragment : Fragment() {
             if (response != null) {
                 Toast.makeText(
                     requireContext(),
-                    "Pedido creado exitosamente: ${response.numeroPedido}",
+                    getString(R.string.pedido_creado_exitosamente, response.numeroPedido),
                     Toast.LENGTH_LONG
                 ).show()
                 // Navigate back to orders list (pop twice to remove both fragments)

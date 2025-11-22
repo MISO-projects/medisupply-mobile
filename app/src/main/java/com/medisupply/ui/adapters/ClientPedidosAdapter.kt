@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.medisupply.R
 import com.medisupply.data.models.PedidoResumenCliente
 import com.medisupply.databinding.ItemPedidoClienteBinding
 import java.text.SimpleDateFormat
@@ -37,7 +38,7 @@ class ClientPedidosAdapter(
             val fechaFormateada = formatearFecha(pedido.fechaCreacion)
             
             binding.fechaPedido.text = fechaFormateada
-            binding.numeroPedido.text = "Pedido #${pedido.numeroPedido}"
+            binding.numeroPedido.text = binding.root.context.getString(R.string.pedido_numero, pedido.numeroPedido)
             binding.estadoPedido.text = pedido.estado
 
             binding.root.setOnClickListener {

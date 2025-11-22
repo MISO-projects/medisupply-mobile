@@ -43,7 +43,7 @@ class DetalleVisitaFragment : Fragment() {
 
     private val viewModel: DetalleVisitaViewModel by viewModels {
         val repository = VisitasRepository(NetworkServiceAdapter.getApiService())
-        DetalleVisitaViewModelFactory(repository, visitaId!!)
+        DetalleVisitaViewModelFactory(requireActivity().application, repository, visitaId!!)
     }
 
     private val fusedLocationClient by lazy {
@@ -131,23 +131,23 @@ class DetalleVisitaFragment : Fragment() {
     private fun poblarDatos(visita: VisitaDetalle) {
         binding.textNombreInstitucionHeader.text = visita.nombreInstitucion
         val tiempoOFecha = if (visita.estado == "PENDIENTE" && !visita.tiempoDesplazamiento.isNullOrEmpty())
-            "Aprox. ${visita.tiempoDesplazamiento} de viaje" else formatNotaFecha(visita.fechaVisitaProgramada)
+            getString(R.string.aproximadamente_tiempo, visita.tiempoDesplazamiento) else formatNotaFecha(visita.fechaVisitaProgramada)
         binding.textHoraVisitaHeader.text = tiempoOFecha
 
-        setupFila(binding.rowNombre, "Nombre", visita.nombreInstitucion ?: "N/A")
-        setupFila(binding.rowDireccion, "Dirección", limpiarDireccion(visita.direccion))
-        setupFila(binding.rowContacto, "Contacto", visita.clienteContacto ?: "N/A")
+        setupFila(binding.rowNombre, getString(R.string.nombre), visita.nombreInstitucion ?: getString(R.string.na))
+        setupFila(binding.rowDireccion, getString(R.string.direccion), limpiarDireccion(visita.direccion))
+        setupFila(binding.rowContacto, getString(R.string.contacto), visita.clienteContacto ?: getString(R.string.na))
 
         val prod = if (!visita.productosPreferidos.isNullOrEmpty())
-            visita.productosPreferidos.joinToString("\n") { "• ${it.nombre}" } else "N/A"
-        setupFila(binding.rowProductos, "Sugerencia:", prod)
+            visita.productosPreferidos.joinToString("\n") { "• ${it.nombre}" } else getString(R.string.na)
+        setupFila(binding.rowProductos, getString(R.string.sugerencia), prod)
 
-        setupFila(binding.rowTiempo, "Tiempo Desplazamiento", visita.tiempoDesplazamiento ?: "N/A")
+        setupFila(binding.rowTiempo, getString(R.string.tiempo_desplazamiento), visita.tiempoDesplazamiento ?: getString(R.string.na))
 
         val notas = if (!visita.notasVisitasAnteriores.isNullOrEmpty())
             visita.notasVisitasAnteriores.joinToString("\n") { "• ${formatNotaFecha(it.fechaVisitaProgramada)}: ${it.detalle}" }
-        else visita.detalle ?: "N/A"
-        setupFila(binding.rowNotas, "Notas/Detalle", notas)
+        else visita.detalle ?: getString(R.string.na)
+        setupFila(binding.rowNotas, getString(R.string.notas_detalle), notas)
 
         // --- LÓGICA DE EVIDENCIA (FOTO vs VIDEO) ---
         val url = visita.evidencia
@@ -194,10 +194,10 @@ class DetalleVisitaFragment : Fragment() {
             binding.evidenceTitle.isVisible = false
             binding.evidenceCard.isVisible = false
         }
-        setupFila(binding.rowProductos, "Recomendación", visita.recomendacionLlm ?: "No disponible")
+        setupFila(binding.rowProductos, getString(R.string.recomendacion), visita.recomendacionLlm ?: getString(R.string.no_disponible))
 
         // Usar el tiempo de desplazamiento de la API
-        setupFila(binding.rowTiempo, "Tiempo de Desplazamiento", visita.tiempoDesplazamiento ?: "N/A")
+        setupFila(binding.rowTiempo, getString(R.string.tiempo_desplazamiento_completo), visita.tiempoDesplazamiento ?: getString(R.string.na))
 
         val notasTexto: String
         if (visita.notasVisitasAnteriores?.isNotEmpty() == true) {
@@ -205,15 +205,15 @@ class DetalleVisitaFragment : Fragment() {
             for (nota in visita.notasVisitasAnteriores) {
                 val fechaFormateada = formatNotaFecha(nota.fechaVisitaProgramada)
                 notasBuilder.append("• $fechaFormateada: ")
-                notasBuilder.append(nota.detalle ?: "Sin detalle")
+                notasBuilder.append(nota.detalle ?: getString(R.string.sin_detalle))
                 notasBuilder.append("\n")
             }
             notasTexto = notasBuilder.trim().toString()
         } else {
-            notasTexto = visita.detalle ?: "N/A"
+            notasTexto = visita.detalle ?: getString(R.string.na)
         }
 
-        setupFila(binding.rowNotas, "Notas de Visita anterior", notasTexto)
+        setupFila(binding.rowNotas, getString(R.string.notas_visita_anterior), notasTexto)
 
         val esPendiente = visita.estado == "PENDIENTE"
         binding.layoutBotones.isVisible = esPendiente
@@ -248,10 +248,10 @@ class DetalleVisitaFragment : Fragment() {
     }
 
     private fun limpiarDireccion(d: String?): String =
-        if (!d.isNullOrEmpty() && d.split(",").size > 2) d.split(",").subList(2, d.split(",").size).joinToString(",") else d ?: "N/A"
+        if (!d.isNullOrEmpty() && d.split(",").size > 2) d.split(",").subList(2, d.split(",").size).joinToString(",") else d ?: getString(R.string.na)
 
     private fun formatNotaFecha(d: String?): String =
-        try { notaDateFormatter.format(isoFormatter.parse(d)!!) } catch (e: Exception) { "Fecha inv." }
+        try { notaDateFormatter.format(isoFormatter.parse(d)!!) } catch (e: Exception) { getString(R.string.fecha_invalida) }
 
     private fun pedirPermisoYRecargarDetalle() = recargarDetalleSinUbicacion()
 

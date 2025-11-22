@@ -94,7 +94,7 @@ class DetallePedidoClienteFragment : Fragment() {
                 binding.deliveryDate.text = formatDate(it.fechaEntregaEstimada)
                 
                 binding.shippingAddress.text = it.direccion
-                binding.shippingMethod.text = "Envío estándar"
+                binding.shippingMethod.text = getString(R.string.envio_estandar)
 
                 val productos = it.productos.map { pedidoItem ->
                     ProductoDetalle(

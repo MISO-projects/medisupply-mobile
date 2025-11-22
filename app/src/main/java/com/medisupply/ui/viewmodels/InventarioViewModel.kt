@@ -81,7 +81,7 @@ class InventarioViewModel(
                 hasLoadedData = true
                 
             } catch (e: Exception) {
-                _error.value = "Error al cargar productos: ${e.message}"
+                _error.value = getApplication<Application>().getString(R.string.error_cargar_productos, e.message ?: "")
             } finally {
                 _isLoading.value = false
             }
