@@ -7,7 +7,6 @@ import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
@@ -132,10 +131,10 @@ class RegistrarVisitaFragment : Fragment() {
         }
 
         binding.btnUpload.setOnClickListener {
-            getContent.launch("image/*")
+            getContent.launch("*/*")
         }
         binding.uploadArea.setOnClickListener {
-            getContent.launch("image/*")
+            getContent.launch("*/*")
         }
     }
 
@@ -278,7 +277,7 @@ class RegistrarVisitaFragment : Fragment() {
     }
 
     private fun getFileName(context: Context, uri: Uri): String {
-        var name = "temp_evidencia.jpg" // Nombre por defecto
+        var name = "temp_evidencia"
         val cursor = context.contentResolver.query(uri, null, null, null, null)
         cursor?.use {
             if (it.moveToFirst()) {
@@ -287,6 +286,9 @@ class RegistrarVisitaFragment : Fragment() {
                     name = it.getString(nameIndex)
                 }
             }
+        }
+        if (!name.contains(".")) {
+            name += ".tmp"
         }
         return name
     }

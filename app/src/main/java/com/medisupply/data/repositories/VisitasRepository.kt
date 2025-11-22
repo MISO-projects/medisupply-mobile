@@ -1,5 +1,6 @@
 package com.medisupply.data.repositories
 
+import android.webkit.MimeTypeMap
 import com.medisupply.data.models.RutaVisitaItem
 import com.medisupply.data.models.VisitaDetalle
 import com.medisupply.data.repositories.network.ApiService
@@ -45,6 +46,7 @@ class VisitasRepository(private val apiService: ApiService) {
 
     /**
      * Registra la visita enviando datos MULTIPART (Texto + Archivo opcional).
+     * Soporta detección automática de IMAGEN o VIDEO.
      */
     suspend fun registrarVisita(
         visitaId: String,
@@ -65,13 +67,12 @@ class VisitasRepository(private val apiService: ApiService) {
 
             var evidenciaPart: MultipartBody.Part? = null
             if (archivoEvidencia != null) {
-                // Detectar tipo, usamos "image/*" genérico o puedes ser específico
-                val requestFile = archivoEvidencia.asRequestBody("image/*".toMediaTypeOrNull())
+                val mimeType = getMimeType(archivoEvidencia) ?: "application/octet-stream"
+                val requestFile = archivoEvidencia.asRequestBody(mimeType.toMediaTypeOrNull())
                 // "evidencia" es el nombre del campo que espera el Backend (Python)
                 evidenciaPart = MultipartBody.Part.createFormData("evidencia", archivoEvidencia.name, requestFile)
             }
 
-            // 3. Llamar al endpoint @Multipart del ApiService
             val response = apiService.registrarVisita(
                 visitaId,
                 detallePart,
@@ -91,9 +92,22 @@ class VisitasRepository(private val apiService: ApiService) {
     }
 
     /**
-     * Helper para crear partes de texto
+     * Helper para crear partes de texto plano
      */
     private fun createPartFromString(value: String): RequestBody {
         return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    }
+
+    /**
+     * Obtiene el MIME Type basado en la extensión del archivo (.jpg, .mp4, etc.)
+     * Esto es crucial para que el navegador sepa si reproducir el video o mostrar la foto.
+     */
+    private fun getMimeType(file: File): String? {
+        val extension = file.extension
+        return if (extension.isNotEmpty()) {
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.lowercase())
+        } else {
+            null
+        }
     }
 }
