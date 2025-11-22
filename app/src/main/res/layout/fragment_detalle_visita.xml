@@ -184,14 +184,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/row_tiempo" />
 
-                <!-- NUEVA SECCIÓN DE EVIDENCIA -->
                 <TextView
                     android:id="@+id/evidence_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="24dp"
-                    android:text="Evidencia "
+                    android:text="Evidencia Multimedia"
                     android:textColor="@color/md_theme_light_primary"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -214,13 +213,36 @@
                     app:layout_constraintTop_toBottomOf="@+id/evidence_title"
                     tools:visibility="visible">
 
-                    <ImageView
-                        android:id="@+id/image_evidence"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:scaleType="centerCrop"
-                        android:background="#F0F0F0"
-                        android:src="@drawable/ic_launcher_background" />
+                        android:layout_height="250dp">
+
+                        <ImageView
+                            android:id="@+id/image_evidence"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:background="#F0F0F0"
+                            android:visibility="gone"
+                            android:src="@drawable/ic_launcher_background" />
+
+                        <VideoView
+                            android:id="@+id/video_evidence"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@+id/icon_play_overlay"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:src="@android:drawable/ic_media_play"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            app:tint="#A0000000"/> 
+                    </FrameLayout>
+
                 </androidx.cardview.widget.CardView>
                 <!-- FIN SECCIÓN DE EVIDENCIA -->
 

@@ -1,22 +1,22 @@
 package com.medisupply.ui.fragments
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.MediaController
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import com.bumptech.glide.Glide // Importar Glide
+import com.bumptech.glide.Glide
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.SupportMapFragment
@@ -53,34 +53,22 @@ class DetalleVisitaFragment : Fragment() {
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                recargarDetalleConUbicacion()
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                recargarDetalleConUbicacion()
-            } else -> {
-            Toast.makeText(requireContext(), "Permiso denegado. No se puede calcular tiempo de viaje.", Toast.LENGTH_SHORT).show()
+        if (permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false)) {
+            recargarDetalleConUbicacion()
+        } else {
             recargarDetalleSinUbicacion()
-        }
         }
     }
 
     private val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }
-    private val timeFormatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
     private val notaDateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
     companion object {
         private const val ARG_VISITA_ID = "visita_id"
-
-        fun newInstance(id: String): DetalleVisitaFragment {
-            return DetalleVisitaFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_VISITA_ID, id)
-                }
-            }
+        fun newInstance(id: String) = DetalleVisitaFragment().apply {
+            arguments = Bundle().apply { putString(ARG_VISITA_ID, id) }
         }
     }
 
@@ -88,241 +76,179 @@ class DetalleVisitaFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let { visitaId = it.getString(ARG_VISITA_ID) }
 
-        setFragmentResultListener("request_cancelar_visita") { _, bundle ->
-            val motivo = bundle.getString("motivo")
-            if (!motivo.isNullOrEmpty()) {
-                viewModel.cancelarVisita(motivo)
-            }
+        setFragmentResultListener("request_cancelar_visita") { _, b ->
+            viewModel.cancelarVisita(b.getString("motivo") ?: "")
         }
-
-        setFragmentResultListener("request_refresh") { _, bundle ->
-            val shouldRefresh = bundle.getBoolean("should_refresh", false)
-            if (shouldRefresh) {
-                parentFragmentManager.popBackStack()
-            }
+        setFragmentResultListener("request_refresh") { _, b ->
+            if (b.getBoolean("should_refresh")) parentFragmentManager.popBackStack()
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detalle_visita, container, false)
         return binding.root
     }
 
-    private fun obtenerCoordenadas(direccionCompleta: String?): LatLng? {
-        if (direccionCompleta.isNullOrEmpty()) return null
-        try {
-            val partes = direccionCompleta.split(",")
-            if (partes.size >= 2) {
-                val lat = partes[0].trim().toDouble()
-                val lng = partes[1].trim().toDouble()
-                return LatLng(lat, lng)
-            }
-        } catch (e: Exception) { return null }
-        return null
-    }
-
-    private fun limpiarDireccion(direccionCompleta: String?): String {
-        if (direccionCompleta.isNullOrEmpty()) return "N/A"
-        val partes = direccionCompleta.split(",")
-        if (partes.size > 2) {
-            return partes.subList(2, partes.size).joinToString(",")
-        }
-        return direccionCompleta
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        if (visitaId == null) {
-            Toast.makeText(requireContext(), "Error: ID no encontrado", Toast.LENGTH_LONG).show()
-            parentFragmentManager.popBackStack()
-            return
-        }
+        if (visitaId == null) { parentFragmentManager.popBackStack(); return }
         setupToolbar()
         setupObservers()
         setupListeners()
         pedirPermisoYRecargarDetalle()
     }
 
-    private fun setupToolbar() {
-        binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-    }
+    private fun setupToolbar() { binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() } }
 
     private fun setupObservers() {
-        viewModel.visita.observe(viewLifecycleOwner) { visita ->
-            visita?.let { poblarDatos(it) }
+        viewModel.visita.observe(viewLifecycleOwner) { if (it != null) poblarDatos(it) }
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            binding.loadingProgressBar.isVisible = it
+            binding.btnIniciarVisita.isEnabled = !it
+            if (it) binding.errorView.isVisible = false
         }
-
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.loadingProgressBar.isVisible = isLoading
-            binding.btnIniciarVisita.isEnabled = !isLoading
-            binding.btnMarcarNoRealizada.isEnabled = !isLoading
-
-            if (isLoading) binding.errorView.isVisible = false
+        viewModel.error.observe(viewLifecycleOwner) {
+            binding.errorView.isVisible = it != null
+            if (it != null) binding.errorText.text = it
         }
-
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            binding.errorView.isVisible = error != null
-            if (error != null) binding.errorText.text = error
-        }
-
-        viewModel.cancelacionExitosa.observe(viewLifecycleOwner) { exito ->
-            if (exito) {
-                Toast.makeText(requireContext(), "Visita marcada como NO REALIZADA", Toast.LENGTH_LONG).show()
-                parentFragmentManager.popBackStack()
-            }
-        }
+        viewModel.cancelacionExitosa.observe(viewLifecycleOwner) { if (it) parentFragmentManager.popBackStack() }
     }
 
     private fun setupListeners() {
         binding.retryButton.setOnClickListener { pedirPermisoYRecargarDetalle() }
         binding.btnIniciarVisita.setOnClickListener {
-            if (visitaId != null) {
-                val fragment = RegistrarVisitaFragment.newInstance(visitaId!!)
-                parentFragmentManager.beginTransaction()
-                    .replace((requireView().parent as ViewGroup).id, fragment)
-                    .addToBackStack(null)
-                    .commit()
-            }
+            val f = RegistrarVisitaFragment.newInstance(visitaId!!)
+            parentFragmentManager.beginTransaction()
+                .replace((requireView().parent as ViewGroup).id, f)
+                .addToBackStack(null)
+                .commit()
         }
         binding.btnMarcarNoRealizada.setOnClickListener {
-            NoRealizadaBottomSheet.newInstance().show(parentFragmentManager, NoRealizadaBottomSheet.TAG)
+            NoRealizadaBottomSheet.newInstance().show(parentFragmentManager, "TAG")
         }
     }
 
     private fun poblarDatos(visita: VisitaDetalle) {
         binding.textNombreInstitucionHeader.text = visita.nombreInstitucion
-        val tiempoOFecha: String
-        if (visita.estado == "PENDIENTE" && !visita.tiempoDesplazamiento.isNullOrEmpty()) {
-            tiempoOFecha = "Aprox. ${visita.tiempoDesplazamiento} de viaje"
-        } else {
-            tiempoOFecha = formatNotaFecha(visita.fechaVisitaProgramada)
-        }
-
+        val tiempoOFecha = if (visita.estado == "PENDIENTE" && !visita.tiempoDesplazamiento.isNullOrEmpty())
+            "Aprox. ${visita.tiempoDesplazamiento} de viaje" else formatNotaFecha(visita.fechaVisitaProgramada)
         binding.textHoraVisitaHeader.text = tiempoOFecha
 
-        setupFila(binding.rowNombre, "Nombre", visita.nombreInstitucion)
-        val dirLimp = limpiarDireccion(visita.direccion)
-        setupFila(binding.rowDireccion, "Dirección", dirLimp)
+        setupFila(binding.rowNombre, "Nombre", visita.nombreInstitucion ?: "N/A")
+        setupFila(binding.rowDireccion, "Dirección", limpiarDireccion(visita.direccion))
         setupFila(binding.rowContacto, "Contacto", visita.clienteContacto ?: "N/A")
-        val productosTexto: String
-        if (visita.productosPreferidos?.isNotEmpty() == true) {
-            val builder = StringBuilder()
-            for (producto in visita.productosPreferidos) {
-                builder.append("• ${producto.nombre}\n")
-            }
-            productosTexto = builder.trim().toString()
-        } else {
-            productosTexto = "N/A"
-        }
-        setupFila(binding.rowProductos, "Sugerencia de productos:", productosTexto)
 
-        setupFila(binding.rowTiempo, "Tiempo de Desplazamiento", visita.tiempoDesplazamiento ?: "N/A")
+        val prod = if (!visita.productosPreferidos.isNullOrEmpty())
+            visita.productosPreferidos.joinToString("\n") { "• ${it.nombre}" } else "N/A"
+        setupFila(binding.rowProductos, "Sugerencia:", prod)
 
-        val notasTexto: String
-        if (visita.notasVisitasAnteriores?.isNotEmpty() == true) {
-            val notasBuilder = StringBuilder()
-            for (nota in visita.notasVisitasAnteriores) {
-                val fechaFormateada = formatNotaFecha(nota.fechaVisitaProgramada)
-                notasBuilder.append("• $fechaFormateada: ")
-                notasBuilder.append(nota.detalle ?: "Sin detalle")
-                notasBuilder.append("\n")
-            }
-            notasTexto = notasBuilder.trim().toString()
-        } else {
-            notasTexto = visita.detalle ?: "N/A"
-        }
+        setupFila(binding.rowTiempo, "Tiempo Desplazamiento", visita.tiempoDesplazamiento ?: "N/A")
 
-        setupFila(binding.rowNotas, "Notas de Visita anterior", notasTexto)
+        val notas = if (!visita.notasVisitasAnteriores.isNullOrEmpty())
+            visita.notasVisitasAnteriores.joinToString("\n") { "• ${formatNotaFecha(it.fechaVisitaProgramada)}: ${it.detalle}" }
+        else visita.detalle ?: "N/A"
+        setupFila(binding.rowNotas, "Notas/Detalle", notas)
 
-        if (!visita.evidencia.isNullOrEmpty()) {
+        // --- LÓGICA DE EVIDENCIA (FOTO vs VIDEO) ---
+        val url = visita.evidencia
+        if (!url.isNullOrEmpty()) {
             binding.evidenceTitle.isVisible = true
             binding.evidenceCard.isVisible = true
 
-            // Cargamos la imagen con Glide
-            Glide.with(this)
-                .load(visita.evidencia)
-                .placeholder(R.drawable.ic_launcher_background) // Puedes crear un drawable gris de carga
-                .error(android.R.drawable.stat_notify_error) // Icono por si falla
-                .into(binding.imageEvidence)
+            val extension = url.substringAfterLast('.', "").lowercase()
+            val esVideo = extension in listOf("mp4", "mov", "avi", "3gp", "mkv")
+
+            if (esVideo) {
+                // MODO VIDEO
+                binding.imageEvidence.isVisible = false
+                binding.videoEvidence.isVisible = true
+                binding.iconPlayOverlay.isVisible = true 
+                val mediaController = MediaController(requireContext())
+                mediaController.setAnchorView(binding.videoEvidence)
+                binding.videoEvidence.setMediaController(mediaController)
+                binding.videoEvidence.setVideoURI(Uri.parse(url))
+
+                // Listener para el overlay de play
+                binding.iconPlayOverlay.setOnClickListener {
+                    binding.iconPlayOverlay.isVisible = false
+                    binding.videoEvidence.start()
+                }
+                // Si el video termina, mostramos el play de nuevo
+                binding.videoEvidence.setOnCompletionListener {
+                    binding.iconPlayOverlay.isVisible = true
+                }
+
+            } else {
+                // MODO FOTO
+                binding.videoEvidence.isVisible = false
+                binding.iconPlayOverlay.isVisible = false
+                binding.imageEvidence.isVisible = true
+
+                Glide.with(this)
+                    .load(url)
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .into(binding.imageEvidence)
+            }
         } else {
+            // SIN EVIDENCIA (Ocultar todo)
             binding.evidenceTitle.isVisible = false
             binding.evidenceCard.isVisible = false
         }
 
         val esPendiente = visita.estado == "PENDIENTE"
         binding.layoutBotones.isVisible = esPendiente
+        setupMap(visita)
+    }
 
-        val coordenadas = obtenerCoordenadas(visita.direccion)
+    private fun setupFila(b: ItemDetalleFilaBinding, l: String, v: String) {
+        b.itemLabel.text = l
+        b.itemValue.text = v
+    }
 
-        if (coordenadas != null) {
-            binding.mapCardView.isVisible = true
+    private fun setupMap(visita: VisitaDetalle) {
+        val coords = obtenerCoordenadas(visita.direccion)
+        binding.mapCardView.isVisible = coords != null
+        if (coords != null) {
             val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
-
             mapFragment?.getMapAsync { googleMap ->
                 googleMap.uiSettings.isMapToolbarEnabled = false
-                googleMap.addMarker(MarkerOptions().position(coordenadas).title(visita.nombreInstitucion))
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordenadas, 15f))
-                googleMap.mapType = com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL
+                googleMap.addMarker(MarkerOptions().position(coords).title(visita.nombreInstitucion))
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords, 15f))
             }
             binding.root.findViewById<View>(R.id.map_overlay_click)?.setOnClickListener {
-                val uri = "geo:${coordenadas.latitude},${coordenadas.longitude}?q=${coordenadas.latitude},${coordenadas.longitude}(${visita.nombreInstitucion})"
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-                startActivity(intent)
+                val uri = "geo:${coords.latitude},${coords.longitude}?q=${coords.latitude},${coords.longitude}"
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uri)))
             }
-        } else {
-            binding.mapCardView.isVisible = false
         }
     }
 
-    private fun setupFila(filaBinding: ItemDetalleFilaBinding, label: String, value: String) {
-        filaBinding.itemLabel.text = label
-        filaBinding.itemValue.text = value
+    private fun obtenerCoordenadas(d: String?): LatLng? {
+        if (d.isNullOrEmpty()) return null
+        return try { val p = d.split(","); LatLng(p[0].toDouble(), p[1].toDouble()) } catch (e: Exception) { null }
     }
 
-    private fun formatHora(isoDate: String?): String {
-        if (isoDate.isNullOrEmpty()) return "N/A"
-        return try {
-            val date = isoFormatter.parse(isoDate)
-            date?.let { timeFormatter.format(it) } ?: "N/A"
-        } catch (e: Exception) { "N/A" }
-    }
+    private fun limpiarDireccion(d: String?): String =
+        if (!d.isNullOrEmpty() && d.split(",").size > 2) d.split(",").subList(2, d.split(",").size).joinToString(",") else d ?: "N/A"
 
-    private fun formatNotaFecha(isoDate: String?): String {
-        if (isoDate.isNullOrEmpty()) return "Fecha inv."
-        return try {
-            val date = isoFormatter.parse(isoDate)
-            date?.let { notaDateFormatter.format(it) } ?: "Fecha inv."
-        } catch (e: Exception) { "Fecha inv." }
-    }
+    private fun formatNotaFecha(d: String?): String =
+        try { notaDateFormatter.format(isoFormatter.parse(d)!!) } catch (e: Exception) { "Fecha inv." }
 
-    private fun pedirPermisoYRecargarDetalle() {
-        recargarDetalleSinUbicacion()
-    }
+    private fun pedirPermisoYRecargarDetalle() = recargarDetalleSinUbicacion()
 
     @SuppressLint("MissingPermission")
     private fun recargarDetalleConUbicacion() {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    viewModel.loadVisitaDetalle(lat = location.latitude, lon = location.longitude)
-                } else {
-                    recargarDetalleSinUbicacion()
-                }
-            }
-            .addOnFailureListener {
-                recargarDetalleSinUbicacion()
-            }
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            if (it != null) viewModel.loadVisitaDetalle(it.latitude, it.longitude)
+            else recargarDetalleSinUbicacion()
+        }.addOnFailureListener { recargarDetalleSinUbicacion() }
     }
 
     private fun recargarDetalleSinUbicacion() {
-        viewModel.loadVisitaDetalle(
-            lat = 7.1384581600911945,
-            lon = -73.12422778151247
-        )
+        viewModel.loadVisitaDetalle(7.1384581600911945, -73.12422778151247)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
