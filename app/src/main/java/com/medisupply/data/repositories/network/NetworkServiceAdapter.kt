@@ -14,7 +14,7 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.SSLSocketFactory
 
 object NetworkServiceAdapter {
-    private const val BASE_URL = "http://10.0.2.2:3014"
+    private const val BASE_URL = "https://medisupply.tech/movil/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

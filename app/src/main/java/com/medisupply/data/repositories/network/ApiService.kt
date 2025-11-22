@@ -77,7 +77,7 @@ interface ApiService {
 
     @POST("clientes/") suspend fun crearCliente(@Body cliente: ClienteRequest): Response<Cliente>
 
-    @GET("visitas/rutas-del-dia/")
+    @GET("visitas/rutas-del-dia")
     suspend fun getRutasDelDia(
         @Query("fecha") fecha: String,
         @Query("vendedor_id") vendedorId: String,
@@ -103,7 +103,7 @@ interface ApiService {
         @Part("estado") estado: RequestBody?,
         @Part evidencia: MultipartBody.Part?
     ): Response<VisitaDetalle>
-    @GET("movil/ordenes/mis-entregas-programadas")
+    @GET("ordenes/mis-entregas-programadas")
     suspend fun getMisEntregasProgramadas(
         @Query("estado_parada") estadoParada: String? = null,
         @Query("estado_ruta") estadoRuta: String? = null,
