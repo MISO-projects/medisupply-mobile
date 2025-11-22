@@ -23,8 +23,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="32dp"
-                tools:context=".ui.fragments.DetalleVisitaFragment">
+                android:paddingBottom="32dp">
 
                 <ImageButton
                     android:id="@+id/btn_back"
@@ -185,6 +184,46 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/row_tiempo" />
 
+                <!-- NUEVA SECCIÓN DE EVIDENCIA -->
+                <TextView
+                    android:id="@+id/evidence_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Evidencia "
+                    android:textColor="@color/md_theme_light_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/row_notas"
+                    tools:visibility="visible"/>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/evidence_card"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="8dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/evidence_title"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/image_evidence"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:scaleType="centerCrop"
+                        android:background="#F0F0F0"
+                        android:src="@drawable/ic_launcher_background" />
+                </androidx.cardview.widget.CardView>
+                <!-- FIN SECCIÓN DE EVIDENCIA -->
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/map_card_view"
                     android:layout_width="0dp"
@@ -197,13 +236,15 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/row_notas"
-                    tools:visibility="visible"> <fragment
-                    android:id="@+id/map_fragment"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:context=".ui.fragments.DetalleVisitaFragment" />
+                    app:layout_constraintTop_toBottomOf="@id/evidence_card"
+                    tools:visibility="visible">
+
+                    <fragment
+                        android:id="@+id/map_fragment"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:context=".ui.fragments.DetalleVisitaFragment" />
 
                     <View
                         android:id="@+id/map_overlay_click"

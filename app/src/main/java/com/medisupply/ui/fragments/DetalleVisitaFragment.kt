@@ -16,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide // Importar Glide
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.SupportMapFragment
@@ -199,7 +200,7 @@ class DetalleVisitaFragment : Fragment() {
         if (visita.estado == "PENDIENTE" && !visita.tiempoDesplazamiento.isNullOrEmpty()) {
             tiempoOFecha = "Aprox. ${visita.tiempoDesplazamiento} de viaje"
         } else {
-            tiempoOFecha = formatNotaFecha(visita.fechaVisitaProgramada) // Reusamos la función "dd MMM yyyy"
+            tiempoOFecha = formatNotaFecha(visita.fechaVisitaProgramada)
         }
 
         binding.textHoraVisitaHeader.text = tiempoOFecha
@@ -220,7 +221,6 @@ class DetalleVisitaFragment : Fragment() {
         }
         setupFila(binding.rowProductos, "Sugerencia de productos:", productosTexto)
 
-        // Usar el tiempo de desplazamiento de la API
         setupFila(binding.rowTiempo, "Tiempo de Desplazamiento", visita.tiempoDesplazamiento ?: "N/A")
 
         val notasTexto: String
@@ -238,6 +238,21 @@ class DetalleVisitaFragment : Fragment() {
         }
 
         setupFila(binding.rowNotas, "Notas de Visita anterior", notasTexto)
+
+        if (!visita.evidencia.isNullOrEmpty()) {
+            binding.evidenceTitle.isVisible = true
+            binding.evidenceCard.isVisible = true
+
+            // Cargamos la imagen con Glide
+            Glide.with(this)
+                .load(visita.evidencia)
+                .placeholder(R.drawable.ic_launcher_background) // Puedes crear un drawable gris de carga
+                .error(android.R.drawable.stat_notify_error) // Icono por si falla
+                .into(binding.imageEvidence)
+        } else {
+            binding.evidenceTitle.isVisible = false
+            binding.evidenceCard.isVisible = false
+        }
 
         val esPendiente = visita.estado == "PENDIENTE"
         binding.layoutBotones.isVisible = esPendiente
@@ -286,7 +301,6 @@ class DetalleVisitaFragment : Fragment() {
     }
 
     private fun pedirPermisoYRecargarDetalle() {
-        // Llama directamente a la función con coordenadas fijas
         recargarDetalleSinUbicacion()
     }
 
