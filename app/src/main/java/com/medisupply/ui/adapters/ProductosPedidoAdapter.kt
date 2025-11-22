@@ -42,7 +42,7 @@ class ProductosPedidoAdapter(
 
         fun bind(item: ProductoConCantidad) {
             productName.text = item.producto.nombre
-            productAvailability.text = "${item.producto.stockDisponible} unidades disponibles"
+            productAvailability.text = itemView.context.getString(R.string.unidades_disponibles, item.producto.stockDisponible)
             productQuantity.text = item.cantidad.toString()
 
             btnDecrease.isEnabled = item.cantidad > 0

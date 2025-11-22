@@ -13,7 +13,6 @@
     <string name="categorias">Categorías</string>
     <string name="disponibilidad">Disponibilidad</string>
     <string name="imagen_producto_description">Imagen del producto</string>
-    <string name="error_cargar_productos">Error al cargar productos</string>
     <string name="cargando_productos">Cargando productos…</string>
     <string name="no_hay_productos">No hay productos disponibles</string>
     <string name="todos">Todos</string>
@@ -110,5 +109,70 @@
 
     <string name="formato_tiempo_viaje_primero">a %1$s de tu ubicación</string>
     <string name="formato_tiempo_viaje_siguiente">a %1$s de %2$s</string>
+
+    <!-- Mensajes Toast -->
+    <string name="evidencia_adjuntada">Evidencia adjuntada</string>
+    <string name="error_procesar_archivo">Error al procesar el archivo</string>
+    <string name="error_id_visita_no_encontrado">Error: ID de visita no encontrado</string>
+    <string name="visita_guardada_exito">Visita guardada con éxito</string>
+    <string name="completar_todos_los_campos">Por favor, completa todos los campos</string>
+    <string name="hora_fin_reiniciada">Hora de fin reiniciada</string>
+    <string name="hora_fin_anterior_inicio">La hora de fin no puede ser anterior a la de inicio</string>
+    <string name="registro_exitoso">Registro exitoso</string>
+    <string name="error_registro">Error en el registro</string>
+    <string name="seleccionar_motivo">Por favor, selecciona un motivo</string>
+    <string name="cliente_seleccionado">Cliente seleccionado: %1$s</string>
+    <string name="error_datos_pedido_no_validos">Error: datos de pedido no válidos</string>
+    <string name="pedido_creado_exitosamente">Pedido creado exitosamente: %1$s</string>
+    <string name="error_no_vendedor_id">Error: No se encontró ID de vendedor. Inicie sesión de nuevo.</string>
+    <string name="error_conexion">Error de conexión. Revisa tu red.</string>
+    <string name="error_cargar_visitas">Error al cargar las visitas: %1$s</string>
+    <string name="error_cargar_detalle">Error al cargar el detalle: %1$s</string>
+    <string name="error_cancelar_visita">Error al cancelar la visita: %1$s</string>
+    <string name="error_cargar_productos">Error al cargar productos: %1$s</string>
+    <string name="error_cargar_entregas">Error al cargar entregas: %1$s</string>
+
+    <!-- Textos de UI -->
+    <string name="archivo_seleccionado">Archivo seleccionado:\n%1$s</string>
+    <string name="seleccionar_hora_inicio">Seleccionar hora de inicio</string>
+    <string name="seleccionar_hora_fin">Seleccionar hora de fin</string>
+    <string name="visitas_para_fecha">Visitas para %1$s</string>
+    <string name="pendiente">PENDIENTE</string>
+    <string name="cancelada">CANCELADA</string>
+    <string name="disponibles">%1$d disponibles</string>
+    <string name="nit_prefix">NIT %1$s</string>
+    <string name="pedido_numero">Pedido #%1$s</string>
+    <string name="stock_label">Stock: %1$d</string>
+    <string name="precio_formato">$%1$s</string>
+    <string name="unidades_formato">%1$d unidades</string>
+    <string name="item_singular">item</string>
+    <string name="items_plural">items</string>
+    <string name="cantidad_items">%1$d %2$s</string>
+    <string name="sin_asignar">Sin asignar</string>
+    <string name="na">N/A</string>
+    <string name="envio_estandar">Envío estándar</string>
+    <string name="orden_parada">#%1$d</string>
+    <string name="aproximadamente_tiempo">Aprox. %1$s de viaje</string>
+    <string name="nombre">Nombre</string>
+    <string name="contacto">Contacto</string>
+    <string name="sugerencia">Sugerencia:</string>
+    <string name="tiempo_desplazamiento">Tiempo Desplazamiento</string>
+    <string name="notas_detalle">Notas/Detalle</string>
+    <string name="recomendacion">Recomendación</string>
+    <string name="no_disponible">No disponible</string>
+    <string name="notas_visita_anterior">Notas de Visita anterior</string>
+    <string name="sin_detalle">Sin detalle</string>
+    <string name="fecha_invalida">Fecha inv.</string>
+    <string name="tiempo_desplazamiento_completo">Tiempo de Desplazamiento</string>
+
+    <!-- Errores de validación -->
+    <string name="debe_ser_numero">Debe ser un número</string>
+    <string name="nit_solo_numeros">El NIT debe contener solo números</string>
+    <string name="email_invalido">Ingrese un correo electrónico válido</string>
+    <string name="password_requisitos">La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número</string>
+
+    <!-- Estados -->
+    <string name="realizada">REALIZADA</string>
+    <string name="tomada">TOMADA</string>
 
 </resources>

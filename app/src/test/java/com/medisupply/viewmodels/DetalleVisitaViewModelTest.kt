@@ -1,6 +1,9 @@
 package com.medisupply.viewmodels
 
+import android.app.Application
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.medisupply.R
 import com.medisupply.data.models.VisitaDetalle
 import com.medisupply.data.repositories.VisitasRepository
 import com.medisupply.ui.viewmodels.DetalleVisitaViewModel
@@ -36,6 +39,9 @@ class DetalleVisitaViewModelTest {
     @Mock
     private lateinit var repository: VisitasRepository
 
+    @Mock
+    private lateinit var application: Application
+
     private lateinit var viewModel: DetalleVisitaViewModel
 
     private val testVisitaId = "visita-123"
@@ -65,7 +71,20 @@ class DetalleVisitaViewModelTest {
     fun setup() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
-        viewModel = DetalleVisitaViewModel(repository, testVisitaId)
+        
+        // Mock Application para devolver strings
+        whenever(application.getString(R.string.error_conexion)).thenReturn("Error de conexión. Revisa tu red.")
+        whenever(application.getString(eq(R.string.error_cargar_detalle), anyOrNull())).thenAnswer { 
+            val message = it.arguments[1] as? String ?: ""
+            "Error al cargar el detalle: $message"
+        }
+        whenever(application.getString(eq(R.string.error_cancelar_visita), anyOrNull())).thenAnswer {
+            val message = it.arguments[1] as? String ?: ""
+            "Error al cancelar la visita: $message"
+        }
+        whenever(application.applicationContext).thenReturn(application)
+        
+        viewModel = DetalleVisitaViewModel(application, repository, testVisitaId)
     }
 
     @After
@@ -100,7 +119,7 @@ class DetalleVisitaViewModelTest {
 
         // Then
         assertNotNull(viewModel.error.value)
-        assertTrue(viewModel.error.value!!.contains("Error de conexión"))
+        assertTrue(viewModel.error.value!!.contains("Error de conexión") || viewModel.error.value!!.contains("Connection error"))
         assertEquals(false, viewModel.isLoading.value)
     }
 
@@ -116,7 +135,8 @@ class DetalleVisitaViewModelTest {
 
         // Then
         assertNotNull(viewModel.error.value)
-        assertTrue(viewModel.error.value!!.contains("Error al cargar el detalle"))
+        val errorMessage = application.getString(R.string.error_cargar_detalle, "Server error")
+        assertTrue(viewModel.error.value!!.contains("Error al cargar el detalle") || viewModel.error.value!!.contains("Error loading details"))
         assertEquals(false, viewModel.isLoading.value)
     }
 
@@ -167,7 +187,7 @@ class DetalleVisitaViewModelTest {
 
         // Then
         assertNotNull(viewModel.error.value)
-        assertTrue(viewModel.error.value!!.contains("Error al cancelar"))
+        assertTrue(viewModel.error.value!!.contains("Error al cancelar") || viewModel.error.value!!.contains("Error canceling"))
         // No debe marcarse como exitosa (o debe ser false/null)
         assertNotEquals(true, viewModel.cancelacionExitosa.value)
         assertEquals(false, viewModel.isLoading.value)

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.medisupply.R
 import com.medisupply.data.models.EntregaProgramadaItem
 import com.medisupply.databinding.ItemEntregaProgramadaBinding
 import java.text.SimpleDateFormat
@@ -46,7 +47,7 @@ class EntregasProgramadasAdapter(
             binding.estadoEntrega.text = formatearEstado(entrega.ruta.estado)
 
             // Nombre del conductor (puede ser null)
-            val conductorNombre = entrega.ruta.conductorNombre ?: "Sin asignar"
+            val conductorNombre = entrega.ruta.conductorNombre ?: binding.root.context.getString(R.string.sin_asignar)
             binding.conductorEntrega.text = conductorNombre
 
             binding.root.setOnClickListener {

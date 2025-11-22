@@ -53,11 +53,11 @@ class RegistrarVisitaFragment : Fragment() {
 
             if (file != null) {
                 viewModel.setArchivoEvidencia(file)
-                binding.tvFileName.text = "Archivo seleccionado:\n${file.name}"
+                binding.tvFileName.text = getString(R.string.archivo_seleccionado, file.name)
                 binding.tvFileName.setTextColor(resources.getColor(R.color.md_theme_light_primary, null))
-                Toast.makeText(requireContext(), "Evidencia adjuntada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.evidencia_adjuntada), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), "Error al procesar el archivo", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.error_procesar_archivo), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -81,7 +81,7 @@ class RegistrarVisitaFragment : Fragment() {
         }
 
         if (visitaId == null) {
-            Toast.makeText(requireContext(), "Error: ID de visita no encontrado", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), getString(R.string.error_id_visita_no_encontrado), Toast.LENGTH_LONG).show()
             parentFragmentManager.popBackStack()
         }
     }
@@ -157,7 +157,7 @@ class RegistrarVisitaFragment : Fragment() {
 
         viewModel.registroExitoso.observe(viewLifecycleOwner) { visitaActualizada ->
             if (visitaActualizada != null) {
-                Toast.makeText(requireContext(), "Visita guardada con éxito", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.visita_guardada_exito), Toast.LENGTH_SHORT).show()
                 setFragmentResult("request_refresh", bundleOf("should_refresh" to true))
                 parentFragmentManager.popBackStack()
             }
@@ -174,7 +174,7 @@ class RegistrarVisitaFragment : Fragment() {
         val detalle = binding.descriptionEditText.text.toString()
 
         if (horaInicio.isBlank() || horaFin.isBlank() || contacto.isBlank() || detalle.isBlank()) {
-            Toast.makeText(requireContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.completar_todos_los_campos), Toast.LENGTH_SHORT).show()
             return
         }
         viewModel.guardarVisita(detalle, contacto, horaInicio, horaFin)
@@ -197,8 +197,8 @@ class RegistrarVisitaFragment : Fragment() {
             .setHour(defaultHour) 
             .setMinute(defaultMinute) 
             .setTitleText(
-                if (esHoraInicio) "Seleccionar hora de inicio"
-                else "Seleccionar hora de fin"
+                if (esHoraInicio) getString(R.string.seleccionar_hora_inicio)
+                else getString(R.string.seleccionar_hora_fin)
             )
             .build()
 
@@ -219,7 +219,7 @@ class RegistrarVisitaFragment : Fragment() {
                 if (!esHoraFinValida()) {
                     horaFinSeleccionada = null
                     binding.endTimeEditText.setText("")
-                    Toast.makeText(requireContext(), "Hora de fin reiniciada", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.hora_fin_reiniciada), Toast.LENGTH_SHORT).show()
                 }
 
             } else {
@@ -229,7 +229,7 @@ class RegistrarVisitaFragment : Fragment() {
                 } else {
                     Toast.makeText(
                         requireContext(),
-                        "La hora de fin no puede ser anterior a la de inicio",
+                        getString(R.string.hora_fin_anterior_inicio),
                         Toast.LENGTH_LONG
                     ).show()
                 }

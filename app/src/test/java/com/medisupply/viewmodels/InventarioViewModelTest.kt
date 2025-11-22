@@ -230,7 +230,7 @@ class InventarioViewModelTest {
 
         // Then
         assertNotNull(viewModel.error.value)
-        assertTrue(viewModel.error.value!!.contains("Error al cargar productos"))
+        assertTrue(viewModel.error.value!!.contains("Error al cargar productos") || viewModel.error.value!!.contains("Error loading products"))
         assertEquals(false, viewModel.isLoading.value)
     }
 

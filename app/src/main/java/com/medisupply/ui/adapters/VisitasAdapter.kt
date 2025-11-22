@@ -80,15 +80,19 @@ class VisitasAdapter(
 
             when (visita.estado) {
                 "PENDIENTE" -> {
-                    binding.textEstado.text = "PENDIENTE"
+                    binding.textEstado.text = context.getString(R.string.pendiente)
                     binding.textEstado.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_pendiente)
                 }
                 "REALIZADA", "TOMADA" -> {
-                    binding.textEstado.text = visita.estado
+                    binding.textEstado.text = when (visita.estado) {
+                        "REALIZADA" -> context.getString(R.string.realizada)
+                        "TOMADA" -> context.getString(R.string.tomada)
+                        else -> visita.estado
+                    }
                     binding.textEstado.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_realizada)
                 }
                 "CANCELADA" -> {
-                    binding.textEstado.text = "CANCELADA"
+                    binding.textEstado.text = context.getString(R.string.cancelada)
                     binding.textEstado.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_cancelada)
                     // Tachar el nombre si está cancelada
                     binding.textNombreCliente.paintFlags = binding.textNombreCliente.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
@@ -104,7 +108,7 @@ class VisitasAdapter(
         }
 
         private fun limpiarDireccion(direccionCompleta: String?): String {
-            if (direccionCompleta.isNullOrEmpty()) return "N/A"
+            if (direccionCompleta.isNullOrEmpty()) return binding.root.context.getString(R.string.na)
             val partes = direccionCompleta.split(",")
             // Formato: "Lat,Lon,Direccion"
             if (partes.size > 2) {

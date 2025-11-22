@@ -1,18 +1,21 @@
 package com.medisupply.ui.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.medisupply.R
 import com.medisupply.data.models.VisitaDetalle
 import com.medisupply.data.repositories.VisitasRepository
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 class DetalleVisitaViewModel(
+    application: Application,
     private val repository: VisitasRepository,
     private val visitaId: String
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val _visita = MutableLiveData<VisitaDetalle?>()
     val visita: LiveData<VisitaDetalle?> = _visita
@@ -37,9 +40,9 @@ class DetalleVisitaViewModel(
                 val result = repository.getVisitaById(visitaId, lat, lon)
                 _visita.value = result
             } catch (e: IOException) {
-                _error.value = "Error de conexión. Revisa tu red."
+                _error.value = getApplication<Application>().getString(R.string.error_conexion)
             } catch (e: Exception) {
-                _error.value = "Error al cargar el detalle: ${e.message}"
+                _error.value = getApplication<Application>().getString(R.string.error_cargar_detalle, e.message ?: "")
             } finally {
                 _isLoading.value = false
             }
@@ -65,7 +68,7 @@ class DetalleVisitaViewModel(
                 )
                 _cancelacionExitosa.value = true
             } catch (e: Exception) {
-                _error.value = "Error al cancelar la visita: ${e.message}"
+                _error.value = getApplication<Application>().getString(R.string.error_cancelar_visita, e.message ?: "")
             } finally {
                 _isLoading.value = false
             }

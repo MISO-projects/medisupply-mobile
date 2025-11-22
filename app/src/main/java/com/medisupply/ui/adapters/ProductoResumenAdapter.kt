@@ -28,8 +28,8 @@ class ProductoResumenAdapter : ListAdapter<ProductoConCantidad, ProductoResumenA
 
         fun bind(item: ProductoConCantidad) {
             productName.text = item.producto.nombre
-            productPrice.text = "$${item.producto.precioUnitario}"
-            productQuantity.text = "${item.cantidad} unidades"
+            productPrice.text = itemView.context.getString(R.string.precio_formato, item.producto.precioUnitario.toString())
+            productQuantity.text = itemView.context.getString(R.string.unidades_formato, item.cantidad)
         }
     }
 

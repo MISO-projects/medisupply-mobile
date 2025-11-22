@@ -41,7 +41,7 @@ class ClientesAdapter(
             binding.apply {
                 // Configurar datos del cliente
                 nombreCliente.text = cliente.nombre
-                nitCliente.text = "NIT ${cliente.nit}"
+                nitCliente.text = root.context.getString(R.string.nit_prefix, cliente.nit)
 
                 // Cargar logo con Glide - usar URL fija para todos por ahora
                 Glide.with(logoCliente.context)

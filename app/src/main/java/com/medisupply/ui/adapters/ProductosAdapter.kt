@@ -41,7 +41,7 @@ class ProductosAdapter(
             binding.apply {
                 // Configurar datos del producto
                 nombreProducto.text = inventario.productoNombre
-                stockProducto.text = "${inventario.cantidad} disponibles"
+                stockProducto.text = root.context.getString(R.string.disponibles, inventario.cantidad)
                 
                 // Cambiar color del stock según disponibilidad
                 val stockColor = if (inventario.cantidad > 50) {

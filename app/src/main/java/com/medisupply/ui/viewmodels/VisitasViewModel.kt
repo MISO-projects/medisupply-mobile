@@ -1,10 +1,12 @@
 package com.medisupply.ui.viewmodels
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.medisupply.R
 import com.medisupply.data.models.RutaVisitaItem
 import com.medisupply.data.repositories.VisitasRepository
 import com.medisupply.data.session.SessionManager
@@ -16,9 +18,10 @@ import java.util.Date
 import java.util.Locale
 
 class VisitasViewModel(
+    application: Application,
     private val repository: VisitasRepository,
     private val sessionManager: SessionManager
-) : ViewModel() {
+) : AndroidViewModel(application) {
     private val _rutas = MutableLiveData<List<RutaVisitaItem>>()
     val rutas: LiveData<List<RutaVisitaItem>> = _rutas
     private val _isLoading = MutableLiveData<Boolean>()
@@ -55,7 +58,7 @@ class VisitasViewModel(
                 //Obtener el ID del vendedor
                 val vendedorId = sessionManager.getIdSeller()
                 if (vendedorId == null) {
-                    _error.value = "Error: No se encontró ID de vendedor. Inicie sesión de nuevo."
+                    _error.value = getApplication<Application>().getString(R.string.error_no_vendedor_id)
                     _isLoading.value = false
                     _rutas.value = emptyList()
                     return@launch
@@ -66,10 +69,10 @@ class VisitasViewModel(
                 _rutas.value = resultado
 
             } catch (e: IOException) {
-                _error.value = "Error de conexión. Revisa tu red."
+                _error.value = getApplication<Application>().getString(R.string.error_conexion)
                 _rutas.value = emptyList()
             } catch (e: Exception) {
-                _error.value = "Error al cargar las visitas: ${e.message}"
+                _error.value = getApplication<Application>().getString(R.string.error_cargar_visitas, e.message ?: "")
                 _rutas.value = emptyList()
             } finally {
                 _isLoading.value = false
