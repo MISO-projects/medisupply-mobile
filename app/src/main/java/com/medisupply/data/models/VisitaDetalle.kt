@@ -77,5 +77,8 @@ data class VisitaDetalle(
     val productosPreferidos: List<ProductoPreferido>? = null,
 
     @SerializedName("tiempo_desplazamiento")
-    val tiempoDesplazamiento: String? = null
+    val tiempoDesplazamiento: String? = null,
+
+    @SerializedName("recomendacion_llm")
+    val recomendacionLlm: String? = null
 )

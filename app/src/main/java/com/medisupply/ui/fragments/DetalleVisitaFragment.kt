@@ -208,17 +208,7 @@ class DetalleVisitaFragment : Fragment() {
         val dirLimp = limpiarDireccion(visita.direccion)
         setupFila(binding.rowDireccion, "Dirección", dirLimp)
         setupFila(binding.rowContacto, "Contacto", visita.clienteContacto ?: "N/A")
-        val productosTexto: String
-        if (visita.productosPreferidos?.isNotEmpty() == true) {
-            val builder = StringBuilder()
-            for (producto in visita.productosPreferidos) {
-                builder.append("• ${producto.nombre}\n")
-            }
-            productosTexto = builder.trim().toString()
-        } else {
-            productosTexto = "N/A"
-        }
-        setupFila(binding.rowProductos, "Sugerencia de productos:", productosTexto)
+        setupFila(binding.rowProductos, "Recomendación", visita.recomendacionLlm ?: "No disponible")
 
         // Usar el tiempo de desplazamiento de la API
         setupFila(binding.rowTiempo, "Tiempo de Desplazamiento", visita.tiempoDesplazamiento ?: "N/A")
